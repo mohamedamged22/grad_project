@@ -1,31 +1,64 @@
 import 'package:beyond_the_pramids/core/constants/app_color.dart';
 import 'package:beyond_the_pramids/core/utils/size_config.dart';
+import 'package:beyond_the_pramids/core/utils/widgets/loading_overlay.dart';
+import 'package:beyond_the_pramids/core/utils/widgets/snack_bar.dart';
 import 'package:beyond_the_pramids/features/account%20type/presentation/views/widgets/custom_text_semi_bold.dart';
 import 'package:beyond_the_pramids/features/complete%20guide%20account/presentation/views/widgets/custom_dropdown_field.dart';
-import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_create_new_trip_step3_cubit/guide_create_new_trip_step3_cubit.dart';
 import 'package:beyond_the_pramids/features/complete%20guide%20account/presentation/views/widgets/step_progress_indicator.dart';
+import 'package:beyond_the_pramids/features/guide_create_trip/presentation/manager/guide_create_trip_price_cubit/guide_create_trip_price_cubit.dart';
 import 'package:beyond_the_pramids/features/onboarding/presentation/views/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class GuideCreateNewTripStep3View extends StatelessWidget {
-  const GuideCreateNewTripStep3View({super.key});
+class GuideCreateTripPriceView extends StatelessWidget {
+  const GuideCreateTripPriceView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final cubit = context.read<GuideCreateNewTripStep3Cubit>();
+    final cubit = context.read<GuideCreateTripPriceCubit>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final pageBg = Theme.of(context).scaffoldBackgroundColor;
     final primaryText = isDark ? Colors.white : AppColor.primaryColor;
 
-    return BlocBuilder<
-      GuideCreateNewTripStep3Cubit,
-      GuideCreateNewTripStep3State
-    >(
+    return BlocConsumer<GuideCreateTripPriceCubit, GuideCreateTripPriceState>(
+      listener: (context, state) {
+        if (state.status == GuideCreateTripPriceStatus.loading) {
+          showLoadingOverlay(context);
+          return;
+        }
+
+        if (state.status == GuideCreateTripPriceStatus.success) {
+          hideLoadingOverlay(context);
+          showSnackBar(context, state.message ?? 'Added', isSuccess: true);
+          Navigator.pushNamed(context, '/guideCreateTripStep4View');
+          return;
+        }
+
+        if (state.status == GuideCreateTripPriceStatus.failure) {
+          hideLoadingOverlay(context);
+          showSnackBar(
+            context,
+            state.message ?? 'Failed to save trip price',
+            isSuccess: false,
+          );
+        }
+      },
       builder: (context, state) {
-        return Scaffold(
-          backgroundColor: pageBg,
-          appBar: AppBar(
+        return WillPopScope(
+          onWillPop: () async {
+            if (state.status == GuideCreateTripPriceStatus.failure) {
+              showSnackBar(
+                context,
+                'Please fix the current error first',
+                isSuccess: false,
+              );
+              return false;
+            }
+            return true;
+          },
+          child: Scaffold(
+            backgroundColor: pageBg,
+            appBar: AppBar(
             backgroundColor: pageBg,
             elevation: 0,
             centerTitle: true,
@@ -35,7 +68,17 @@ class GuideCreateNewTripStep3View extends StatelessWidget {
                 color: AppColor.primaryColor,
                 size: 18.sp,
               ),
-              onPressed: () => Navigator.pop(context),
+              onPressed: () {
+                if (state.status == GuideCreateTripPriceStatus.failure) {
+                  showSnackBar(
+                    context,
+                    'Please fix the current error first',
+                    isSuccess: false,
+                  );
+                  return;
+                }
+                Navigator.pop(context);
+              },
             ),
             title: Text(
               'Create New Trip',
@@ -45,19 +88,8 @@ class GuideCreateNewTripStep3View extends StatelessWidget {
                 color: primaryText,
               ),
             ),
-            actions: [
-              IconButton(
-                onPressed: () {},
-                icon: Icon(
-                  Icons.bookmark_border_rounded,
-                  color: AppColor.secondaryColor,
-                  size: 20.sp,
-                ),
-              ),
-              SizedBox(width: 4.w),
-            ],
           ),
-          body: SafeArea(
+            body: SafeArea(
             child: SingleChildScrollView(
               padding: EdgeInsets.symmetric(horizontal: 16.w),
               child: Form(
@@ -68,7 +100,6 @@ class GuideCreateNewTripStep3View extends StatelessWidget {
                     SizedBox(height: 6.h),
                     const StepProgressIndicator(currentStep: 3, totalSteps: 4),
                     SizedBox(height: 16.h),
-
                     CustomTextSemiBold(
                       text: 'Price per Tourist',
                       fontSize: 15.sp,
@@ -80,7 +111,6 @@ class GuideCreateNewTripStep3View extends StatelessWidget {
                       items: cubit.priceOptions,
                       onChanged: cubit.selectPrice,
                     ),
-
                     SizedBox(height: 14.h),
                     CustomTextSemiBold(
                       text: "What's Included ?",
@@ -96,14 +126,13 @@ class GuideCreateNewTripStep3View extends StatelessWidget {
                                 cubit.setIncludedItem(item, value ?? false),
                       );
                     }),
-
                     SizedBox(height: 70.h),
                   ],
                 ),
               ),
             ),
           ),
-          bottomNavigationBar: SafeArea(
+            bottomNavigationBar: SafeArea(
             top: false,
             child: Padding(
               padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 14.h),
@@ -112,13 +141,11 @@ class GuideCreateNewTripStep3View extends StatelessWidget {
                 onTap: () {
                   if (cubit.formKey.currentState!.validate()) {
                     FocusScope.of(context).unfocus();
-                    Navigator.pushNamed(
-                      context,
-                      '/guideCreateNewTripStep4View',
-                    );
+                    cubit.submitTripPrice();
                   }
                 },
               ),
+            ),
             ),
           ),
         );

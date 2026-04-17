@@ -13,14 +13,17 @@ import 'package:beyond_the_pramids/features/complete%20tourist%20account/present
 import 'package:beyond_the_pramids/features/complete%20tourist%20account/presentation/manager/Trip%20Details/trip_details_cubit.dart';
 import 'package:beyond_the_pramids/features/complete%20tourist%20account/presentation/manager/Travel%20Interests/travel_interests_cubit.dart';
 import 'package:beyond_the_pramids/features/complete%20tourist%20account/presentation/manager/Tourist%20Preferences/tourist_preferences_cubit.dart';
-import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_create_new_trip_cubit/guide_create_new_trip_cubit.dart';
-import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_create_new_trip_step2_cubit/guide_create_new_trip_step2_cubit.dart';
-import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_create_new_trip_step3_cubit/guide_create_new_trip_step3_cubit.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_my_trip_cubit/guide_my_trip_cubit.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_profile_cubit/guide_profile_cubit.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_requests_cubit/guide_requests_cubit.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_root_cubit/guide_root_cubit.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/profile_personal_information_cubit/profile_personal_information_cubit.dart';
+import 'package:beyond_the_pramids/features/guide_create_trip/data/repo/guide_create_trip_repo.dart';
+import 'package:beyond_the_pramids/features/guide_create_trip/presentation/manager/guide_create_trip_basic_cubit/guide_create_trip_basic_cubit.dart';
+import 'package:beyond_the_pramids/features/guide_create_trip/presentation/manager/guide_create_trip_cover_cubit/guide_create_trip_cover_cubit.dart';
+import 'package:beyond_the_pramids/features/guide_create_trip/presentation/manager/guide_last_created_trip_cubit/guide_last_created_trip_cubit.dart';
+import 'package:beyond_the_pramids/features/guide_create_trip/presentation/manager/guide_create_trip_price_cubit/guide_create_trip_price_cubit.dart';
+import 'package:beyond_the_pramids/features/guide_create_trip/presentation/manager/guide_create_trip_time_cubit/guide_create_trip_time_cubit.dart';
 import 'package:beyond_the_pramids/features/guide_trip_map/presentation/manager/guide_trip_map_cubit.dart';
 import 'package:get_it/get_it.dart';
 
@@ -68,12 +71,21 @@ void setupServiceLocator() {
   sl.registerFactory<GuideRootCubit>(() => GuideRootCubit());
   sl.registerFactory<GuideRequestsCubit>(() => GuideRequestsCubit());
   sl.registerFactory<GuideProfileCubit>(() => GuideProfileCubit());
-  sl.registerFactory<GuideCreateNewTripCubit>(() => GuideCreateNewTripCubit());
-  sl.registerFactory<GuideCreateNewTripStep2Cubit>(
-    () => GuideCreateNewTripStep2Cubit(),
+  sl.registerLazySingleton<GuideCreateTripRepo>(() => GuideCreateTripRepo(sl<ApiService>()));
+  sl.registerFactory<GuideCreateTripBasicCubit>(
+    () => GuideCreateTripBasicCubit(sl<GuideCreateTripRepo>()),
   );
-  sl.registerFactory<GuideCreateNewTripStep3Cubit>(
-    () => GuideCreateNewTripStep3Cubit(),
+  sl.registerFactory<GuideCreateTripTimeCubit>(
+    () => GuideCreateTripTimeCubit(sl<GuideCreateTripRepo>()),
+  );
+  sl.registerFactory<GuideCreateTripPriceCubit>(
+    () => GuideCreateTripPriceCubit(sl<GuideCreateTripRepo>()),
+  );
+  sl.registerFactory<GuideCreateTripCoverCubit>(
+    () => GuideCreateTripCoverCubit(sl<GuideCreateTripRepo>()),
+  );
+  sl.registerFactory<GuideLastCreatedTripCubit>(
+    () => GuideLastCreatedTripCubit(sl<GuideCreateTripRepo>()),
   );
   sl.registerFactory<GuideMyTripCubit>(() => GuideMyTripCubit());
   sl.registerFactory<ProfilePersonalInformationCubit>(

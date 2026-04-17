@@ -1,9 +1,11 @@
 import 'package:beyond_the_pramids/core/constants/app_color.dart';
+import 'package:beyond_the_pramids/core/utils/pref_helper.dart';
 import 'package:beyond_the_pramids/core/utils/size_config.dart';
 import 'package:flutter/material.dart';
 
 class GuideTripPreviewCard extends StatelessWidget {
   final String imagePath;
+  final String? imageUrl;
   final String title;
   final String location;
   final String spots;
@@ -15,6 +17,7 @@ class GuideTripPreviewCard extends StatelessWidget {
   const GuideTripPreviewCard({
     super.key,
     required this.imagePath,
+    this.imageUrl,
     required this.title,
     required this.location,
     required this.spots,
@@ -24,12 +27,27 @@ class GuideTripPreviewCard extends StatelessWidget {
     this.tag = 'History',
   });
 
+  Future<Map<String, String>> _buildImageHeaders() async {
+    final headers = <String, String>{
+      'ngrok-skip-browser-warning': 'true',
+    };
+
+    final token = await PrefHelper.getToken();
+    if (token != null && token.isNotEmpty && token != 'guest') {
+      headers['Authorization'] = 'Bearer $token';
+    }
+
+    return headers;
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = Theme.of(context).cardColor;
     final borderColor = isDark ? const Color(0xFF304250) : AppColor.grey;
     final metaColor = isDark ? const Color(0xFF9FB0BD) : AppColor.softText;
+
+    final hasNetworkImage = imageUrl != null && imageUrl!.trim().isNotEmpty;
 
     return Container(
       width: double.infinity,
@@ -45,12 +63,36 @@ class GuideTripPreviewCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(12.r),
             child: Stack(
               children: [
-                Image.asset(
-                  imagePath,
-                  height: 160.h,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ),
+                if (hasNetworkImage)
+                  FutureBuilder<Map<String, String>>(
+                    future: _buildImageHeaders(),
+                    builder: (context, snapshot) {
+                      return Image.network(
+                        imageUrl!,
+                        headers: snapshot.data,
+                        height: 160.h,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, error, stackTrace) {
+                          debugPrint('❌ Trip image failed: $error');
+                          debugPrint('🖼️ URL: $imageUrl');
+                          return Image.asset(
+                            imagePath,
+                            height: 160.h,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                          );
+                        },
+                      );
+                    },
+                  )
+                else
+                  Image.asset(
+                    imagePath,
+                    height: 160.h,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
                 Positioned.fill(
                   child: DecoratedBox(
                     decoration: BoxDecoration(

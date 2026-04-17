@@ -27,18 +27,20 @@ import 'package:beyond_the_pramids/features/complete%20tourist%20account/present
 import 'package:beyond_the_pramids/features/complete%20tourist%20account/presentation/views/tourist_preferences_view.dart';
 import 'package:beyond_the_pramids/features/complete%20tourist%20account/presentation/views/travel_interests_view.dart';
 import 'package:beyond_the_pramids/features/complete%20tourist%20account/presentation/views/trip_details_view.dart';
-import 'package:beyond_the_pramids/features/guide%20home/presentation/views/guide_create_new_trip_view.dart';
-import 'package:beyond_the_pramids/features/guide%20home/presentation/views/guide_create_new_trip_step2_view.dart';
-import 'package:beyond_the_pramids/features/guide%20home/presentation/views/guide_create_new_trip_step3_view.dart';
-import 'package:beyond_the_pramids/features/guide%20home/presentation/views/guide_create_new_trip_step4_view.dart';
-import 'package:beyond_the_pramids/features/guide%20home/presentation/views/guide_create_new_trip_success_view.dart';
-import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_create_new_trip_cubit/guide_create_new_trip_cubit.dart';
-import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_create_new_trip_step2_cubit/guide_create_new_trip_step2_cubit.dart';
-import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_create_new_trip_step3_cubit/guide_create_new_trip_step3_cubit.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_profile_cubit/guide_profile_cubit.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_requests_cubit/guide_requests_cubit.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_root_cubit/guide_root_cubit.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/profile_personal_information_cubit/profile_personal_information_cubit.dart';
+import 'package:beyond_the_pramids/features/guide_create_trip/presentation/manager/guide_create_trip_basic_cubit/guide_create_trip_basic_cubit.dart';
+import 'package:beyond_the_pramids/features/guide_create_trip/presentation/manager/guide_create_trip_cover_cubit/guide_create_trip_cover_cubit.dart';
+import 'package:beyond_the_pramids/features/guide_create_trip/presentation/manager/guide_last_created_trip_cubit/guide_last_created_trip_cubit.dart';
+import 'package:beyond_the_pramids/features/guide_create_trip/presentation/manager/guide_create_trip_price_cubit/guide_create_trip_price_cubit.dart';
+import 'package:beyond_the_pramids/features/guide_create_trip/presentation/manager/guide_create_trip_time_cubit/guide_create_trip_time_cubit.dart';
+import 'package:beyond_the_pramids/features/guide_create_trip/presentation/views/guide_create_trip_basic_view.dart';
+import 'package:beyond_the_pramids/features/guide_create_trip/presentation/views/guide_create_trip_cover_view.dart';
+import 'package:beyond_the_pramids/features/guide_create_trip/presentation/views/guide_create_trip_price_view.dart';
+import 'package:beyond_the_pramids/features/guide_create_trip/presentation/views/guide_create_trip_success_view.dart';
+import 'package:beyond_the_pramids/features/guide_create_trip/presentation/views/guide_create_trip_time_view.dart';
 import 'package:beyond_the_pramids/features/guide_trip_map/presentation/manager/guide_trip_map_cubit.dart';
 import 'package:beyond_the_pramids/features/guide_trip_map/presentation/views/guide_trip_map_view.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/views/profile_personal_information_view.dart';
@@ -126,29 +128,35 @@ class AppRoute {
           child: const GuideRootView(),
         );
         break;
-      case '/guideCreateNewTripView':
+      case '/guideCreateTripView':
         page = BlocProvider(
-          create: (context) => sl<GuideCreateNewTripCubit>(),
-          child: const GuideCreateNewTripView(),
+          create: (context) => sl<GuideCreateTripBasicCubit>(),
+          child: const GuideCreateTripBasicView(),
         );
         break;
-      case '/guideCreateNewTripStep2View':
+      case '/guideCreateTripStep2View':
         page = BlocProvider(
-          create: (context) => sl<GuideCreateNewTripStep2Cubit>(),
-          child: const GuideCreateNewTripStep2View(),
+          create: (context) => sl<GuideCreateTripTimeCubit>(),
+          child: const GuideCreateTripTimeView(),
         );
         break;
-      case '/guideCreateNewTripStep3View':
+      case '/guideCreateTripStep3View':
         page = BlocProvider(
-          create: (context) => sl<GuideCreateNewTripStep3Cubit>(),
-          child: const GuideCreateNewTripStep3View(),
+          create: (context) => sl<GuideCreateTripPriceCubit>(),
+          child: const GuideCreateTripPriceView(),
         );
         break;
-      case '/guideCreateNewTripStep4View':
-        page = const GuideCreateNewTripStep4View();
+      case '/guideCreateTripStep4View':
+        page = BlocProvider(
+          create: (context) => sl<GuideCreateTripCoverCubit>(),
+          child: const GuideCreateTripCoverView(),
+        );
         break;
-      case '/guideCreateNewTripSuccessView':
-        page = const GuideCreateNewTripSuccessView();
+      case '/guideCreateTripSuccessView':
+        page = BlocProvider(
+          create: (context) => sl<GuideLastCreatedTripCubit>()..fetchLastCreatedTrip(),
+          child: const GuideCreateTripSuccessView(),
+        );
         break;
       case '/guideTripMapView':
         page = BlocProvider(
@@ -254,6 +262,7 @@ class AppRoute {
     // Success screens: scale + fade (celebratory feel)
     if (routeName.contains('success') || routeName.contains('Success')) {
       return PageRouteBuilder(
+        settings: settings,
         transitionDuration: const Duration(milliseconds: 500),
         pageBuilder: (_, __, ___) => page,
         transitionsBuilder: (_, animation, __, child) {
@@ -275,6 +284,7 @@ class AppRoute {
     // Onboarding screens: horizontal slide (page flip feel)
     if (routeName.contains('onboarding')) {
       return PageRouteBuilder(
+        settings: settings,
         transitionDuration: const Duration(milliseconds: 400),
         pageBuilder: (_, __, ___) => page,
         transitionsBuilder: (_, animation, __, child) {
@@ -291,6 +301,7 @@ class AppRoute {
 
     // Default: subtle slide up + fade
     return PageRouteBuilder(
+      settings: settings,
       transitionDuration: const Duration(milliseconds: 400),
       pageBuilder: (_, __, ___) => page,
       transitionsBuilder: (_, animation, __, child) {

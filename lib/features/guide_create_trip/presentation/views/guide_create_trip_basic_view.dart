@@ -1,29 +1,65 @@
 import 'package:beyond_the_pramids/core/constants/app_color.dart';
 import 'package:beyond_the_pramids/core/utils/size_config.dart';
+import 'package:beyond_the_pramids/core/utils/widgets/loading_overlay.dart';
+import 'package:beyond_the_pramids/core/utils/widgets/snack_bar.dart';
 import 'package:beyond_the_pramids/features/account%20type/presentation/views/widgets/custom_text_semi_bold.dart';
 import 'package:beyond_the_pramids/features/auth/presentation/views/widgets/custom_text_field.dart';
 import 'package:beyond_the_pramids/features/complete%20guide%20account/presentation/views/widgets/custom_dropdown_field.dart';
-import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_create_new_trip_cubit/guide_create_new_trip_cubit.dart';
 import 'package:beyond_the_pramids/features/complete%20guide%20account/presentation/views/widgets/step_progress_indicator.dart';
+import 'package:beyond_the_pramids/features/guide_create_trip/presentation/manager/guide_create_trip_basic_cubit/guide_create_trip_basic_cubit.dart';
 import 'package:beyond_the_pramids/features/onboarding/presentation/views/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class GuideCreateNewTripView extends StatelessWidget {
-  const GuideCreateNewTripView({super.key});
+class GuideCreateTripBasicView extends StatelessWidget {
+  const GuideCreateTripBasicView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final cubit = context.read<GuideCreateNewTripCubit>();
+    final cubit = context.read<GuideCreateTripBasicCubit>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final pageBg = Theme.of(context).scaffoldBackgroundColor;
     final primaryText = isDark ? Colors.white : AppColor.primaryColor;
 
-    return BlocBuilder<GuideCreateNewTripCubit, GuideCreateNewTripState>(
+    return BlocConsumer<GuideCreateTripBasicCubit, GuideCreateTripBasicState>(
+      listener: (context, state) {
+        if (state.status == GuideCreateTripBasicStatus.loading) {
+          showLoadingOverlay(context);
+          return;
+        }
+
+        if (state.status == GuideCreateTripBasicStatus.success) {
+          hideLoadingOverlay(context);
+          showSnackBar(context, state.message ?? 'Created', isSuccess: true);
+          Navigator.pushNamed(context, '/guideCreateTripStep2View');
+          return;
+        }
+
+        if (state.status == GuideCreateTripBasicStatus.failure) {
+          hideLoadingOverlay(context);
+          showSnackBar(
+            context,
+            state.message ?? 'Failed to create trip',
+            isSuccess: false,
+          );
+        }
+      },
       builder: (context, state) {
-        return Scaffold(
-          backgroundColor: pageBg,
-          appBar: AppBar(
+        return WillPopScope(
+          onWillPop: () async {
+            if (state.status == GuideCreateTripBasicStatus.failure) {
+              showSnackBar(
+                context,
+                'Please fix the current error first',
+                isSuccess: false,
+              );
+              return false;
+            }
+            return true;
+          },
+          child: Scaffold(
+            backgroundColor: pageBg,
+            appBar: AppBar(
             backgroundColor: pageBg,
             elevation: 0,
             centerTitle: true,
@@ -33,7 +69,17 @@ class GuideCreateNewTripView extends StatelessWidget {
                 color: AppColor.primaryColor,
                 size: 18.sp,
               ),
-              onPressed: () => Navigator.pop(context),
+              onPressed: () {
+                if (state.status == GuideCreateTripBasicStatus.failure) {
+                  showSnackBar(
+                    context,
+                    'Please fix the current error first',
+                    isSuccess: false,
+                  );
+                  return;
+                }
+                Navigator.pop(context);
+              },
             ),
             title: Text(
               'Create New Trip',
@@ -55,7 +101,7 @@ class GuideCreateNewTripView extends StatelessWidget {
               SizedBox(width: 4.w),
             ],
           ),
-          body: SafeArea(
+            body: SafeArea(
             child: SingleChildScrollView(
               padding: EdgeInsets.symmetric(horizontal: 16.w),
               child: Form(
@@ -103,7 +149,7 @@ class GuideCreateNewTripView extends StatelessWidget {
                     SizedBox(height: 6.h),
                     CustomTextField(
                       controller: cubit.meetingPointController,
-                      hintText: 'Marriott Mena House',
+                      hintText: 'Marriott Mena House, Giza',
                       suffixIcon: Icon(
                         Icons.location_on_outlined,
                         color: AppColor.secondaryColor,
@@ -142,7 +188,7 @@ class GuideCreateNewTripView extends StatelessWidget {
               ),
             ),
           ),
-          bottomNavigationBar: SafeArea(
+            bottomNavigationBar: SafeArea(
             top: false,
             child: Padding(
               padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 14.h),
@@ -151,13 +197,11 @@ class GuideCreateNewTripView extends StatelessWidget {
                 onTap: () {
                   if (cubit.formKey.currentState!.validate()) {
                     FocusScope.of(context).unfocus();
-                    Navigator.pushNamed(
-                      context,
-                      '/guideCreateNewTripStep2View',
-                    );
+                    cubit.submitBasicTrip();
                   }
                 },
               ),
+            ),
             ),
           ),
         );

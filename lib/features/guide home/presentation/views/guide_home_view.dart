@@ -44,7 +44,7 @@ class GuideHomeView extends StatelessWidget {
               SizedBox(height: 16.h),
               GuidePromoTripCard(
                 onCreateTripTap: () {
-                  Navigator.pushNamed(context, '/guideCreateNewTripView');
+                  Navigator.pushNamed(context, '/guideCreateTripView');
                 },
               ),
               SizedBox(height: 16.h),

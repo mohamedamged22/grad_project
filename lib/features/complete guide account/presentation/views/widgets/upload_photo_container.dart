@@ -6,8 +6,15 @@ import 'package:file_picker/file_picker.dart';
 
 class UploadPhotoContainer extends StatefulWidget {
   final Function(PlatformFile)? onFileSelected;
+  final List<String> allowedExtensions;
+  final String? fileInfoText;
 
-  const UploadPhotoContainer({super.key, this.onFileSelected});
+  const UploadPhotoContainer({
+    super.key,
+    this.onFileSelected,
+    this.allowedExtensions = const ['jpg', 'jpeg', 'png', 'pdf'],
+    this.fileInfoText,
+  });
 
   @override
   State<UploadPhotoContainer> createState() => _UploadPhotoContainerState();
@@ -17,10 +24,13 @@ class _UploadPhotoContainerState extends State<UploadPhotoContainer> {
   PlatformFile? selectedFile;
 
   Future<void> _pickFile() async {
+    final normalizedExtensions =
+        widget.allowedExtensions.map((e) => e.toLowerCase()).toList();
+
     try {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
-        allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf'],
+        allowedExtensions: normalizedExtensions,
         allowMultiple: false,
       );
 
@@ -40,10 +50,12 @@ class _UploadPhotoContainerState extends State<UploadPhotoContainer> {
         }
 
         String extension = file.extension?.toLowerCase() ?? '';
-        if (!['jpg', 'jpeg', 'png', 'pdf'].contains(extension)) {
+        if (!normalizedExtensions.contains(extension)) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('upload_file_type_error'.tr()),
+              content: Text(
+                'Unsupported file type. Allowed: ${normalizedExtensions.join(', ')}',
+              ),
               backgroundColor: Colors.red,
               duration: Duration(seconds: 3),
             ),
@@ -131,7 +143,7 @@ class _UploadPhotoContainerState extends State<UploadPhotoContainer> {
                   Text(
                     selectedFile != null
                         ? '${(selectedFile!.size / 1024).toStringAsFixed(2)} KB'
-                        : 'upload_file_info'.tr(),
+                        : (widget.fileInfoText ?? 'upload_file_info'.tr()),
                     style: TextStyle(
                       fontSize: 10.sp,
                       color:
