@@ -7,6 +7,7 @@ import 'package:beyond_the_pramids/features/guide%20home/presentation/views/widg
 import 'package:beyond_the_pramids/features/guide%20home/presentation/views/widgets/guide_promo_trip_card.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/views/widgets/guide_section_title.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/views/widgets/guide_upcoming_trip_card.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class GuideHomeView extends StatelessWidget {
@@ -31,7 +32,7 @@ class GuideHomeView extends StatelessWidget {
               const GuideHomeTopBar(),
               SizedBox(height: 4.h),
               Text(
-                'Welcome to our Team',
+                'guide_home_welcome'.tr(),
                 style: TextStyle(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w700,
@@ -39,7 +40,7 @@ class GuideHomeView extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 8.h),
-              const GuideHomeSearchField(),
+              GuideHomeSearchField(hintText: 'guide_search_trip'.tr()),
               SizedBox(height: 16.h),
               GuidePromoTripCard(
                 onCreateTripTap: () {
@@ -47,7 +48,7 @@ class GuideHomeView extends StatelessWidget {
                 },
               ),
               SizedBox(height: 16.h),
-              const GuideSectionTitle(title: 'Upcoming Trips'),
+              GuideSectionTitle(title: 'guide_upcoming_trips'.tr()),
               SizedBox(height: 8.h),
               SizedBox(
                 height: 240.h,
@@ -61,12 +62,12 @@ class GuideHomeView extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 12.h),
-              const GuideSectionTitle(title: 'New requests'),
+              GuideSectionTitle(title: 'guide_new_requests'.tr()),
               SizedBox(height: 8.h),
               const GuideNewRequestCard(),
               SizedBox(height: 14.h),
               Text(
-                'This Month',
+                'guide_this_month'.tr(),
                 style: TextStyle(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w700,
@@ -78,8 +79,8 @@ class GuideHomeView extends StatelessWidget {
                 children: [
                   Expanded(
                     child: GuideMetricCard(
-                      title: 'Completed Trips',
-                      value: '12 Trips',
+                      title: 'guide_completed_trips'.tr(),
+                      value: 'guide_12_trips'.tr(),
                       icon: Icons.trending_up_rounded,
                       valueColor: Color(0xFFF79A3B),
                     ),
@@ -87,7 +88,7 @@ class GuideHomeView extends StatelessWidget {
                   SizedBox(width: 8.w),
                   Expanded(
                     child: GuideMetricCard(
-                      title: 'Rating',
+                      title: 'guide_rating'.tr(),
                       value: '4.8/5',
                       icon: Icons.star_border_rounded,
                       valueColor: Color(0xFFF79A3B),
@@ -96,8 +97,8 @@ class GuideHomeView extends StatelessWidget {
                   SizedBox(width: 8.w),
                   Expanded(
                     child: GuideMetricCard(
-                      title: 'Earnings',
-                      value: '1500\$',
+                      title: 'guide_earnings'.tr(),
+                      value: 'guide_earnings_value'.tr(),
                       icon: Icons.currency_exchange_rounded,
                       valueColor: Color(0xFFF79A3B),
                     ),

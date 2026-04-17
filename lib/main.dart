@@ -36,6 +36,10 @@ class MyApp extends StatelessWidget {
           localizationsDelegates: context.localizationDelegates,
           themeMode: themeMode,
           theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: const Color(0xFF047185),
+              brightness: Brightness.light,
+            ),
             brightness: Brightness.light,
             scaffoldBackgroundColor: Colors.white,
             cardColor: Colors.white,
@@ -45,6 +49,14 @@ class MyApp extends StatelessWidget {
               elevation: 0,
             ),
             dialogTheme: const DialogThemeData(backgroundColor: Colors.white),
+            inputDecorationTheme: InputDecorationTheme(
+              filled: true,
+              fillColor: Colors.white,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: const BorderSide(color: Color(0xFFE2E2E2)),
+              ),
+            ),
             bottomNavigationBarTheme: const BottomNavigationBarThemeData(
               backgroundColor: Colors.white,
               selectedItemColor: Color(0xFF047185),
@@ -55,6 +67,10 @@ class MyApp extends StatelessWidget {
             ).textTheme.apply(fontFamily: fontFamily),
           ),
           darkTheme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: const Color(0xFF047185),
+              brightness: Brightness.dark,
+            ),
             brightness: Brightness.dark,
             scaffoldBackgroundColor: const Color(0xFF0F1720),
             cardColor: const Color(0xFF19232D),
@@ -65,6 +81,15 @@ class MyApp extends StatelessWidget {
             ),
             dialogTheme: const DialogThemeData(
               backgroundColor: Color(0xFF19232D),
+            ),
+            inputDecorationTheme: InputDecorationTheme(
+              filled: true,
+              fillColor: const Color(0xFF19232D),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: const BorderSide(color: Color(0xFF304250)),
+              ),
+              hintStyle: const TextStyle(color: Color(0xFF8FA0AE)),
             ),
             bottomNavigationBarTheme: const BottomNavigationBarThemeData(
               backgroundColor: Color(0xFF19232D),

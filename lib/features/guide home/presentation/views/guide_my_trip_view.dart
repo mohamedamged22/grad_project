@@ -5,6 +5,7 @@ import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/gui
 import 'package:beyond_the_pramids/features/guide%20home/presentation/views/widgets/guide_filter_chip.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/views/widgets/guide_home_search_field.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/views/widgets/guide_trip_preview_card.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -85,7 +86,7 @@ class _MyTripViewBody extends StatelessWidget {
                 children: [
                   Center(
                     child: Text(
-                      'My Trip',
+                      'guide_my_trip_title'.tr(),
                       style: TextStyle(
                         color: primaryText,
                         fontWeight: FontWeight.w700,
@@ -95,7 +96,7 @@ class _MyTripViewBody extends StatelessWidget {
                   ),
                   SizedBox(height: 10.h),
                   GuideHomeSearchField(
-                    hintText: 'Search Trip',
+                    hintText: 'guide_search_trip'.tr(),
                     onChanged:
                         context.read<GuideMyTripCubit>().updateSearchQuery,
                   ),
@@ -104,7 +105,7 @@ class _MyTripViewBody extends StatelessWidget {
                     children: [
                       Expanded(
                         child: GuideFilterChip(
-                          label: 'New',
+                          label: 'guide_filter_new'.tr(),
                           isSelected: state.filter == MyTripFilter.newTrips,
                           backgroundColor: cardBg,
                           textColor: primaryText,
@@ -117,7 +118,7 @@ class _MyTripViewBody extends StatelessWidget {
                       SizedBox(width: 8.w),
                       Expanded(
                         child: GuideFilterChip(
-                          label: 'All',
+                          label: 'guide_filter_all'.tr(),
                           isSelected: state.filter == MyTripFilter.all,
                           backgroundColor: cardBg,
                           textColor: primaryText,
@@ -130,7 +131,7 @@ class _MyTripViewBody extends StatelessWidget {
                       SizedBox(width: 8.w),
                       Expanded(
                         child: GuideFilterChip(
-                          label: 'Upcoming',
+                          label: 'guide_filter_upcoming'.tr(),
                           isSelected: state.filter == MyTripFilter.upcoming,
                           backgroundColor: cardBg,
                           textColor: primaryText,
@@ -175,15 +176,14 @@ class _MyTripViewBody extends StatelessWidget {
                                 ),
                                 children: [
                                   TextSpan(
-                                    text: 'Trip added successfully!\n',
+                                    text: 'guide_trip_added_successfully'.tr(),
                                     style: TextStyle(
                                       fontSize: 10.5.sp,
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
                                   TextSpan(
-                                    text:
-                                        'Your trip is now live and open for booking.',
+                                    text: 'guide_trip_live_open_booking'.tr(),
                                     style: TextStyle(
                                       fontSize: 9.2.sp,
                                       fontWeight: FontWeight.w400,
@@ -213,8 +213,8 @@ class _MyTripViewBody extends StatelessWidget {
                   SizedBox(height: 12.h),
                   Text(
                     state.filter == MyTripFilter.upcoming
-                        ? 'Upcoming Trips'
-                        : 'New Trips',
+                        ? 'guide_upcoming_trips'.tr()
+                        : 'guide_new_trips'.tr(),
                     style: TextStyle(
                       fontSize: 22.sp,
                       fontWeight: FontWeight.w700,
@@ -277,8 +277,8 @@ class _NewTripCard extends StatelessWidget {
       spots: item.spots,
       dateRange: item.dateRange,
       price: '\$150',
-      priceSuffix: '/person',
-      tag: 'History',
+      priceSuffix: 'guide_price_per_person_suffix'.tr(),
+      tag: 'guide_trip_tag_history'.tr(),
     );
   }
 }
@@ -291,10 +291,13 @@ class _UpcomingTripCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cardBg = Theme.of(context).cardColor;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryText =
         Theme.of(context).brightness == Brightness.dark
             ? Colors.white
             : AppColor.primaryColor;
+    final secondaryMetaText =
+      isDark ? const Color(0xFF9FB0BD) : AppColor.primaryColor.withValues(alpha: .55);
 
     return Container(
       decoration: BoxDecoration(
@@ -329,7 +332,7 @@ class _UpcomingTripCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12.r),
                     ),
                     child: Text(
-                      'Adventure trip',
+                      'guide_adventure_trip'.tr(),
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 8.sp,
@@ -389,7 +392,7 @@ class _UpcomingTripCard extends StatelessWidget {
                 item.dateRange,
                 style: TextStyle(
                   fontSize: 9.sp,
-                  color: AppColor.primaryColor.withValues(alpha: .55),
+                  color: secondaryMetaText,
                 ),
               ),
               const Spacer(),
@@ -397,7 +400,7 @@ class _UpcomingTripCard extends StatelessWidget {
                 item.pricePerPerson,
                 style: TextStyle(
                   fontSize: 9.sp,
-                  color: AppColor.primaryColor.withValues(alpha: .55),
+                  color: secondaryMetaText,
                 ),
               ),
             ],
@@ -418,7 +421,7 @@ class _UpcomingTripCard extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    'Confirmed',
+                    'guide_confirmed'.tr(),
                     style: TextStyle(
                       fontSize: 9.sp,
                       fontWeight: FontWeight.w600,
@@ -428,7 +431,7 @@ class _UpcomingTripCard extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                'View-Details',
+                'guide_view_details'.tr(),
                 style: TextStyle(
                   fontSize: 9.sp,
                   color: AppColor.secondaryColor,

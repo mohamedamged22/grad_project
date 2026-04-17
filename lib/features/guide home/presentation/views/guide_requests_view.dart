@@ -3,6 +3,7 @@ import 'package:beyond_the_pramids/core/utils/size_config.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_requests_cubit/guide_requests_cubit.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/views/widgets/guide_filter_chip.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/views/widgets/guide_new_request_card.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -59,7 +60,7 @@ class RequestsView extends StatelessWidget {
                   ),
                   SizedBox(height: 10.h),
                   Text(
-                    'Confirmation',
+                    'guide_requests_confirmation'.tr(),
                     style: TextStyle(
                       fontSize: 18.sp,
                       fontWeight: FontWeight.w700,
@@ -68,7 +69,7 @@ class RequestsView extends StatelessWidget {
                   ),
                   SizedBox(height: 8.h),
                   Text(
-                    'Trip successfully confirmed',
+                    'guide_requests_trip_confirmed'.tr(),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 12.sp,
@@ -90,7 +91,7 @@ class RequestsView extends StatelessWidget {
                         ),
                       ),
                       child: Text(
-                        'Done',
+                        'guide_done'.tr(),
                         style: TextStyle(fontSize: 13.sp, color: Colors.white),
                       ),
                     ),
@@ -154,7 +155,7 @@ class RequestsView extends StatelessWidget {
                   ),
                   SizedBox(height: 10.h),
                   Text(
-                    'Are you sure ?',
+                    'guide_requests_are_you_sure'.tr(),
                     style: TextStyle(
                       fontSize: 20.sp,
                       fontWeight: FontWeight.w700,
@@ -180,7 +181,7 @@ class RequestsView extends StatelessWidget {
                               ),
                             ),
                             child: Text(
-                              'Cancel',
+                              'guide_cancel'.tr(),
                               style: TextStyle(fontSize: 12.sp),
                             ),
                           ),
@@ -200,7 +201,7 @@ class RequestsView extends StatelessWidget {
                               ),
                             ),
                             child: Text(
-                              'Decline',
+                              'guide_decline'.tr(),
                               style: TextStyle(
                                 fontSize: 12.sp,
                                 color: Colors.white,
@@ -240,7 +241,7 @@ class RequestsView extends StatelessWidget {
                   SizedBox(height: 2.h),
                   Center(
                     child: Text(
-                      'Requests',
+                      'guide_requests_title'.tr(),
                       style: TextStyle(
                         fontSize: 17.sp,
                         fontWeight: FontWeight.w700,
@@ -253,7 +254,7 @@ class RequestsView extends StatelessWidget {
                     children: [
                       Expanded(
                         child: GuideFilterChip(
-                          label: 'New',
+                          label: 'guide_filter_new'.tr(),
                           isSelected: state.selectedFilter == 'New',
                           backgroundColor: cardBg,
                           textColor: primaryText,
@@ -266,7 +267,7 @@ class RequestsView extends StatelessWidget {
                       SizedBox(width: 8.w),
                       Expanded(
                         child: GuideFilterChip(
-                          label: 'Accepted',
+                          label: 'guide_filter_accepted'.tr(),
                           isSelected: state.selectedFilter == 'Accepted',
                           backgroundColor: cardBg,
                           textColor: primaryText,
@@ -279,7 +280,7 @@ class RequestsView extends StatelessWidget {
                       SizedBox(width: 8.w),
                       Expanded(
                         child: GuideFilterChip(
-                          label: 'Declined',
+                          label: 'guide_filter_declined'.tr(),
                           isSelected: state.selectedFilter == 'Declined',
                           backgroundColor: cardBg,
                           textColor: primaryText,

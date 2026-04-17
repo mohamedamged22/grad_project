@@ -26,9 +26,10 @@ class GuideTripPreviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cardBg = AppColor.white;
-    final borderColor = AppColor.grey;
-    final metaColor = AppColor.softText;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardBg = Theme.of(context).cardColor;
+    final borderColor = isDark ? const Color(0xFF304250) : AppColor.grey;
+    final metaColor = isDark ? const Color(0xFF9FB0BD) : AppColor.softText;
 
     return Container(
       width: double.infinity,

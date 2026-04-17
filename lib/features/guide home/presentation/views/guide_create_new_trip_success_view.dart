@@ -1,6 +1,7 @@
 import 'package:beyond_the_pramids/core/constants/app_color.dart';
 import 'package:beyond_the_pramids/core/utils/size_config.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/views/widgets/guide_trip_preview_card.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class GuideCreateNewTripSuccessView extends StatelessWidget {
@@ -8,8 +9,9 @@ class GuideCreateNewTripSuccessView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pageBg = AppColor.white;
-    final titleColor = AppColor.primaryColor;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final pageBg = Theme.of(context).scaffoldBackgroundColor;
+    final titleColor = isDark ? Colors.white : AppColor.primaryColor;
     final subtitleColor = AppColor.secondaryColor;
 
     return Scaffold(
@@ -40,7 +42,7 @@ class GuideCreateNewTripSuccessView extends StatelessWidget {
               ),
               SizedBox(height: 14.h),
               Text(
-                'Your trip has been created successfully!',
+                'guide_trip_created_successfully'.tr(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: 'Poppins',
@@ -52,7 +54,7 @@ class GuideCreateNewTripSuccessView extends StatelessWidget {
               ),
               SizedBox(height: 8.h),
               Text(
-                'It\'s now live and open for booking.',
+                'guide_trip_live_open_booking'.tr(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: 'Poppins',
@@ -66,13 +68,13 @@ class GuideCreateNewTripSuccessView extends StatelessWidget {
               SizedBox(height: 22.h),
               GuideTripPreviewCard(
                 imagePath: 'assets/images/2th.jpg',
-                title: 'Ancient Wonder of Aswan',
-                location: 'Aswan',
-                spots: '0/20 Spots',
-                dateRange: '1 Feb - 15 Feb, 2026',
+                title: 'guide_sample_trip_title_aswan'.tr(),
+                location: 'guide_location_aswan'.tr(),
+                spots: 'guide_spots_0_20'.tr(),
+                dateRange: 'guide_sample_trip_date_range'.tr(),
                 price: '\$150',
-                priceSuffix: ' /person',
-                tag: 'History',
+                priceSuffix: 'guide_price_per_person_suffix'.tr(),
+                tag: 'guide_trip_tag_history'.tr(),
               ),
 
               SizedBox(height: 20.h),
@@ -96,7 +98,7 @@ class GuideCreateNewTripSuccessView extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    'View My Trips',
+                    'guide_view_my_trips'.tr(),
                     style: TextStyle(
                       fontSize: 13.sp,
                       fontWeight: FontWeight.w600,
@@ -124,7 +126,7 @@ class GuideCreateNewTripSuccessView extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    'Create Another Trip',
+                    'guide_create_another_trip'.tr(),
                     style: TextStyle(
                       fontSize: 12.5.sp,
                       fontWeight: FontWeight.w600,
@@ -152,7 +154,7 @@ class GuideCreateNewTripSuccessView extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    'Back to home',
+                    'guide_back_to_home'.tr(),
                     style: TextStyle(
                       fontSize: 12.5.sp,
                       fontWeight: FontWeight.w600,

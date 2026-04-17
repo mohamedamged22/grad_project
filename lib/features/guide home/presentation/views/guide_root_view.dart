@@ -1,6 +1,7 @@
 import 'package:beyond_the_pramids/core/constants/app_color.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_root_cubit/guide_root_cubit.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/views/profile_view.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -20,15 +21,27 @@ class GuideRootView extends StatelessWidget {
     ProfileView(),
   ];
 
-  static const List<_GuideTabData> _tabs = [
-    _GuideTabData(label: 'Home', assetPath: 'assets/svg/home-04.svg'),
-    _GuideTabData(label: 'Request', assetPath: 'assets/svg/request_nav.svg'),
-    _GuideTabData(label: 'My Trip', assetPath: 'assets/svg/my_trip.svg'),
-    _GuideTabData(label: 'Profile', assetPath: 'assets/svg/profile.svg'),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final tabs = [
+      _GuideTabData(
+        label: 'guide_nav_home'.tr(),
+        assetPath: 'assets/svg/home-04.svg',
+      ),
+      _GuideTabData(
+        label: 'guide_nav_request'.tr(),
+        assetPath: 'assets/svg/request_nav.svg',
+      ),
+      _GuideTabData(
+        label: 'guide_nav_my_trip'.tr(),
+        assetPath: 'assets/svg/my_trip.svg',
+      ),
+      _GuideTabData(
+        label: 'guide_nav_profile'.tr(),
+        assetPath: 'assets/svg/profile.svg',
+      ),
+    ];
+
     return BlocBuilder<GuideRootCubit, GuideRootState>(
       builder: (context, state) {
         return Scaffold(
@@ -36,7 +49,7 @@ class GuideRootView extends StatelessWidget {
           bottomNavigationBar: _GuideBottomNavBar(
             currentIndex: state.currentIndex,
             onTap: (index) => context.read<GuideRootCubit>().changeTab(index),
-            tabs: _tabs,
+            tabs: tabs,
           ),
         );
       },
