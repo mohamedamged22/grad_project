@@ -230,6 +230,7 @@ class AppRoute {
           create: (context) => sl<VerificationCubit>(),
           child: const VerificationView(),
         );
+        break;
       case '/basicInformationTouristView':
         page = BlocProvider(
           create: (context) => sl<TouristBasicInfoCubit>()..loadBasicInfo(),

@@ -101,7 +101,7 @@ class MyApp extends StatelessWidget {
             ).textTheme.apply(fontFamily: fontFamily),
           ),
           debugShowCheckedModeBanner: false,
-          initialRoute: '/guideHomeRootView',
+          initialRoute: '/splash',
           onGenerateRoute: AppRoute.generate,
         );
       },

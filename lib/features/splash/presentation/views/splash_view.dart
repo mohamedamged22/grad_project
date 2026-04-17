@@ -1,4 +1,5 @@
 import 'package:beyond_the_pramids/core/constants/app_color.dart';
+import 'package:beyond_the_pramids/core/utils/pref_helper.dart';
 import 'package:beyond_the_pramids/core/utils/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
@@ -16,6 +17,8 @@ class _SplashViewState extends State<SplashView>
   late AnimationController _logoAnimController;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
+  late Future<void> _bootstrapFuture;
+  String _nextRoute = '/onboarding';
   bool _navigated = false;
 
   @override
@@ -34,6 +37,8 @@ class _SplashViewState extends State<SplashView>
       CurvedAnimation(parent: _logoAnimController, curve: Curves.easeOutBack),
     );
 
+    _bootstrapFuture = _resolveNextRoute();
+
     _controller = VideoPlayerController.asset('assets/video/splash_video.mp4')
       ..initialize().then((_) {
         if (mounted) {
@@ -51,6 +56,33 @@ class _SplashViewState extends State<SplashView>
     _controller.addListener(_videoListener);
   }
 
+  Future<void> _resolveNextRoute() async {
+    final token = await PrefHelper.getToken();
+    if (token == null || token.isEmpty || token == 'guest') {
+      _nextRoute = '/onboarding';
+      return;
+    }
+
+    final isCompleted = await PrefHelper.isProfileCompleted();
+    if (isCompleted) {
+      _nextRoute = '/guideHomeRootView';
+      return;
+    }
+
+    final role = await PrefHelper.getUserRole();
+    if (role == 'guide') {
+      _nextRoute = '/basicInformationView';
+      return;
+    }
+    if (role == 'tourist') {
+      _nextRoute = '/basicInformationTouristView';
+      return;
+    }
+
+    // Fallback for signed-in users without stored role metadata.
+    _nextRoute = '/guideHomeRootView';
+  }
+
   Future<void> _videoListener() async {
     if (!_controller.value.isInitialized || _navigated) return;
 
@@ -58,12 +90,13 @@ class _SplashViewState extends State<SplashView>
       _navigated = true;
 
       await _controller.pause();
+      await _bootstrapFuture;
 
       await Future.delayed(const Duration(milliseconds: 200));
 
       if (!mounted) return;
 
-      Navigator.pushReplacementNamed(context, '/onboarding');
+      Navigator.pushReplacementNamed(context, _nextRoute);
     }
   }
 

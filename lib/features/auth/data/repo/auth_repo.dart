@@ -44,6 +44,7 @@ class AuthRepo {
 
       // ✅ حفظ التوكن
       await PrefHelper.saveToken(token);
+      await PrefHelper.setProfileCompleted(true);
 
       isGuest = false;
       _currentUser = user;
@@ -93,6 +94,8 @@ class AuthRepo {
       );
 
       await PrefHelper.saveToken(token);
+      await PrefHelper.saveUserRole(role == 'TOURGUIDE' ? 'guide' : 'tourist');
+      await PrefHelper.setProfileCompleted(false);
       isGuest = false;
       _currentUser = user;
 
@@ -211,6 +214,7 @@ class AuthRepo {
     try {
       await _apiService.post('/logout', {});
       await PrefHelper.clearToken();
+      await PrefHelper.clearAuthMetadata();
       isGuest = true;
       _currentUser = null;
     } on DioException catch (e) {
@@ -297,6 +301,7 @@ class AuthRepo {
     isGuest = true;
     _currentUser = null;
     await PrefHelper.saveToken('guest');
+    await PrefHelper.clearAuthMetadata();
   }
 
   /// ----------------------------
@@ -325,6 +330,7 @@ class AuthRepo {
       }
     } catch (e) {
       await PrefHelper.clearToken();
+      await PrefHelper.clearAuthMetadata();
       isGuest = true;
       _currentUser = null;
       return null;

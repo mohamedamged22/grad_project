@@ -1,4 +1,5 @@
 import 'package:beyond_the_pramids/core/utils/size_config.dart';
+import 'package:beyond_the_pramids/core/utils/pref_helper.dart';
 import 'package:beyond_the_pramids/features/account%20type/presentation/views/widgets/custom_text_regolar.dart';
 import 'package:beyond_the_pramids/features/account%20type/presentation/views/widgets/custom_text_semi_bold.dart';
 import 'package:beyond_the_pramids/features/onboarding/presentation/views/widgets/custom_button.dart';
@@ -42,8 +43,14 @@ class SuccessCompleteDataView extends StatelessWidget {
             CustomButton(
               text: 'success_submitted'.tr(),
               width: 260,
-              onTap: () {
-                Navigator.pushReplacementNamed(context, '/signInView');
+              onTap: () async {
+                await PrefHelper.setProfileCompleted(true);
+                if (!context.mounted) return;
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  '/guideHomeRootView',
+                  (route) => false,
+                );
               },
             ),
 
