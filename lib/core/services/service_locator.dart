@@ -1,0 +1,83 @@
+import 'package:beyond_the_pramids/core/network/api_service.dart';
+import 'package:beyond_the_pramids/core/network/dio_client.dart';
+import 'package:beyond_the_pramids/features/auth/data/repo/auth_repo.dart';
+import 'package:beyond_the_pramids/features/auth/presentation/manger/auth_cubit/auth_cubit.dart';
+import 'package:beyond_the_pramids/features/complete%20guide%20account/data/repo/complete_guide_account_repo.dart';
+import 'package:beyond_the_pramids/features/complete%20guide%20account/presentation/views/manger/Guide%20Languages/guide_languages_cubit.dart';
+import 'package:beyond_the_pramids/features/complete%20guide%20account/presentation/views/manger/Pricing/pricing_cubit.dart';
+import 'package:beyond_the_pramids/features/complete%20guide%20account/presentation/views/manger/ProfessionalInfoCubit/professional_info_cubit.dart';
+import 'package:beyond_the_pramids/features/complete%20guide%20account/presentation/views/manger/Verification/verification_cubit.dart';
+import 'package:beyond_the_pramids/features/complete%20guide%20account/presentation/views/manger/basic%20info_cubit/basic_info_cubit.dart';
+import 'package:beyond_the_pramids/features/complete%20tourist%20account/data/repo/complete_tourist_account_repo.dart';
+import 'package:beyond_the_pramids/features/complete%20tourist%20account/presentation/manager/Tourist%20Basic%20Info/tourist_basic_info_cubit.dart';
+import 'package:beyond_the_pramids/features/complete%20tourist%20account/presentation/manager/Trip%20Details/trip_details_cubit.dart';
+import 'package:beyond_the_pramids/features/complete%20tourist%20account/presentation/manager/Travel%20Interests/travel_interests_cubit.dart';
+import 'package:beyond_the_pramids/features/complete%20tourist%20account/presentation/manager/Tourist%20Preferences/tourist_preferences_cubit.dart';
+import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_create_new_trip_cubit/guide_create_new_trip_cubit.dart';
+import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_create_new_trip_step2_cubit/guide_create_new_trip_step2_cubit.dart';
+import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_create_new_trip_step3_cubit/guide_create_new_trip_step3_cubit.dart';
+import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_my_trip_cubit/guide_my_trip_cubit.dart';
+import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_profile_cubit/guide_profile_cubit.dart';
+import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_requests_cubit/guide_requests_cubit.dart';
+import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_root_cubit/guide_root_cubit.dart';
+import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/profile_personal_information_cubit/profile_personal_information_cubit.dart';
+import 'package:beyond_the_pramids/features/guide_trip_map/presentation/manager/guide_trip_map_cubit.dart';
+import 'package:get_it/get_it.dart';
+
+final sl = GetIt.instance;
+
+void setupServiceLocator() {
+  sl.registerLazySingleton<DioClient>(() => DioClient());
+  sl.registerLazySingleton<ApiService>(() => ApiService(sl<DioClient>()));
+  sl.registerLazySingleton<AuthRepo>(() => AuthRepo(sl<ApiService>()));
+  sl.registerFactory<AuthCubit>(() => AuthCubit(sl<AuthRepo>()));
+  sl.registerFactory<BasicInfoCubit>(
+    () => BasicInfoCubit(sl<CompleteGuideAccountRepo>()),
+  );
+  sl.registerLazySingleton<CompleteGuideAccountRepo>(
+    () => CompleteGuideAccountRepo(sl<ApiService>()),
+  );
+
+  sl.registerFactory<ProfessionalInfoCubit>(
+    () => ProfessionalInfoCubit(sl<CompleteGuideAccountRepo>()),
+  );
+  sl.registerFactory<GuideLanguagesCubit>(
+    () => GuideLanguagesCubit(sl<CompleteGuideAccountRepo>()),
+  );
+  sl.registerFactory<PricingCubit>(
+    () => PricingCubit(sl<CompleteGuideAccountRepo>()),
+  );
+  sl.registerFactory<VerificationCubit>(
+    () => VerificationCubit(sl<CompleteGuideAccountRepo>()),
+  );
+  sl.registerLazySingleton<CompleteTouristAccountRepo>(
+    () => CompleteTouristAccountRepo(sl<ApiService>()),
+  );
+  sl.registerFactory<TouristBasicInfoCubit>(
+    () => TouristBasicInfoCubit(sl<CompleteTouristAccountRepo>()),
+  );
+  sl.registerFactory<TripDetailsCubit>(
+    () => TripDetailsCubit(sl<CompleteTouristAccountRepo>()),
+  );
+  sl.registerFactory<TravelInterestsCubit>(
+    () => TravelInterestsCubit(sl<CompleteTouristAccountRepo>()),
+  );
+  sl.registerFactory<TouristPreferencesCubit>(
+    () => TouristPreferencesCubit(sl<CompleteTouristAccountRepo>()),
+  );
+  sl.registerFactory<GuideRootCubit>(() => GuideRootCubit());
+  sl.registerFactory<GuideRequestsCubit>(() => GuideRequestsCubit());
+  sl.registerFactory<GuideProfileCubit>(() => GuideProfileCubit());
+  sl.registerFactory<GuideCreateNewTripCubit>(() => GuideCreateNewTripCubit());
+  sl.registerFactory<GuideCreateNewTripStep2Cubit>(
+    () => GuideCreateNewTripStep2Cubit(),
+  );
+  sl.registerFactory<GuideCreateNewTripStep3Cubit>(
+    () => GuideCreateNewTripStep3Cubit(),
+  );
+  sl.registerFactory<GuideMyTripCubit>(() => GuideMyTripCubit());
+  sl.registerFactory<ProfilePersonalInformationCubit>(
+    () => ProfilePersonalInformationCubit(),
+  );
+  sl.registerFactory<GuideTripMapCubit>(() => GuideTripMapCubit());
+}
