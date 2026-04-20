@@ -3,11 +3,20 @@ import 'package:beyond_the_pramids/core/utils/size_config.dart';
 import 'package:flutter/material.dart';
 
 class GuideHomeTopBar extends StatelessWidget {
-  const GuideHomeTopBar({super.key});
+  final String location;
+  final String profilePhotoUrl;
+
+  const GuideHomeTopBar({
+    super.key,
+    required this.location,
+    required this.profilePhotoUrl,
+  });
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final hasPhoto = profilePhotoUrl.trim().isNotEmpty;
+    final locationLabel = location.trim().isEmpty ? 'Egypt' : location.trim();
 
     return Row(
       children: [
@@ -23,7 +32,7 @@ class GuideHomeTopBar extends StatelessWidget {
             borderRadius: BorderRadius.circular(20.r),
           ),
           child: Text(
-            'Luxor, Egypt',
+            locationLabel,
             style: TextStyle(
               color: isDark ? const Color(0xFFF2F7FA) : Colors.white,
               fontWeight: FontWeight.w600,
@@ -44,7 +53,10 @@ class GuideHomeTopBar extends StatelessWidget {
         CircleAvatar(
           backgroundColor: AppColor.secondaryColor,
           radius: 20.r,
-          backgroundImage: const AssetImage('assets/images/2th.jpg'),
+          backgroundImage:
+              hasPhoto
+                  ? NetworkImage(profilePhotoUrl) as ImageProvider
+                  : const AssetImage('assets/images/2th.jpg'),
         ),
       ],
     );

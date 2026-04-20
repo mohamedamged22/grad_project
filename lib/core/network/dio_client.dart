@@ -1,3 +1,4 @@
+import 'package:beyond_the_pramids/core/navigation/navigation_service.dart';
 import 'package:beyond_the_pramids/core/utils/pref_helper.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +45,7 @@ class DioClient {
           debugPrint('✅ Response [${response.statusCode}]: ${response.data}');
           return handler.next(response);
         },
-        onError: (error, handler) {
+        onError: (error, handler) async {
           // Print error details
           debugPrint('❌ Error [${error.response?.statusCode}]');
           debugPrint('Error Data: ${error.response?.data}');
@@ -53,9 +54,9 @@ class DioClient {
           // ⭐ If 401 or 403, clear the token
           if (error.response?.statusCode == 401 ||
               error.response?.statusCode == 403) {
-            debugPrint('🔓 Unauthorized - Token might be expired');
-            // يمكن تمسح التوكن هنا لو عايزة
-            // PrefHelper.clearToken();
+            debugPrint('🔓 Session expired or unauthorized - clearing session');
+            await PrefHelper.clearSession();
+            NavigationService.redirectToSignIn();
           }
 
           return handler.next(error);

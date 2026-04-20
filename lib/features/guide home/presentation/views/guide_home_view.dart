@@ -1,5 +1,6 @@
 import 'package:beyond_the_pramids/core/constants/app_color.dart';
 import 'package:beyond_the_pramids/core/utils/size_config.dart';
+import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_profile_cubit/guide_profile_cubit.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/views/widgets/guide_home_search_field.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/views/widgets/guide_home_top_bar.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/views/widgets/guide_metric_card.dart';
@@ -9,6 +10,7 @@ import 'package:beyond_the_pramids/features/guide%20home/presentation/views/widg
 import 'package:beyond_the_pramids/features/guide%20home/presentation/views/widgets/guide_upcoming_trip_card.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class GuideHomeView extends StatelessWidget {
   const GuideHomeView({super.key});
@@ -20,6 +22,7 @@ class GuideHomeView extends StatelessWidget {
         Theme.of(context).brightness == Brightness.dark
             ? Colors.white
             : AppColor.primaryColor;
+    final profileState = context.watch<GuideProfileCubit>().state;
 
     return SafeArea(
       child: ColoredBox(
@@ -29,7 +32,10 @@ class GuideHomeView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const GuideHomeTopBar(),
+              GuideHomeTopBar(
+                location: profileState.guideLocation,
+                profilePhotoUrl: profileState.profilePhotoUrl,
+              ),
               SizedBox(height: 4.h),
               Text(
                 'guide_home_welcome'.tr(),

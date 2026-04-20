@@ -13,8 +13,13 @@ class GuideNewRequestCard extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = Theme.of(context).cardColor;
     final primaryText = isDark ? Colors.white : AppColor.primaryColor;
-    final acceptButtonColor =
-        isDark ? const Color(0xFF0A8FA7) : AppColor.secondaryColor;
+    final acceptButtonColor = AppColor.secondaryColor;
+    final cardBorderColor =
+        isDark ? const Color(0xFF2C3C4A) : const Color(0xFFD8E0E6);
+    final metaColor =
+        isDark ? const Color(0xFF9DB0BF) : const Color(0xFF6E7F8D);
+    final declineBorderColor =
+        isDark ? const Color(0xFF5B6E7D) : const Color(0xFFC7D1D9);
 
     return Container(
       width: double.infinity,
@@ -22,12 +27,12 @@ class GuideNewRequestCard extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20.r),
         color: cardBg,
-        border: Border.all(color: AppColor.secondaryColor, width: .75),
+        border: Border.all(color: cardBorderColor, width: .9),
         boxShadow: const [
           BoxShadow(
             color: Color(0x14000000),
-            blurRadius: 8,
-            offset: Offset(0, 3),
+            blurRadius: 6,
+            offset: Offset(0, 2),
           ),
         ],
       ),
@@ -57,11 +62,7 @@ class GuideNewRequestCard extends StatelessWidget {
                     SizedBox(height: 4.h),
                     Row(
                       children: [
-                        Icon(
-                          Icons.settings,
-                          size: 12.8.sp,
-                          color: AppColor.secondaryColor,
-                        ),
+                        Icon(Icons.settings, size: 12.8.sp, color: metaColor),
                         SizedBox(width: 4.w),
                         Expanded(
                           child: Text(
@@ -70,7 +71,7 @@ class GuideNewRequestCard extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 11.5.sp,
                               fontWeight: FontWeight.w600,
-                              color: primaryText,
+                              color: metaColor,
                             ),
                           ),
                         ),
@@ -85,7 +86,7 @@ class GuideNewRequestCard extends StatelessWidget {
                               Icon(
                                 Icons.calendar_today_rounded,
                                 size: 12.8.sp,
-                                color: AppColor.secondaryColor,
+                                color: metaColor,
                               ),
                               SizedBox(width: 4.w),
                               Expanded(
@@ -95,7 +96,7 @@ class GuideNewRequestCard extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 11.sp,
                                     fontWeight: FontWeight.w600,
-                                    color: primaryText,
+                                    color: metaColor,
                                   ),
                                 ),
                               ),
@@ -103,18 +104,14 @@ class GuideNewRequestCard extends StatelessWidget {
                           ),
                         ),
                         SizedBox(width: 8.w),
-                        Icon(
-                          Icons.alarm,
-                          size: 12.8.sp,
-                          color: AppColor.secondaryColor,
-                        ),
+                        Icon(Icons.alarm, size: 12.8.sp, color: metaColor),
                         SizedBox(width: 4.w),
                         Text(
                           '8:00 Pm',
                           style: TextStyle(
                             fontSize: 12.sp,
                             fontWeight: FontWeight.w500,
-                            color: primaryText,
+                            color: metaColor,
                           ),
                         ),
                       ],
@@ -125,15 +122,12 @@ class GuideNewRequestCard extends StatelessWidget {
                         Icon(
                           Icons.group_outlined,
                           size: 13.sp,
-                          color: AppColor.secondaryColor,
+                          color: metaColor,
                         ),
                         SizedBox(width: 4.w),
                         Text(
                           '3 Tourists',
-                          style: TextStyle(
-                            fontSize: 11.5.sp,
-                            color: primaryText,
-                          ),
+                          style: TextStyle(fontSize: 11.5.sp, color: metaColor),
                         ),
                       ],
                     ),
@@ -144,7 +138,7 @@ class GuideNewRequestCard extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
                 decoration: BoxDecoration(
                   color: isDark ? const Color(0xFF0F1720) : Colors.white,
-                  border: Border.all(color: AppColor.secondaryColor, width: .8),
+                  border: Border.all(color: const Color(0xFF9CCFDB), width: .8),
                   borderRadius: BorderRadius.circular(16.r),
                 ),
                 child: Text(
@@ -166,11 +160,13 @@ class GuideNewRequestCard extends StatelessWidget {
                 child: SizedBox(
                   height: 34.h,
                   child: ElevatedButton(
-                    onPressed: onAccept,
+                    onPressed: onAccept ?? () {},
                     style: ElevatedButton.styleFrom(
                       elevation: 0,
                       backgroundColor: acceptButtonColor,
+                      disabledBackgroundColor: acceptButtonColor,
                       foregroundColor: Colors.white,
+                      disabledForegroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(24.r),
                       ),
@@ -191,18 +187,21 @@ class GuideNewRequestCard extends StatelessWidget {
                 child: SizedBox(
                   height: 34.h,
                   child: OutlinedButton(
-                    onPressed: onDecline,
+                    onPressed: onDecline ?? () {},
                     style: OutlinedButton.styleFrom(
-                      side: BorderSide(
-                        color: AppColor.secondaryColor,
-                        width: 1,
-                      ),
-                      foregroundColor: const Color(0xFF4B657A),
+                      side: BorderSide(color: declineBorderColor, width: 1),
+                      foregroundColor: metaColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(24.r),
                       ),
                     ),
-                    child: Text('Decline', style: TextStyle(fontSize: 12.5.sp)),
+                    child: Text(
+                      'Decline',
+                      style: TextStyle(
+                        fontSize: 12.5.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                 ),
               ),

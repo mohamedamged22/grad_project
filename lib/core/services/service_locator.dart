@@ -14,6 +14,7 @@ import 'package:beyond_the_pramids/features/complete%20tourist%20account/present
 import 'package:beyond_the_pramids/features/complete%20tourist%20account/presentation/manager/Travel%20Interests/travel_interests_cubit.dart';
 import 'package:beyond_the_pramids/features/complete%20tourist%20account/presentation/manager/Tourist%20Preferences/tourist_preferences_cubit.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_my_trip_cubit/guide_my_trip_cubit.dart';
+import 'package:beyond_the_pramids/features/guide%20home/data/repo/guide_profile_repo.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_profile_cubit/guide_profile_cubit.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_requests_cubit/guide_requests_cubit.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_root_cubit/guide_root_cubit.dart';
@@ -70,8 +71,15 @@ void setupServiceLocator() {
   );
   sl.registerFactory<GuideRootCubit>(() => GuideRootCubit());
   sl.registerFactory<GuideRequestsCubit>(() => GuideRequestsCubit());
-  sl.registerFactory<GuideProfileCubit>(() => GuideProfileCubit());
-  sl.registerLazySingleton<GuideCreateTripRepo>(() => GuideCreateTripRepo(sl<ApiService>()));
+  sl.registerLazySingleton<GuideProfileRepo>(
+    () => GuideProfileRepo(sl<ApiService>()),
+  );
+  sl.registerFactory<GuideProfileCubit>(
+    () => GuideProfileCubit(sl<GuideProfileRepo>()),
+  );
+  sl.registerLazySingleton<GuideCreateTripRepo>(
+    () => GuideCreateTripRepo(sl<ApiService>()),
+  );
   sl.registerFactory<GuideCreateTripBasicCubit>(
     () => GuideCreateTripBasicCubit(sl<GuideCreateTripRepo>()),
   );
@@ -89,7 +97,7 @@ void setupServiceLocator() {
   );
   sl.registerFactory<GuideMyTripCubit>(() => GuideMyTripCubit());
   sl.registerFactory<ProfilePersonalInformationCubit>(
-    () => ProfilePersonalInformationCubit(),
+    () => ProfilePersonalInformationCubit(sl<GuideProfileRepo>()),
   );
   sl.registerFactory<GuideTripMapCubit>(() => GuideTripMapCubit());
 }

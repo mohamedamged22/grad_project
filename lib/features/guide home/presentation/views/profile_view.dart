@@ -16,8 +16,24 @@ class ProfileView extends StatelessWidget {
         isDark ? const Color(0xFF2A3744) : const Color(0xFFE9EEF1);
     final primaryText = isDark ? Colors.white : AppColor.primaryColor;
 
-    return BlocBuilder<GuideProfileCubit, GuideProfileState>(
+    return BlocConsumer<GuideProfileCubit, GuideProfileState>(
+      listener: (context, state) {
+        if (state.status == GuideProfileStatus.failure &&
+            (state.errorMessage?.isNotEmpty ?? false)) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+        }
+      },
       builder: (context, state) {
+        final hasPhoto = state.profilePhotoUrl.trim().isNotEmpty;
+        final guideName =
+            state.guideName.trim().isEmpty ? 'Guide' : state.guideName.trim();
+        final subtitle =
+            state.guideLocation.trim().isEmpty
+                ? 'Licensed Guide'
+                : state.guideLocation.trim();
+
         return Scaffold(
           backgroundColor: screenBg,
           appBar: AppBar(
@@ -52,9 +68,11 @@ class ProfileView extends StatelessWidget {
                     children: [
                       CircleAvatar(
                         radius: 34.r,
-                        backgroundImage: const AssetImage(
-                          'assets/images/2th.jpg',
-                        ),
+                        backgroundImage:
+                            hasPhoto
+                                ? NetworkImage(state.profilePhotoUrl)
+                                    as ImageProvider
+                                : const AssetImage('assets/images/2th.jpg'),
                       ),
                       Positioned(
                         right: -2.w,
@@ -81,7 +99,7 @@ class ProfileView extends StatelessWidget {
                   ),
                   SizedBox(height: 8.h),
                   Text(
-                    'Ahmed Sameh',
+                    guideName,
                     style: TextStyle(
                       fontSize: 18.sp,
                       fontWeight: FontWeight.w700,
@@ -90,13 +108,25 @@ class ProfileView extends StatelessWidget {
                   ),
                   SizedBox(height: 2.h),
                   Text(
-                    'Licensed Guide',
+                    subtitle,
                     style: TextStyle(
                       fontSize: 12.sp,
                       fontWeight: FontWeight.w600,
                       color: AppColor.secondaryColor,
                     ),
                   ),
+                  if (state.status == GuideProfileStatus.loading)
+                    Padding(
+                      padding: EdgeInsets.only(top: 8.h),
+                      child: SizedBox(
+                        width: 20.w,
+                        height: 20.w,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: AppColor.secondaryColor,
+                        ),
+                      ),
+                    ),
                   SizedBox(height: 14.h),
 
                   _SettingsItem(
@@ -109,11 +139,18 @@ class ProfileView extends StatelessWidget {
                       Icons.chevron_right_rounded,
                       color: AppColor.secondaryColor,
                     ),
-                    onTap: () {
-                      Navigator.pushNamed(
+                    onTap: () async {
+                      final updated = await Navigator.pushNamed(
                         context,
                         '/profilePersonalInformationView',
+                        arguments: state.guideName,
                       );
+
+                      if (updated == true && context.mounted) {
+                        context
+                            .read<GuideProfileCubit>()
+                            .fetchProfileDashboard();
+                      }
                     },
                   ),
                   SizedBox(height: 8.h),
@@ -211,7 +248,34 @@ class ProfileView extends StatelessWidget {
                     borderColor: borderColor,
                     backgroundColor: cardBg,
                     defaultTextColor: primaryText,
-                    onTap: () {},
+                    onTap: () async {
+                      final shouldDelete = await _showDeleteAccountDialog(
+                        context,
+                      );
+                      if (!shouldDelete || !context.mounted) {
+                        return;
+                      }
+
+                      try {
+                        final message =
+                            await context
+                                .read<GuideProfileCubit>()
+                                .deleteAccount();
+                        if (!context.mounted) return;
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(SnackBar(content: Text(message)));
+                      } catch (e) {
+                        if (!context.mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              e.toString().replaceFirst('Exception: ', ''),
+                            ),
+                          ),
+                        );
+                      }
+                    },
                   ),
                   SizedBox(height: 8.h),
                   _SettingsItem(
@@ -232,7 +296,9 @@ class ProfileView extends StatelessWidget {
                     defaultTextColor: primaryText,
                     iconColor: AppColor.secondaryColor,
                     textColor: const Color(0xFFE54343),
-                    onTap: () {},
+                    onTap: () async {
+                      await context.read<GuideProfileCubit>().signOut();
+                    },
                   ),
                 ],
               ),
@@ -241,6 +307,118 @@ class ProfileView extends StatelessWidget {
         );
       },
     );
+  }
+
+  Future<bool> _showDeleteAccountDialog(BuildContext context) async {
+    final result = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return Dialog(
+          insetPadding: EdgeInsets.symmetric(horizontal: 34.w),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14.r),
+          ),
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 14.h),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 74.w,
+                  height: 74.w,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFF6F6F6),
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color(0x33FF4D4D),
+                        blurRadius: 24,
+                        spreadRadius: 1,
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    Icons.close_rounded,
+                    color: const Color(0xFFF23A3A),
+                    size: 26.sp,
+                  ),
+                ),
+                SizedBox(height: 12.h),
+                Text(
+                  'Are you sure ?',
+                  style: TextStyle(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.w700,
+                    color: AppColor.primaryColor,
+                  ),
+                ),
+                SizedBox(height: 6.h),
+                Text(
+                  'You want to delete your account.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 11.5.sp,
+                    color: const Color(0xFF6E7C89),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                SizedBox(height: 14.h),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(
+                            color: Color(0xFFB8C4CE),
+                            width: 1,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(22.r),
+                          ),
+                        ),
+                        child: Text(
+                          'Keep it',
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: const Color(0xFF73808D),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 8.w),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        style: ElevatedButton.styleFrom(
+                          elevation: 0,
+                          backgroundColor: const Color(0xFFF23A3A),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(22.r),
+                          ),
+                        ),
+                        child: Text(
+                          'Delete Account',
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    return result ?? false;
   }
 }
 

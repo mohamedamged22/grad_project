@@ -1,4 +1,5 @@
 import 'package:beyond_the_pramids/core/navigation/app_route.dart';
+import 'package:beyond_the_pramids/core/navigation/navigation_service.dart';
 import 'package:beyond_the_pramids/core/services/service_locator.dart';
 import 'package:beyond_the_pramids/core/services/theme_service.dart';
 import 'package:beyond_the_pramids/core/utils/size_config.dart';
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
             context.locale.languageCode == 'ar' ? 'Cairo' : 'Poppins';
 
         return MaterialApp(
+          navigatorKey: NavigationService.navigatorKey,
           locale: context.locale,
           supportedLocales: context.supportedLocales,
           localizationsDelegates: context.localizationDelegates,

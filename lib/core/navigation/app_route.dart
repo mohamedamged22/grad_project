@@ -123,7 +123,10 @@ class AppRoute {
           providers: [
             BlocProvider(create: (context) => sl<GuideRootCubit>()),
             BlocProvider(create: (context) => sl<GuideRequestsCubit>()),
-            BlocProvider(create: (context) => sl<GuideProfileCubit>()),
+            BlocProvider(
+              create:
+                  (context) => sl<GuideProfileCubit>()..fetchProfileDashboard(),
+            ),
           ],
           child: const GuideRootView(),
         );
@@ -154,7 +157,9 @@ class AppRoute {
         break;
       case '/guideCreateTripSuccessView':
         page = BlocProvider(
-          create: (context) => sl<GuideLastCreatedTripCubit>()..fetchLastCreatedTrip(),
+          create:
+              (context) =>
+                  sl<GuideLastCreatedTripCubit>()..fetchLastCreatedTrip(),
           child: const GuideCreateTripSuccessView(),
         );
         break;
@@ -165,8 +170,13 @@ class AppRoute {
         );
         break;
       case '/profilePersonalInformationView':
+        final guideName =
+            settings.arguments is String ? settings.arguments as String : null;
         page = BlocProvider(
-          create: (context) => sl<ProfilePersonalInformationCubit>(),
+          create:
+              (context) =>
+                  sl<ProfilePersonalInformationCubit>()
+                    ..loadInitialData(initialGuideName: guideName),
           child: const ProfilePersonalInformationView(),
         );
         break;

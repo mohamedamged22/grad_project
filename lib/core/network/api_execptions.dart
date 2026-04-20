@@ -45,7 +45,7 @@ class ApiException implements Exception {
           switch (statusCode) {
             case 401:
               return ApiException(
-                serverMessage ?? 'api_bad_credentials'.tr(),
+                _normalizeAuthMessage(serverMessage, 401),
                 401,
               ); // BadCredentialsException
             case 404:
@@ -62,7 +62,7 @@ class ApiException implements Exception {
               return ApiException(serverMessage ?? 'api_bad_request'.tr(), 400);
             case 403:
               return ApiException(
-                serverMessage ?? 'api_access_denied'.tr(),
+                _normalizeAuthMessage(serverMessage, 403),
                 403,
               );
             case 500:
@@ -89,11 +89,13 @@ class ApiException implements Exception {
         // -------- Status code fallback --------
         switch (statusCode) {
           case 401:
-            return ApiException('api_bad_credentials'.tr(), 401);
+            return ApiException(_normalizeAuthMessage(null, 401), 401);
           case 404:
             return ApiException('api_user_not_found'.tr(), 404);
           case 409:
             return ApiException('api_user_already_exists'.tr(), 409);
+          case 403:
+            return ApiException(_normalizeAuthMessage(null, 403), 403);
           default:
             return ApiException('api_something_wrong'.tr(), statusCode);
         }
@@ -107,5 +109,25 @@ class ApiException implements Exception {
       case DioExceptionType.unknown:
         return ApiException('api_unexpected_error'.tr());
     }
+  }
+
+  static String _normalizeAuthMessage(String? serverMessage, int code) {
+    final raw = serverMessage?.trim() ?? '';
+    final lower = raw.toLowerCase();
+    final isGeneric =
+        raw.isEmpty ||
+        lower == 'forbidden' ||
+        lower == 'unauthorized' ||
+        lower == 'access denied';
+
+    if (!isGeneric) {
+      return raw;
+    }
+
+    if (code == 401 || code == 403) {
+      return 'Your session has expired. Please log in again.';
+    }
+
+    return 'api_something_wrong'.tr();
   }
 }
