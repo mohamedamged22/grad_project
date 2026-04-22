@@ -51,9 +51,12 @@ class DioClient {
           debugPrint('Error Data: ${error.response?.data}');
           debugPrint('Error Message: ${error.message}');
 
-          // ⭐ If 401 or 403, clear the token
-          if (error.response?.statusCode == 401 ||
-              error.response?.statusCode == 403) {
+          final statusCode = error.response?.statusCode;
+          final path = error.requestOptions.path.toLowerCase();
+          final isAuthLoginRequest = path.contains('/auth/login');
+
+          // For login endpoint, 401 means bad credentials, not expired session.
+          if (!isAuthLoginRequest && (statusCode == 401 || statusCode == 403)) {
             debugPrint('🔓 Session expired or unauthorized - clearing session');
             await PrefHelper.clearSession();
             NavigationService.redirectToSignIn();

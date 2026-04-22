@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class SuccessConfirmView extends StatefulWidget {
-  const SuccessConfirmView({super.key});
+  final bool fromProfileFlow;
+
+  const SuccessConfirmView({super.key, this.fromProfileFlow = false});
 
   @override
   State<SuccessConfirmView> createState() => _SuccessConfirmViewState();
@@ -81,9 +83,17 @@ class _SuccessConfirmViewState extends State<SuccessConfirmView>
             const Spacer(),
 
             CustomButton(
-              text: 'back_to_login'.tr(),
+              text:
+                  widget.fromProfileFlow
+                      ? 'back_to_profile'.tr()
+                      : 'back_to_login'.tr(),
               width: 260,
               onTap: () {
+                if (widget.fromProfileFlow) {
+                  Navigator.pop(context, true);
+                  return;
+                }
+
                 Navigator.pushReplacementNamed(context, '/signInView');
               },
             ),

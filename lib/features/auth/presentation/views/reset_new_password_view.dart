@@ -17,6 +17,10 @@ class ResetNewPasswordView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final args = ModalRoute.of(context)?.settings.arguments;
+    final fromProfileFlow =
+        args is Map<String, dynamic> && args['fromProfileFlow'] == true;
+
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is AuthLoading) {
@@ -27,6 +31,15 @@ class ResetNewPasswordView extends StatelessWidget {
 
           // ⭐ امسح البيانات قبل الانتقال
           context.read<AuthCubit>().clearForgetPasswordData();
+
+          if (fromProfileFlow) {
+            Navigator.pushReplacementNamed(
+              context,
+              '/successConfirmView',
+              arguments: {'fromProfileFlow': true},
+            );
+            return;
+          }
 
           Navigator.pushNamedAndRemoveUntil(
             context,

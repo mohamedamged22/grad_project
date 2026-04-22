@@ -185,7 +185,10 @@ class AppRoute {
         break;
 
       case '/successConfirmView':
-        page = const SuccessConfirmView();
+        final args = settings.arguments;
+        final fromProfileFlow =
+            args is Map<String, dynamic> && args['fromProfileFlow'] == true;
+        page = SuccessConfirmView(fromProfileFlow: fromProfileFlow);
         break;
 
       case '/splash':

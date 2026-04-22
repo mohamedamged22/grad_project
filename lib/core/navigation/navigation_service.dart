@@ -13,10 +13,19 @@ class NavigationService {
       return;
     }
 
-    final navigator = navigatorKey.currentState;
-    if (navigator == null) return;
-
     _lastRedirectToLoginAt = now;
-    navigator.pushNamedAndRemoveUntil('/signInView', (route) => false);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final navigator = navigatorKey.currentState;
+      if (navigator == null) return;
+
+      final currentContext = navigator.context;
+      final currentRouteName = ModalRoute.of(currentContext)?.settings.name;
+      if (currentRouteName == '/signInView') {
+        return;
+      }
+
+      navigator.pushNamedAndRemoveUntil('/signInView', (route) => false);
+    });
   }
 }

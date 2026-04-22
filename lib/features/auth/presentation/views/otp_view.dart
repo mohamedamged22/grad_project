@@ -18,6 +18,10 @@ class OtpView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final args = ModalRoute.of(context)?.settings.arguments;
+    final fromProfileFlow =
+        args is Map<String, dynamic> && args['fromProfileFlow'] == true;
+
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is AuthLoading) {
@@ -25,7 +29,11 @@ class OtpView extends StatelessWidget {
         } else if (state is OtpSuccess) {
           hideLoadingOverlay(context);
           showSnackBar(context, state.message, isSuccess: true);
-          Navigator.pushReplacementNamed(context, '/resetNewPasswordView');
+          Navigator.pushReplacementNamed(
+            context,
+            '/resetNewPasswordView',
+            arguments: {'fromProfileFlow': fromProfileFlow},
+          );
         } else if (state is ForgetPasswordSuccess) {
           hideLoadingOverlay(context);
           showSnackBar(context, 'auth_otp_resent'.tr(), isSuccess: true);
@@ -50,6 +58,7 @@ class OtpView extends StatelessWidget {
                     () => Navigator.pushReplacementNamed(
                       context,
                       '/forgetPasswordView',
+                      arguments: {'fromProfileFlow': fromProfileFlow},
                     ),
                 icon: Icon(
                   Icons.chevron_left,

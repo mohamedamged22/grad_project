@@ -13,7 +13,10 @@ void showLoadingOverlay(BuildContext context) {
 
 /// Dismisses the loading overlay
 void hideLoadingOverlay(BuildContext context) {
-  Navigator.of(context, rootNavigator: true).pop();
+  final navigator = Navigator.of(context, rootNavigator: true);
+  if (navigator.canPop()) {
+    navigator.pop();
+  }
 }
 
 class _LoadingIndicator extends StatefulWidget {

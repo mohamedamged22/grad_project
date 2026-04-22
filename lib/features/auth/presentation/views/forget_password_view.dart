@@ -17,6 +17,10 @@ class ForgetPasswordView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final args = ModalRoute.of(context)?.settings.arguments;
+    final fromProfileFlow =
+        args is Map<String, dynamic> && args['fromProfileFlow'] == true;
+
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is AuthLoading) {
@@ -24,7 +28,11 @@ class ForgetPasswordView extends StatelessWidget {
         } else if (state is ForgetPasswordSuccess) {
           hideLoadingOverlay(context);
           showSnackBar(context, state.message, isSuccess: true);
-          Navigator.pushReplacementNamed(context, '/otpView');
+          Navigator.pushReplacementNamed(
+            context,
+            '/otpView',
+            arguments: {'fromProfileFlow': fromProfileFlow},
+          );
         } else if (state is AuthError) {
           hideLoadingOverlay(context);
           showSnackBar(context, state.message, isSuccess: false);
@@ -39,8 +47,14 @@ class ForgetPasswordView extends StatelessWidget {
             appBar: AppBar(
               leading: IconButton(
                 onPressed:
-                    () =>
-                        Navigator.pushReplacementNamed(context, '/signInView'),
+                    () {
+                      if (fromProfileFlow) {
+                        Navigator.pop(context);
+                        return;
+                      }
+
+                      Navigator.pushReplacementNamed(context, '/signInView');
+                    },
                 icon: Icon(
                   Icons.chevron_left,
                   size: 32.w,

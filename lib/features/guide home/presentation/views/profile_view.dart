@@ -239,7 +239,13 @@ class ProfileView extends StatelessWidget {
                       Icons.chevron_right_rounded,
                       color: AppColor.secondaryColor,
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        '/forgetPasswordView',
+                        arguments: {'fromProfileFlow': true},
+                      );
+                    },
                   ),
                   SizedBox(height: 8.h),
                   _SettingsItem(
