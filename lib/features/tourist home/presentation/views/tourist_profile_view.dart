@@ -81,7 +81,7 @@ class TouristProfileView extends StatelessWidget {
                   CircleAvatar(
                     radius: 44.r,
                     backgroundImage: hasPhoto
-                        ? NetworkImage(profilePhoto!) as ImageProvider
+                        ? NetworkImage(profilePhoto) as ImageProvider
                         : const AssetImage('assets/images/2th.jpg'),
                   ),
                   SizedBox(height: 8.h),
