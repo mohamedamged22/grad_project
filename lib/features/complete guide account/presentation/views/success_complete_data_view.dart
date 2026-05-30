@@ -46,11 +46,23 @@ class SuccessCompleteDataView extends StatelessWidget {
               onTap: () async {
                 await PrefHelper.setProfileCompleted(true);
                 if (!context.mounted) return;
-                Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  '/guideHomeRootView',
-                  (route) => false,
-                );
+                
+                final role = await PrefHelper.getUserRole();
+                if (role == 'guide') {
+                  if (!context.mounted) return;
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/guideHomeRootView',
+                    (route) => false,
+                  );
+                } else {
+                  if (!context.mounted) return;
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/touristHomeRootView',
+                    (route) => false,
+                  );
+                }
               },
             ),
 

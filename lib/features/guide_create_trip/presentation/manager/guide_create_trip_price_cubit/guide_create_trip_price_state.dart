@@ -17,12 +17,12 @@ class GuideCreateTripPriceState {
 
   factory GuideCreateTripPriceState.initial() {
     return const GuideCreateTripPriceState(
-      selectedPrice: '150.50',
+      selectedPrice: null,
       includedItems: {
-        'Private transportation': true,
-        'Entry fees to the Pyramids': true,
-        'Professional licensed tour guide': true,
-        'Lunch at a local restaurant': true,
+        'Private transportation': false,
+        'Entry fees to the Pyramids': false,
+        'Professional licensed tour guide': false,
+        'Lunch at a local restaurant': false,
       },
       status: GuideCreateTripPriceStatus.initial,
       message: null,

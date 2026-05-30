@@ -24,11 +24,19 @@ class SignInView extends StatelessWidget {
         } else if (state is AuthSuccess) {
           hideLoadingOverlay(context);
           showSnackBar(context, 'login_success'.tr(), isSuccess: true);
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            '/guideHomeRootView',
-            (route) => false,
-          );
+          if (state.user.role == 'TOURGUIDE') {
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              '/guideHomeRootView',
+              (route) => false,
+            );
+          } else {
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              '/touristHomeRootView',
+              (route) => false,
+            );
+          }
         } else if (state is AuthError) {
           hideLoadingOverlay(context);
           showSnackBar(context, state.message, isSuccess: false);

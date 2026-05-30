@@ -23,10 +23,13 @@ import 'package:beyond_the_pramids/features/complete%20tourist%20account/present
 import 'package:beyond_the_pramids/features/complete%20tourist%20account/presentation/manager/Trip%20Details/trip_details_cubit.dart';
 import 'package:beyond_the_pramids/features/complete%20tourist%20account/presentation/manager/Travel%20Interests/travel_interests_cubit.dart';
 import 'package:beyond_the_pramids/features/complete%20tourist%20account/presentation/manager/Tourist%20Preferences/tourist_preferences_cubit.dart';
+import 'package:beyond_the_pramids/features/complete%20tourist%20account/presentation/manager/Tourist%20Profile%20Photo/tourist_profile_photo_cubit.dart';
 import 'package:beyond_the_pramids/features/complete%20tourist%20account/presentation/views/basic_information_tourist_view.dart';
 import 'package:beyond_the_pramids/features/complete%20tourist%20account/presentation/views/tourist_preferences_view.dart';
 import 'package:beyond_the_pramids/features/complete%20tourist%20account/presentation/views/travel_interests_view.dart';
 import 'package:beyond_the_pramids/features/complete%20tourist%20account/presentation/views/trip_details_view.dart';
+import 'package:beyond_the_pramids/features/complete%20tourist%20account/presentation/views/tourist_profile_photo_view.dart';
+import 'package:beyond_the_pramids/features/tourist%20home/presentation/manager/tourist_profile_cubit/tourist_profile_cubit.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_profile_cubit/guide_profile_cubit.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_requests_cubit/guide_requests_cubit.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_root_cubit/guide_root_cubit.dart';
@@ -49,6 +52,17 @@ import 'package:beyond_the_pramids/features/onboarding/presentation/views/onboar
 import 'package:beyond_the_pramids/features/onboarding/presentation/views/onboarding_view_2.dart';
 import 'package:beyond_the_pramids/features/onboarding/presentation/views/onboarding_view_3.dart';
 import 'package:beyond_the_pramids/features/splash/presentation/views/splash_view.dart';
+import 'package:beyond_the_pramids/features/tourist%20home/data/mock/tourist_home_mock_data.dart';
+import 'package:beyond_the_pramids/features/tourist%20home/data/model/tourist_landmark_list_item.dart';
+import 'package:beyond_the_pramids/features/tourist%20home/data/model/tourist_public_trip.dart';
+import 'package:beyond_the_pramids/features/tourist%20home/presentation/manager/tourist_landmark_details_cubit/tourist_landmark_details_cubit.dart';
+import 'package:beyond_the_pramids/features/tourist%20home/presentation/manager/tourist_landmark_trips_cubit/tourist_landmark_trips_cubit.dart';
+import 'package:beyond_the_pramids/features/tourist%20home/presentation/views/tourist_landmark_details_view.dart';
+import 'package:beyond_the_pramids/features/tourist%20home/presentation/views/tourist_landmarks_view.dart';
+import 'package:beyond_the_pramids/features/tourist%20home/presentation/views/tour_guide_profile_view.dart';
+import 'package:beyond_the_pramids/features/tourist%20home/presentation/views/tourist_root_view.dart';
+import 'package:beyond_the_pramids/features/tourist%20home/presentation/views/tourist_trip_details_view.dart';
+import 'package:beyond_the_pramids/features/tourist%20home/presentation/manager/tourist_trip_details_cubit/tourist_trip_details_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -130,6 +144,94 @@ class AppRoute {
           ],
           child: const GuideRootView(),
         );
+        break;
+      case '/touristHomeRootView':
+        page = BlocProvider(
+          create: (context) => sl<TouristProfileCubit>()..fetchProfile(),
+          child: const TouristRootView(),
+        );
+        break;
+      case '/touristLandmarksView':
+        page = const TouristLandmarksView();
+        break;
+      case '/touristLandmarkDetailsView':
+        final landmark = settings.arguments;
+        if (landmark is TouristLandmarkListItem) {
+          final args = TouristLandmarkDetailsArgs(
+            id: landmark.id,
+            title: landmark.name,
+            city: landmark.city,
+            imageUrl: landmark.normalizedImageUrl,
+            rating: null,
+          );
+          page = MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (context) =>
+                    sl<TouristLandmarkDetailsCubit>()
+                      ..fetchLandmarkDetails(landmark.id),
+              ),
+              BlocProvider(
+                create: (context) =>
+                    sl<TouristLandmarkTripsCubit>()
+                      ..fetchLandmarkTrips(landmarkId: landmark.id),
+              ),
+            ],
+            child: TouristLandmarkDetailsView(args: args),
+          );
+          break;
+        }
+        if (landmark is TouristLandmark) {
+          final args = TouristLandmarkDetailsArgs.fromMock(landmark);
+          page = MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (context) => sl<TouristLandmarkDetailsCubit>(),
+              ),
+              BlocProvider(
+                create: (context) => sl<TouristLandmarkTripsCubit>(),
+              ),
+            ],
+            child: TouristLandmarkDetailsView(args: args),
+          );
+          break;
+        }
+        page = Scaffold(body: Center(child: Text('no_route'.tr())));
+        break;
+      case '/touristTripDetailsView':
+        final trip = settings.arguments;
+        if (trip is TouristPublicTrip) {
+          page = BlocProvider(
+            create: (context) => sl<TouristTripDetailsCubit>()..fetchTripDetails(tripId: trip.id),
+            child: TouristTripDetailsView(trip: trip),
+          );
+          break;
+        }
+        if (trip is TouristGroupTrip) {
+          // fallback: show details built from mock trip and attempt to fetch real details
+          final publicTrip = TouristPublicTrip(
+            id: 0,
+            title: trip.title,
+            city: trip.city,
+            category: trip.category,
+            coverImageUrl: trip.imagePath,
+            duration: trip.duration,
+            status: 'PUBLIC',
+            pricePerTourist: num.tryParse(
+                  trip.price.replaceAll(RegExp(r'[^0-9.]'), ''),
+                ) ??
+                0,
+          );
+          page = BlocProvider(
+            create: (context) => sl<TouristTripDetailsCubit>()..fetchTripDetails(tripId: publicTrip.id),
+            child: TouristTripDetailsView(trip: publicTrip),
+          );
+          break;
+        }
+        page = Scaffold(body: Center(child: Text('no_route'.tr())));
+        break;
+      case '/tourGuideProfileView':
+        page = const TourGuideProfileView();
         break;
       case '/guideCreateTripView':
         page = BlocProvider(
@@ -215,7 +317,7 @@ class AppRoute {
         break;
       case '/professionalInformationView':
         page = BlocProvider(
-          create: (context) => sl<ProfessionalInfoCubit>(), // ✅
+          create: (context) => sl<ProfessionalInfoCubit>(),
           child: const ProfessionalInformationView(),
         );
         break;
@@ -238,6 +340,14 @@ class AppRoute {
         page = BlocProvider(
           create: (context) => sl<TripDetailsCubit>(),
           child: const TripDetailsView(),
+        );
+        break;
+      case '/touristProfilePhotoView':
+      case '/touristProfilePhotoView/':
+      case '/touristProfilePhoto':
+        page = BlocProvider(
+          create: (context) => sl<TouristProfilePhotoCubit>(),
+          child: const TouristProfilePhotoView(),
         );
         break;
       case '/guideLanguagesView':

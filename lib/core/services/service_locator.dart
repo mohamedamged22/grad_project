@@ -13,7 +13,9 @@ import 'package:beyond_the_pramids/features/complete%20tourist%20account/present
 import 'package:beyond_the_pramids/features/complete%20tourist%20account/presentation/manager/Trip%20Details/trip_details_cubit.dart';
 import 'package:beyond_the_pramids/features/complete%20tourist%20account/presentation/manager/Travel%20Interests/travel_interests_cubit.dart';
 import 'package:beyond_the_pramids/features/complete%20tourist%20account/presentation/manager/Tourist%20Preferences/tourist_preferences_cubit.dart';
+import 'package:beyond_the_pramids/features/complete%20tourist%20account/presentation/manager/Tourist%20Profile%20Photo/tourist_profile_photo_cubit.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_my_trip_cubit/guide_my_trip_cubit.dart';
+import 'package:beyond_the_pramids/features/guide%20home/data/repo/guide_my_trip_repo.dart';
 import 'package:beyond_the_pramids/features/guide%20home/data/repo/guide_profile_repo.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_profile_cubit/guide_profile_cubit.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_requests_cubit/guide_requests_cubit.dart';
@@ -26,6 +28,17 @@ import 'package:beyond_the_pramids/features/guide_create_trip/presentation/manag
 import 'package:beyond_the_pramids/features/guide_create_trip/presentation/manager/guide_create_trip_price_cubit/guide_create_trip_price_cubit.dart';
 import 'package:beyond_the_pramids/features/guide_create_trip/presentation/manager/guide_create_trip_time_cubit/guide_create_trip_time_cubit.dart';
 import 'package:beyond_the_pramids/features/guide_trip_map/presentation/manager/guide_trip_map_cubit.dart';
+import 'package:beyond_the_pramids/features/tourist%20home/data/repo/tourist_landmark_repo.dart';
+import 'package:beyond_the_pramids/features/tourist%20home/data/repo/tourist_favorites_repo.dart';
+import 'package:beyond_the_pramids/features/tourist%20home/data/repo/tourist_public_trips_repo.dart';
+import 'package:beyond_the_pramids/features/tourist%20home/data/repo/tourist_trip_details_repo.dart';
+import 'package:beyond_the_pramids/features/tourist%20home/presentation/manager/tourist_landmarks_cubit/tourist_landmarks_cubit.dart';
+import 'package:beyond_the_pramids/features/tourist%20home/presentation/manager/tourist_landmark_details_cubit/tourist_landmark_details_cubit.dart';
+import 'package:beyond_the_pramids/features/tourist%20home/presentation/manager/tourist_landmark_trips_cubit/tourist_landmark_trips_cubit.dart';
+import 'package:beyond_the_pramids/features/tourist%20home/presentation/manager/tourist_public_trips_cubit/tourist_public_trips_cubit.dart';
+import 'package:beyond_the_pramids/features/tourist%20home/presentation/manager/tourist_trip_details_cubit/tourist_trip_details_cubit.dart';
+import 'package:beyond_the_pramids/features/tourist%20home/data/repo/tourist_profile_repo.dart';
+import 'package:beyond_the_pramids/features/tourist%20home/presentation/manager/tourist_profile_cubit/tourist_profile_cubit.dart';
 import 'package:get_it/get_it.dart';
 
 final sl = GetIt.instance;
@@ -69,6 +82,9 @@ void setupServiceLocator() {
   sl.registerFactory<TouristPreferencesCubit>(
     () => TouristPreferencesCubit(sl<CompleteTouristAccountRepo>()),
   );
+  sl.registerFactory<TouristProfilePhotoCubit>(
+    () => TouristProfilePhotoCubit(sl<CompleteTouristAccountRepo>()),
+  );
   sl.registerFactory<GuideRootCubit>(() => GuideRootCubit());
   sl.registerFactory<GuideRequestsCubit>(() => GuideRequestsCubit());
   sl.registerLazySingleton<GuideProfileRepo>(
@@ -95,9 +111,48 @@ void setupServiceLocator() {
   sl.registerFactory<GuideLastCreatedTripCubit>(
     () => GuideLastCreatedTripCubit(sl<GuideCreateTripRepo>()),
   );
-  sl.registerFactory<GuideMyTripCubit>(() => GuideMyTripCubit());
+  sl.registerLazySingleton<GuideMyTripRepo>(
+    () => GuideMyTripRepo(sl<ApiService>()),
+  );
+  sl.registerFactory<GuideMyTripCubit>(
+    () => GuideMyTripCubit(sl<GuideMyTripRepo>()),
+  );
   sl.registerFactory<ProfilePersonalInformationCubit>(
     () => ProfilePersonalInformationCubit(sl<GuideProfileRepo>()),
   );
   sl.registerFactory<GuideTripMapCubit>(() => GuideTripMapCubit());
+  sl.registerLazySingleton<TouristLandmarkRepo>(
+    () => TouristLandmarkRepo(sl<ApiService>()),
+  );
+  sl.registerLazySingleton<TouristFavoritesRepo>(
+    () => TouristFavoritesRepo(sl<ApiService>()),
+  );
+  sl.registerFactory<TouristLandmarksCubit>(
+    () => TouristLandmarksCubit(sl<TouristLandmarkRepo>()),
+  );
+  sl.registerFactory<TouristLandmarkDetailsCubit>(
+    () => TouristLandmarkDetailsCubit(sl<TouristLandmarkRepo>()),
+  );
+  sl.registerFactory<TouristLandmarkTripsCubit>(
+    () => TouristLandmarkTripsCubit(sl<TouristLandmarkRepo>()),
+  );
+  sl.registerLazySingleton<TouristPublicTripsRepo>(
+    () => TouristPublicTripsRepo(sl<ApiService>()),
+  );
+  sl.registerFactory<TouristPublicTripsCubit>(
+    () => TouristPublicTripsCubit(sl<TouristPublicTripsRepo>()),
+  );
+  
+  sl.registerLazySingleton<TouristTripDetailsRepo>(
+    () => TouristTripDetailsRepo(sl<ApiService>()),
+  );
+  sl.registerFactory<TouristTripDetailsCubit>(
+    () => TouristTripDetailsCubit(sl<TouristTripDetailsRepo>()),
+  );
+  sl.registerLazySingleton<TouristProfileRepo>(
+    () => TouristProfileRepo(sl<ApiService>()),
+  );
+  sl.registerFactory<TouristProfileCubit>(
+    () => TouristProfileCubit(sl<TouristProfileRepo>()),
+  );
 }

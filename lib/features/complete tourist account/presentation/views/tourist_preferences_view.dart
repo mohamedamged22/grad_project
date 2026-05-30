@@ -48,7 +48,7 @@ class TouristPreferencesView extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(height: 30.h),
-                      const StepProgressIndicator(currentStep: 4),
+                      const StepProgressIndicator(currentStep: 5),
                       SizedBox(height: 30.h),
                       CustomTextSemiBold(
                         fontSize: 18.sp,

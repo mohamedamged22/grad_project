@@ -6,6 +6,7 @@ class PrefHelper {
   static const String _profileCompletedKey = 'profile_completed';
   static const String _guideDashboardCacheKey = 'guide_dashboard_cache';
   static const String _guideProfileInfoCacheKey = 'guide_profile_info_cache';
+  static const String _authMeCacheKey = 'auth_me_cache';
 
   static Future<void> saveString(String key, String value) async {
     final prefs = await SharedPreferences.getInstance();
@@ -63,9 +64,25 @@ class PrefHelper {
     await prefs.remove(_profileCompletedKey);
   }
 
+  static Future<void> saveAuthMeCache(String payload) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_authMeCacheKey, payload);
+  }
+
+  static Future<String?> getAuthMeCache() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_authMeCacheKey);
+  }
+
+  static Future<void> clearAuthMeCache() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_authMeCacheKey);
+  }
+
   static Future<void> clearSession() async {
     await clearToken();
     await clearAuthMetadata();
+    await clearAuthMeCache();
     await removeKey(_guideDashboardCacheKey);
     await removeKey(_guideProfileInfoCacheKey);
   }

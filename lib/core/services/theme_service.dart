@@ -4,7 +4,7 @@ class ThemeService {
   ThemeService._();
 
   static final ValueNotifier<ThemeMode> themeModeNotifier = ValueNotifier(
-    ThemeMode.light,
+    ThemeMode.dark,
   );
 
   static bool get isDark => themeModeNotifier.value == ThemeMode.dark;

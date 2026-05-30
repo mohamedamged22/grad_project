@@ -10,11 +10,7 @@ class GuideCreateTripPriceRequestModel {
   Map<String, dynamic> toJson() {
     return {
       'pricePerTourist': pricePerTourist,
-      'price_per_tourist': pricePerTourist,
-      'price': pricePerTourist,
       'inclusions': inclusions,
-      'included': inclusions,
-      'includedServices': inclusions,
     };
   }
 }

@@ -40,14 +40,7 @@ class ProfileView extends StatelessWidget {
             backgroundColor: screenBg,
             elevation: 0,
             centerTitle: true,
-            leading: IconButton(
-              onPressed: () => Navigator.maybePop(context),
-              icon: Icon(
-                Icons.arrow_back_ios_new_rounded,
-                color: AppColor.secondaryColor,
-                size: 18.sp,
-              ),
-            ),
+            automaticallyImplyLeading: false,
             title: Text(
               'Profile',
               style: TextStyle(
@@ -67,33 +60,12 @@ class ProfileView extends StatelessWidget {
                     clipBehavior: Clip.none,
                     children: [
                       CircleAvatar(
-                        radius: 34.r,
+                        radius: 44.r,
                         backgroundImage:
                             hasPhoto
                                 ? NetworkImage(state.profilePhotoUrl)
                                     as ImageProvider
                                 : const AssetImage('assets/images/2th.jpg'),
-                      ),
-                      Positioned(
-                        right: -2.w,
-                        bottom: -1.h,
-                        child: Container(
-                          width: 20.w,
-                          height: 20.w,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: AppColor.secondaryColor,
-                              width: 1,
-                            ),
-                          ),
-                          child: Icon(
-                            Icons.edit_outlined,
-                            size: 12.sp,
-                            color: AppColor.secondaryColor,
-                          ),
-                        ),
                       ),
                     ],
                   ),

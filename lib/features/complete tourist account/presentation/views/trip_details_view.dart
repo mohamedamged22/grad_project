@@ -101,7 +101,7 @@ class _TripDetailsViewState extends State<TripDetailsView> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(height: 30.h),
-                        const StepProgressIndicator(currentStep: 2),
+                        const StepProgressIndicator(currentStep: 3),
                         SizedBox(height: 36.h),
 
                         // Travel Date

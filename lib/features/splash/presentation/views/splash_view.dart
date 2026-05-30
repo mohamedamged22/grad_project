@@ -64,12 +64,17 @@ class _SplashViewState extends State<SplashView>
     }
 
     final isCompleted = await PrefHelper.isProfileCompleted();
+    final role = await PrefHelper.getUserRole();
+    
     if (isCompleted) {
-      _nextRoute = '/guideHomeRootView';
+      if (role == 'tourist') {
+        _nextRoute = '/touristHomeRootView';
+      } else {
+        _nextRoute = '/guideHomeRootView';
+      }
       return;
     }
 
-    final role = await PrefHelper.getUserRole();
     if (role == 'guide') {
       _nextRoute = '/basicInformationView';
       return;

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:beyond_the_pramids/core/network/api_error.dart';
 import 'package:beyond_the_pramids/core/network/api_execptions.dart';
 import 'package:beyond_the_pramids/core/network/api_service.dart';
@@ -215,6 +217,7 @@ class AuthRepo {
       await _apiService.post('/logout', {});
       await PrefHelper.clearToken();
       await PrefHelper.clearAuthMetadata();
+      await PrefHelper.clearAuthMeCache();
       isGuest = true;
       _currentUser = null;
     } on DioException catch (e) {
@@ -234,8 +237,30 @@ class AuthRepo {
         return null;
       }
 
-      final response = await _apiService.get('/profile');
-      final user = UserModel.fromJson(response['data']);
+      if (_currentUser != null) {
+        return _currentUser;
+      }
+
+      final cached = await PrefHelper.getAuthMeCache();
+      if (cached != null && cached.trim().isNotEmpty) {
+        try {
+          final decoded = jsonDecode(cached);
+          if (decoded is Map<String, dynamic>) {
+            final cachedUser = UserModel.fromAuthMeResponse(decoded);
+            isGuest = false;
+            _currentUser = cachedUser;
+            return cachedUser;
+          }
+        } catch (_) {}
+      }
+
+      final response = await _apiService.get('/auth/me');
+      if (response['success'] != true) {
+        final message = response['message']?.toString() ?? 'auth_login_failed'.tr();
+        throw ApiError(message: message);
+      }
+      final user = UserModel.fromAuthMeResponse(response);
+      await PrefHelper.saveAuthMeCache(jsonEncode(response));
       isGuest = false;
       _currentUser = user;
       return user;
@@ -302,6 +327,7 @@ class AuthRepo {
     _currentUser = null;
     await PrefHelper.saveToken('guest');
     await PrefHelper.clearAuthMetadata();
+    await PrefHelper.clearAuthMeCache();
   }
 
   /// ----------------------------

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class DioClient {
   final Dio _dio = Dio(
     BaseOptions(
-      baseUrl: 'https://josphine-magnipotent-vectorially.ngrok-free.dev/api',
+      baseUrl: 'https://asmaa-project.karem.live/api',
       connectTimeout: const Duration(seconds: 30),
       receiveTimeout: const Duration(seconds: 30),
       headers: {

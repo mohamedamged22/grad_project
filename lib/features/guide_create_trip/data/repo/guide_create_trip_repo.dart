@@ -42,14 +42,9 @@ class GuideCreateTripRepo {
   Future<String> createTripTime(GuideCreateTripTimeRequestModel model) async {
     try {
       final tripId = _requireTripId();
-      final payload = Map<String, dynamic>.from(model.toJson())
-        ..addAll({
-          'tripId': tripId,
-          'trip_id': tripId,
-          'id': tripId,
-        });
+      final payload = Map<String, dynamic>.from(model.toJson());
 
-      final response = await _apiService.post('/v1/trip/trip-time', payload);
+      final response = await _apiService.post('/v1/trip/$tripId/trip-time', payload);
 
       if (response['success'] == true) {
         return response['message']?.toString() ?? 'Added';
@@ -67,14 +62,9 @@ class GuideCreateTripRepo {
   Future<String> createTripPrice(GuideCreateTripPriceRequestModel model) async {
     try {
       final tripId = _requireTripId();
-      final payload = Map<String, dynamic>.from(model.toJson())
-        ..addAll({
-          'tripId': tripId,
-          'trip_id': tripId,
-          'id': tripId,
-        });
+      final payload = Map<String, dynamic>.from(model.toJson());
 
-      final response = await _apiService.post('/v1/trip/trip-price', payload);
+      final response = await _apiService.post('/v1/trip/$tripId/trip-price', payload);
 
       if (response['success'] == true) {
         return response['message']?.toString() ?? 'Added';
@@ -91,53 +81,38 @@ class GuideCreateTripRepo {
 
   Future<GuideUploadCoverResult> uploadTripCover(String filePath) async {
     final tripId = _requireTripId();
-    final endpoints = [
-      '/v1/trip/trips/$tripId/upload-cover',
-      '/v1/trip/upload-cover',
-      '/v1/trip//upload-cover',
-    ];
-    ApiException? lastError;
+    try {
+      final formData = FormData.fromMap({
+        'file': await MultipartFile.fromFile(filePath),
+      });
 
-    for (final endpoint in endpoints) {
-      try {
-        final formData = FormData.fromMap({
-          'tripId': tripId,
-          'trip_id': tripId,
-          'id': tripId,
-          'file': await MultipartFile.fromFile(filePath),
-        });
+      final response = await _apiService.post(
+        '/v1/trip/$tripId/upload-cover',
+        formData,
+      );
 
-        final response = await _apiService.post(endpoint, formData);
-
-        if (response['success'] == true) {
-          return GuideUploadCoverResult(
-            message: response['message']?.toString() ?? 'Image uploaded successfully',
-            uploadedImagePath: _extractUploadedImagePath(response['data']),
-          );
-        }
-
-        throw ApiException(response['message']?.toString() ?? 'Failed to upload cover');
-      } on DioException catch (e) {
-        final isNotFound = e.response?.statusCode == 404;
-        if (!isNotFound) {
-          throw ApiException.fromDioError(e);
-        }
-        lastError = ApiException.fromDioError(e);
-      } catch (e) {
-        if (e is ApiException) {
-          lastError = e;
-        } else {
-          lastError = ApiException(e.toString());
-        }
+      if (response['success'] == true) {
+        return GuideUploadCoverResult(
+          message: response['message']?.toString() ?? 'Image uploaded successfully',
+          uploadedImagePath: _extractUploadedImagePath(response['data']),
+        );
       }
-    }
 
-    throw lastError ?? ApiException('Failed to upload cover');
+      throw ApiException(response['message']?.toString() ?? 'Failed to upload cover');
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    } catch (e) {
+      if (e is ApiException) rethrow;
+      throw ApiException(e.toString());
+    }
   }
 
   Future<GuideLastCreatedTripModel> getLastCreatedTrip() async {
     try {
-      final response = await _apiService.get('/v1/trip/last-created');
+      final response = await _apiService.get(
+        '/v1/trip/guideTrips',
+        queryParams: {'statusKey': 'NEW'},
+      );
 
       if (response['success'] != true) {
         throw ApiException(
@@ -146,11 +121,23 @@ class GuideCreateTripRepo {
       }
 
       final data = response['data'];
-      if (data is! Map<String, dynamic>) {
+      if (data is! List) {
         throw ApiException('Invalid response data for last created trip');
       }
 
-      return GuideLastCreatedTripModel.fromJson(data);
+      final tripMaps =
+          data.whereType<Map<String, dynamic>>().toList(growable: false);
+      if (tripMaps.isEmpty) {
+        throw ApiException('No new trips found');
+      }
+
+      tripMaps.sort((a, b) {
+        final aId = (a['id'] as num?)?.toInt() ?? 0;
+        final bId = (b['id'] as num?)?.toInt() ?? 0;
+        return bId.compareTo(aId);
+      });
+
+      return GuideLastCreatedTripModel.fromJson(tripMaps.first);
     } on DioException catch (e) {
       throw ApiException.fromDioError(e);
     } catch (e) {

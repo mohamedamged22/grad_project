@@ -14,11 +14,19 @@ class GuideProfileRepo {
 
   GuideProfileRepo(this._apiService);
 
-  Future<GuideProfileDashboardModel> getProfileDashboard() async {
+  Future<GuideProfileDashboardModel> getProfileDashboard({bool forceRefresh = false}) async {
     try {
-      final response = await _apiService.get('/v1/profile/me');
+      if (!forceRefresh) {
+        final cached = await getCachedProfileDashboard();
+        if (cached != null) {
+          return cached;
+        }
+      }
 
-      final payload = _extractPayload(response);
+      final response = await _apiService.get('/auth/me');
+      await PrefHelper.saveAuthMeCache(jsonEncode(response));
+
+      final payload = _extractAuthMePayload(response);
       final profile = GuideProfileDashboardModel.fromJson(payload);
 
       await _cacheDashboardPayload(payload);
@@ -65,6 +73,12 @@ class GuideProfileRepo {
       );
       await _updateCachedGuideName(firstName: firstName, lastName: lastName);
 
+      try {
+        await getProfileDashboard(forceRefresh: true);
+      } catch (_) {
+        // Ignore refresh errors to avoid blocking a successful update.
+      }
+
       if (response is Map<String, dynamic>) {
         final serverMessage = response['message']?.toString();
         if (serverMessage != null && serverMessage.trim().isNotEmpty) {
@@ -107,13 +121,38 @@ class GuideProfileRepo {
     }
   }
 
-  Map<String, dynamic> _extractPayload(dynamic response) {
+  Map<String, dynamic> _extractAuthMePayload(dynamic response) {
     if (response is! Map<String, dynamic>) {
       throw ApiException('Invalid profile response format');
     }
+    final data = response['data'];
+    if (data is Map<String, dynamic>) {
+      final guideProfile = data['tourGuideProfile'] as Map<String, dynamic>?;
+      final user = data['user'] as Map<String, dynamic>?;
+      final name =
+          guideProfile?['name']?.toString() ?? user?['username']?.toString() ?? '';
+      final nameParts = name.trim().split(RegExp(r'\s+'));
+      final firstName = nameParts.isNotEmpty ? nameParts.first : '';
+      final lastName =
+          nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
 
-    if (response['data'] is Map<String, dynamic>) {
-      return response['data'] as Map<String, dynamic>;
+      return {
+        'guideName': name,
+        'firstName': firstName,
+        'lastName': lastName,
+        'email':
+            guideProfile?['email']?.toString() ?? user?['email']?.toString() ?? '',
+        'phone': guideProfile?['phone']?.toString() ?? '',
+        'profilePhoto': guideProfile?['profilePhoto'],
+        'city': guideProfile?['city']?.toString() ?? '',
+        'guideLocation': guideProfile?['coveredArea']?.toString() ?? '',
+        'title': guideProfile?['guideType']?.toString() ?? '',
+        'stats': const {
+          'rating': 0,
+          'completedTrips': 0,
+          'earnings': 0,
+        },
+      };
     }
 
     return response;

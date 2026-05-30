@@ -50,13 +50,20 @@ class GuideHomeTopBar extends StatelessWidget {
             color: AppColor.secondaryColor,
           ),
         ),
-        CircleAvatar(
-          backgroundColor: AppColor.secondaryColor,
-          radius: 20.r,
-          backgroundImage:
-              hasPhoto
-                  ? NetworkImage(profilePhotoUrl) as ImageProvider
-                  : const AssetImage('assets/images/2th.jpg'),
+        InkWell(
+          onTap: () => Navigator.pushNamed(
+            context,
+            '/profilePersonalInformationView',
+          ),
+          borderRadius: BorderRadius.circular(24.r),
+          child: CircleAvatar(
+            backgroundColor: AppColor.secondaryColor,
+            radius: 22.r,
+            backgroundImage:
+                hasPhoto
+                    ? NetworkImage(profilePhotoUrl) as ImageProvider
+                    : const AssetImage('assets/images/2th.jpg'),
+          ),
         ),
       ],
     );

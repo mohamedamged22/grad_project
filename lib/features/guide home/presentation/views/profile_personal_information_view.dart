@@ -90,7 +90,7 @@ class ProfilePersonalInformationView extends StatelessWidget {
                           clipBehavior: Clip.none,
                           children: [
                             CircleAvatar(
-                              radius: 34.r,
+                              radius: 44.r,
                               backgroundImage:
                                   hasProfilePhoto
                                       ? NetworkImage(state.profilePhotoUrl)
@@ -98,27 +98,6 @@ class ProfilePersonalInformationView extends StatelessWidget {
                                       : const AssetImage(
                                         'assets/images/2th.jpg',
                                       ),
-                            ),
-                            Positioned(
-                              right: -2.w,
-                              bottom: -1.h,
-                              child: Container(
-                                width: 20.w,
-                                height: 20.w,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: AppColor.secondaryColor,
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Icon(
-                                  Icons.edit_outlined,
-                                  size: 12.sp,
-                                  color: AppColor.secondaryColor,
-                                ),
-                              ),
                             ),
                           ],
                         ),

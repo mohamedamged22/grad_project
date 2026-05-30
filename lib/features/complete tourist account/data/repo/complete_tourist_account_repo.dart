@@ -84,4 +84,21 @@ class CompleteTouristAccountRepo {
       throw ApiException(e.toString());
     }
   }
+
+  Future<Map<String, dynamic>> uploadProfilePhoto(String filePath) async {
+    try {
+      final formData = FormData.fromMap({
+        'file': await MultipartFile.fromFile(filePath),
+      });
+      final response = await _apiService.post(
+        '/tourist/profile/photo',
+        formData,
+      );
+      return response;
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    } catch (e) {
+      throw ApiException(e.toString());
+    }
+  }
 }

@@ -105,11 +105,45 @@ class GuideCreateTripPriceView extends StatelessWidget {
                       fontSize: 15.sp,
                     ),
                     SizedBox(height: 6.h),
-                    CustomDropdownField(
-                      hint: 'Select price',
-                      value: state.selectedPrice,
-                      items: cubit.priceOptions,
-                      onChanged: cubit.selectPrice,
+                    FormField<String>(
+                      initialValue: state.selectedPrice,
+                      validator: (value) {
+                        final price = value ?? state.selectedPrice;
+                        if (price == null || price.trim().isEmpty) {
+                          return 'Please select price per tourist';
+                        }
+                        final parsed = double.tryParse(price.trim());
+                        if (parsed == null || parsed <= 0) {
+                          return 'Price per tourist must be a valid number greater than 0';
+                        }
+                        return null;
+                      },
+                      builder: (field) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomDropdownField(
+                              hint: 'Select price',
+                              value: state.selectedPrice,
+                              items: cubit.priceOptions,
+                              onChanged: (value) {
+                                field.didChange(value);
+                                cubit.selectPrice(value);
+                              },
+                            ),
+                            if (field.hasError) ...[
+                              SizedBox(height: 6.h),
+                              Text(
+                                field.errorText ?? '',
+                                style: TextStyle(
+                                  color: Colors.red.shade600,
+                                  fontSize: 12.sp,
+                                ),
+                              ),
+                            ],
+                          ],
+                        );
+                      },
                     ),
                     SizedBox(height: 14.h),
                     CustomTextSemiBold(

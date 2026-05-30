@@ -1,6 +1,7 @@
 import 'package:beyond_the_pramids/core/constants/app_color.dart';
 import 'package:beyond_the_pramids/core/services/service_locator.dart';
 import 'package:beyond_the_pramids/core/utils/size_config.dart';
+import 'package:beyond_the_pramids/features/guide%20home/data/model/guide_trip_summary_model.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_my_trip_cubit/guide_my_trip_cubit.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/views/widgets/guide_filter_chip.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/views/widgets/guide_home_search_field.dart';
@@ -15,7 +16,7 @@ class MyTripView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => sl<GuideMyTripCubit>(),
+      create: (context) => sl<GuideMyTripCubit>()..loadTrips(),
       child: const _MyTripViewBody(),
     );
   }
@@ -23,44 +24,6 @@ class MyTripView extends StatelessWidget {
 
 class _MyTripViewBody extends StatelessWidget {
   const _MyTripViewBody();
-
-  static const List<_MyTripItemData> _newTrips = [
-    _MyTripItemData(
-      imagePath: 'assets/images/2th.jpg',
-      title: 'Ancient Wonder of Aswan',
-      location: 'Aswan',
-      dateRange: '1 Feb - 15 Feb, 2026',
-      pricePerPerson: '\$ 150 / person',
-      spots: '0/20 Spots',
-    ),
-    _MyTripItemData(
-      imagePath: 'assets/images/3th.jpg',
-      title: 'Ancient Wonder of Giza',
-      location: 'Giza',
-      dateRange: '1 Feb - 15 Feb, 2026',
-      pricePerPerson: '\$ 150 / person',
-      spots: '0/20 Spots',
-    ),
-  ];
-
-  static const List<_MyTripItemData> _upcomingTrips = [
-    _MyTripItemData(
-      imagePath: 'assets/images/trip.png',
-      title: 'Dahab Adventure',
-      location: 'Aswan',
-      dateRange: 'Mon 20 Feb 2026',
-      pricePerPerson: '10 tourists',
-      spots: '500 Applicants',
-    ),
-    _MyTripItemData(
-      imagePath: 'assets/images/trip.png',
-      title: 'Dahab Adventure',
-      location: 'Aswan',
-      dateRange: 'Mon 20 Feb 2026',
-      pricePerPerson: '10 tourists',
-      spots: '500 Applicants',
-    ),
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -73,8 +36,22 @@ class _MyTripViewBody extends StatelessWidget {
 
     return BlocBuilder<GuideMyTripCubit, GuideMyTripState>(
       builder: (context, state) {
-        final displayedTrips =
-            state.filter == MyTripFilter.upcoming ? _upcomingTrips : _newTrips;
+        final query = state.searchQuery.trim().toLowerCase();
+        final baseTrips = List<GuideTripSummaryModel>.from(state.trips);
+        if (state.filter == MyTripFilter.newTrips) {
+          baseTrips.sort((a, b) => b.id.compareTo(a.id));
+        }
+        final filteredTrips =
+            query.isEmpty
+                ? baseTrips
+                : baseTrips
+                    .where(
+                      (trip) =>
+                          trip.title.toLowerCase().contains(query) ||
+                          trip.city.toLowerCase().contains(query) ||
+                          trip.category.toLowerCase().contains(query),
+                    )
+                    .toList();
 
         return SafeArea(
           child: ColoredBox(
@@ -222,19 +199,62 @@ class _MyTripViewBody extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 10.h),
-                  ListView.separated(
-                    itemCount: displayedTrips.length,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    separatorBuilder: (_, __) => SizedBox(height: 12.h),
-                    itemBuilder: (context, index) {
-                      final item = displayedTrips[index];
-                      if (state.filter == MyTripFilter.upcoming) {
-                        return _UpcomingTripCard(item: item);
-                      }
-                      return _NewTripCard(item: item);
-                    },
-                  ),
+                  if (state.status == GuideMyTripStatus.loading)
+                    Padding(
+                      padding: EdgeInsets.only(top: 12.h),
+                      child: const Center(child: CircularProgressIndicator()),
+                    )
+                  else if (state.status == GuideMyTripStatus.failure)
+                    Padding(
+                      padding: EdgeInsets.only(top: 12.h),
+                      child: Center(
+                        child: Column(
+                          children: [
+                            Text(
+                              state.errorMessage ?? 'Failed to load trips',
+                              style: TextStyle(
+                                color: primaryText,
+                                fontSize: 12.sp,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            SizedBox(height: 8.h),
+                            TextButton(
+                              onPressed:
+                                  context.read<GuideMyTripCubit>().loadTrips,
+                              child: Text(
+                                'Retry',
+                                style: TextStyle(color: AppColor.secondaryColor),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  else if (filteredTrips.isEmpty)
+                    Padding(
+                      padding: EdgeInsets.only(top: 12.h),
+                      child: Center(
+                        child: Text(
+                          'No trips found',
+                          style: TextStyle(color: primaryText),
+                        ),
+                      ),
+                    )
+                  else
+                    ListView.separated(
+                      itemCount: filteredTrips.length,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      separatorBuilder: (_, __) => SizedBox(height: 12.h),
+                      itemBuilder: (context, index) {
+                        final item = filteredTrips[index];
+                        if (state.filter == MyTripFilter.upcoming) {
+                          return _UpcomingTripCard(item: item);
+                        }
+                        return _NewTripCard(item: item);
+                      },
+                    ),
                 ],
               ),
             ),
@@ -245,46 +265,33 @@ class _MyTripViewBody extends StatelessWidget {
   }
 }
 
-class _MyTripItemData {
-  final String imagePath;
-  final String title;
-  final String location;
-  final String dateRange;
-  final String pricePerPerson;
-  final String spots;
-
-  const _MyTripItemData({
-    required this.imagePath,
-    required this.title,
-    required this.location,
-    required this.dateRange,
-    required this.pricePerPerson,
-    required this.spots,
-  });
-}
-
 class _NewTripCard extends StatelessWidget {
-  final _MyTripItemData item;
+  final GuideTripSummaryModel item;
 
   const _NewTripCard({required this.item});
 
   @override
   Widget build(BuildContext context) {
+    final priceValue = item.pricePerTourist;
+    final priceText =
+        priceValue != null ? '\$${priceValue.toStringAsFixed(2)}' : '--';
+
     return GuideTripPreviewCard(
-      imagePath: item.imagePath,
+      imagePath: 'assets/images/trip.png',
+      imageUrl: item.normalizedCoverImageUrl,
       title: item.title,
-      location: item.location,
-      spots: item.spots,
-      dateRange: item.dateRange,
-      price: '\$150',
+      location: item.city,
+      spots: item.status.isNotEmpty ? item.status : '--',
+      dateRange: item.duration ?? 'TBD',
+      price: priceText,
       priceSuffix: 'guide_price_per_person_suffix'.tr(),
-      tag: 'guide_trip_tag_history'.tr(),
+      tag: item.category.isNotEmpty ? item.category : 'guide_trip_tag_history'.tr(),
     );
   }
 }
 
 class _UpcomingTripCard extends StatelessWidget {
-  final _MyTripItemData item;
+  final GuideTripSummaryModel item;
 
   const _UpcomingTripCard({required this.item});
 
@@ -298,6 +305,9 @@ class _UpcomingTripCard extends StatelessWidget {
             : AppColor.primaryColor;
     final secondaryMetaText =
       isDark ? const Color(0xFF9FB0BD) : AppColor.primaryColor.withValues(alpha: .55);
+    final priceValue = item.pricePerTourist;
+    final priceText =
+      priceValue != null ? '\$${priceValue.toStringAsFixed(2)}' : '--';
 
     return Container(
       decoration: BoxDecoration(
@@ -314,7 +324,7 @@ class _UpcomingTripCard extends StatelessWidget {
             child: Stack(
               children: [
                 Image.asset(
-                  item.imagePath,
+                  'assets/images/trip.png',
                   height: 98.h,
                   width: double.infinity,
                   fit: BoxFit.cover,
@@ -357,7 +367,7 @@ class _UpcomingTripCard extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        item.location,
+                        item.city,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 9.sp,
@@ -389,7 +399,7 @@ class _UpcomingTripCard extends StatelessWidget {
               ),
               SizedBox(width: 3.w),
               Text(
-                item.dateRange,
+                item.duration ?? 'TBD',
                 style: TextStyle(
                   fontSize: 9.sp,
                   color: secondaryMetaText,
@@ -397,7 +407,7 @@ class _UpcomingTripCard extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                item.pricePerPerson,
+                priceText,
                 style: TextStyle(
                   fontSize: 9.sp,
                   color: secondaryMetaText,

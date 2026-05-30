@@ -10,7 +10,7 @@ class GuideCreateTripSuccessView extends StatelessWidget {
   const GuideCreateTripSuccessView({super.key});
 
   static const String _uploadsBaseHost =
-      'https://josphine-magnipotent-vectorially.ngrok-free.dev';
+      'https://asmaa-project.karem.live';
 
   String _formatDateRange(String? startDate, String? endDate) {
     String formatOne(String? value) {

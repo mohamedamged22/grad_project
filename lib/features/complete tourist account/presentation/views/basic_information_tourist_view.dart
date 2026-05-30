@@ -98,7 +98,7 @@ class _BasicInformationTouristViewState
         } else if (state is TouristBasicInfoSuccess) {
           Navigator.of(context).pop();
 
-          Navigator.pushReplacementNamed(context, '/tripDetailsView');
+          Navigator.pushReplacementNamed(context, '/touristProfilePhotoView');
         } else if (state is TouristBasicInfoError) {
           if (Navigator.of(context).canPop()) Navigator.of(context).pop();
           showSnackBar(context, state.message, isSuccess: false);
