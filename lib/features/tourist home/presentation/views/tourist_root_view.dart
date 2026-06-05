@@ -1,8 +1,9 @@
 import 'package:beyond_the_pramids/core/constants/app_color.dart';
 import 'package:beyond_the_pramids/core/utils/size_config.dart';
-import 'package:beyond_the_pramids/features/tourist%20home/presentation/views/tourist_discover_view.dart';
+import 'package:beyond_the_pramids/features/tourist%20home/presentation/views/tourist_guides_view.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/presentation/views/tourist_home_view.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/presentation/views/tourist_profile_view.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -18,8 +19,8 @@ class _TouristRootViewState extends State<TouristRootView> {
 
   final _pages = const [
     TouristHomeView(),
-    _TouristPlaceholderPage(title: 'Customize'),
-    TouristDiscoverView(),
+    TouristGuidesView(),
+    _TouristPlaceholderPage(titleKey: 'tourist_nav_chat'),
     TouristProfileView(),
   ];
 
@@ -27,19 +28,19 @@ class _TouristRootViewState extends State<TouristRootView> {
   Widget build(BuildContext context) {
     final tabs = [
       _TouristTabData(
-        label: 'Home',
+        label: 'tourist_nav_home'.tr(),
         assetPath: 'assets/svg/home-04.svg',
       ),
       _TouristTabData(
-        label: 'Customize',
-        iconData: Icons.tune_rounded,
+        label: 'tourist_nav_guides'.tr(),
+        iconData: Icons.badge_outlined,
       ),
       _TouristTabData(
-        label: 'Discover',
-        iconData: Icons.explore_rounded,
+        label: 'tourist_nav_chat'.tr(),
+        iconData: Icons.chat_bubble_outline_rounded,
       ),
       _TouristTabData(
-        label: 'Profile',
+        label: 'tourist_nav_profile'.tr(),
         assetPath: 'assets/svg/profile.svg',
       ),
     ];
@@ -175,9 +176,9 @@ class _TouristBottomNavBar extends StatelessWidget {
 }
 
 class _TouristPlaceholderPage extends StatelessWidget {
-  final String title;
+  final String titleKey;
 
-  const _TouristPlaceholderPage({required this.title});
+  const _TouristPlaceholderPage({required this.titleKey});
 
   @override
   Widget build(BuildContext context) {
@@ -185,7 +186,7 @@ class _TouristPlaceholderPage extends StatelessWidget {
 
     return Center(
       child: Text(
-        '$title (Coming soon)',
+        '${titleKey.tr()} (${"coming_soon".tr()})',
         style: TextStyle(
           fontSize: 18.sp,
           fontWeight: FontWeight.w700,

@@ -6,6 +6,7 @@ import 'package:beyond_the_pramids/features/tourist%20home/presentation/views/to
 import 'package:beyond_the_pramids/features/tourist%20home/presentation/views/tourist_saved_trips_view.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/presentation/views/tourist_settings_view.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/presentation/views/tourist_trip_history_view.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -30,27 +31,27 @@ class TouristProfileView extends StatelessWidget {
         }
       },
       builder: (context, state) {
-        String name = 'Tourist';
-        String subtitle = 'Traveler';
+        String name = 'tourist_title'.tr();
+        String subtitle = 'traveler'.tr();
         String? profilePhoto;
 
         if (state is TouristProfileLoaded) {
-          name = state.profileData['name'] ?? 'Tourist';
+          name = state.profileData['name'] ?? 'tourist_title'.tr();
           if (name.isEmpty) {
             final firstName = state.profileData['firstName'] ?? '';
             final lastName = state.profileData['lastName'] ?? '';
             name = '$firstName $lastName'.trim();
-            if (name.isEmpty) name = 'Tourist';
+            if (name.isEmpty) name = 'tourist_title'.tr();
           }
-          subtitle = state.profileData['email'] ?? 'Traveler';
+          subtitle = state.profileData['email'] ?? 'traveler'.tr();
           profilePhoto = state.profileData['profilePhoto'];
         } else if (state is TouristProfileLoading) {
-          name = 'Loading...';
+          name = 'loading'.tr();
           subtitle = '';
         } else if (context.read<TouristProfileCubit>().currentProfile != null) {
           final profile = context.read<TouristProfileCubit>().currentProfile!;
-          name = profile['name'] ?? 'Tourist';
-          subtitle = profile['email'] ?? 'Traveler';
+          name = profile['name'] ?? 'tourist_title'.tr();
+          subtitle = profile['email'] ?? 'traveler'.tr();
           profilePhoto = profile['profilePhoto'];
         }
 
@@ -64,7 +65,7 @@ class TouristProfileView extends StatelessWidget {
             centerTitle: true,
             automaticallyImplyLeading: false,
             title: Text(
-              'Profile',
+              'profile_title'.tr(),
               style: TextStyle(
                 color: primaryText,
                 fontWeight: FontWeight.w700,
@@ -117,7 +118,7 @@ class TouristProfileView extends StatelessWidget {
                   SizedBox(height: 14.h),
                   _SettingsItem(
                     icon: Icons.person_outline,
-                    title: 'Personal information',
+                    title: 'personal_information'.tr(),
                     borderColor: borderColor,
                     backgroundColor: cardBg,
                     defaultTextColor: primaryText,
@@ -143,7 +144,7 @@ class TouristProfileView extends StatelessWidget {
                   SizedBox(height: 8.h),
                   _SettingsItem(
                     icon: Icons.bookmark_border_rounded,
-                    title: 'Saved Trips',
+                    title: 'saved_trips'.tr(),
                     borderColor: borderColor,
                     backgroundColor: cardBg,
                     defaultTextColor: primaryText,
@@ -163,7 +164,7 @@ class TouristProfileView extends StatelessWidget {
                   SizedBox(height: 8.h),
                   _SettingsItem(
                     icon: Icons.receipt_long_outlined,
-                    title: 'Trip History',
+                    title: 'trip_history'.tr(),
                     borderColor: borderColor,
                     backgroundColor: cardBg,
                     defaultTextColor: primaryText,
@@ -183,7 +184,7 @@ class TouristProfileView extends StatelessWidget {
                   SizedBox(height: 8.h),
                   _SettingsItem(
                     icon: Icons.settings_outlined,
-                    title: 'Settings',
+                    title: 'settings'.tr(),
                     borderColor: borderColor,
                     backgroundColor: cardBg,
                     defaultTextColor: primaryText,
@@ -203,7 +204,7 @@ class TouristProfileView extends StatelessWidget {
                   SizedBox(height: 8.h),
                   _SettingsItem(
                     icon: Icons.shield_outlined,
-                    title: 'Privacy & Policy',
+                    title: 'privacy_policy'.tr(),
                     borderColor: borderColor,
                     backgroundColor: cardBg,
                     defaultTextColor: primaryText,
@@ -212,7 +213,7 @@ class TouristProfileView extends StatelessWidget {
                   SizedBox(height: 8.h),
                   _SettingsItem(
                     icon: Icons.logout,
-                    title: 'Sign out',
+                    title: 'sign_out'.tr(),
                     borderColor: borderColor,
                     backgroundColor: cardBg,
                     defaultTextColor: primaryText,

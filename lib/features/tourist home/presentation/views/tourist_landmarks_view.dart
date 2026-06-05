@@ -5,6 +5,7 @@ import 'package:beyond_the_pramids/features/guide%20home/presentation/views/widg
 import 'package:beyond_the_pramids/features/tourist%20home/data/repo/tourist_favorites_repo.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/presentation/manager/tourist_landmarks_cubit/tourist_landmarks_cubit.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/presentation/views/widgets/tourist_landmark_card.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -64,7 +65,7 @@ class _TouristLandmarksViewState extends State<TouristLandmarksView> {
             ),
           ),
           title: Text(
-            'Iconic landmarks',
+            'tourist_home_iconic_landmarks'.tr(),
             style: TextStyle(
               fontSize: 20.sp,
               fontWeight: FontWeight.w700,
@@ -79,7 +80,7 @@ class _TouristLandmarksViewState extends State<TouristLandmarksView> {
               children: [
                 SizedBox(height: 6.h),
                 GuideHomeSearchField(
-                  hintText: 'Discover Egypt',
+                  hintText: 'tourist_home_search'.tr(),
                   onChanged: (value) {
                     setState(() => _searchQuery = value);
                     context.read<TouristLandmarksCubit>().fetchLandmarks(
@@ -101,7 +102,8 @@ class _TouristLandmarksViewState extends State<TouristLandmarksView> {
                       if (state.status == TouristLandmarksStatus.failure) {
                         return Center(
                           child: Text(
-                            state.errorMessage ?? 'Failed to load landmarks',
+                            state.errorMessage ??
+                                'tourist_home_landmarks_failed'.tr(),
                             style: TextStyle(
                               color:
                                   isDark ? Colors.white : AppColor.primaryColor,
@@ -116,8 +118,8 @@ class _TouristLandmarksViewState extends State<TouristLandmarksView> {
                         return Center(
                           child: Text(
                             _searchQuery.trim().isEmpty
-                                ? 'No landmarks found'
-                                : 'No matches for your search',
+                                ? 'tourist_home_landmarks_empty'.tr()
+                                : 'tourist_landmarks_no_matches'.tr(),
                             style: TextStyle(
                               color:
                                   isDark ? Colors.white : AppColor.primaryColor,

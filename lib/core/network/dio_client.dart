@@ -56,7 +56,7 @@ class DioClient {
           final isAuthLoginRequest = path.contains('/auth/login');
 
           // For login endpoint, 401 means bad credentials, not expired session.
-          if (!isAuthLoginRequest && (statusCode == 401 || statusCode == 403)) {
+          if (!isAuthLoginRequest && statusCode == 401) {
             debugPrint('🔓 Session expired or unauthorized - clearing session');
             await PrefHelper.clearSession();
             NavigationService.redirectToSignIn();

@@ -48,6 +48,7 @@ import 'package:beyond_the_pramids/features/guide_trip_map/presentation/manager/
 import 'package:beyond_the_pramids/features/guide_trip_map/presentation/views/guide_trip_map_view.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/views/profile_personal_information_view.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/views/guide_root_view.dart';
+import 'package:beyond_the_pramids/features/guide%20home/presentation/views/guide_settings_view.dart';
 import 'package:beyond_the_pramids/features/onboarding/presentation/views/onboarding_view_1.dart';
 import 'package:beyond_the_pramids/features/onboarding/presentation/views/onboarding_view_2.dart';
 import 'package:beyond_the_pramids/features/onboarding/presentation/views/onboarding_view_3.dart';
@@ -55,6 +56,7 @@ import 'package:beyond_the_pramids/features/splash/presentation/views/splash_vie
 import 'package:beyond_the_pramids/features/tourist%20home/data/mock/tourist_home_mock_data.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/data/model/tourist_landmark_list_item.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/data/model/tourist_public_trip.dart';
+import 'package:beyond_the_pramids/features/tourist%20home/data/model/tour_guide_profile.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/presentation/manager/tourist_landmark_details_cubit/tourist_landmark_details_cubit.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/presentation/manager/tourist_landmark_trips_cubit/tourist_landmark_trips_cubit.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/presentation/views/tourist_landmark_details_view.dart';
@@ -63,6 +65,7 @@ import 'package:beyond_the_pramids/features/tourist%20home/presentation/views/to
 import 'package:beyond_the_pramids/features/tourist%20home/presentation/views/tourist_root_view.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/presentation/views/tourist_trip_details_view.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/presentation/manager/tourist_trip_details_cubit/tourist_trip_details_cubit.dart';
+import 'package:beyond_the_pramids/features/tourist%20home/presentation/manager/tour_guide_profile_cubit/tour_guide_profile_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -231,7 +234,21 @@ class AppRoute {
         page = Scaffold(body: Center(child: Text('no_route'.tr())));
         break;
       case '/tourGuideProfileView':
-        page = const TourGuideProfileView();
+        final args = settings.arguments;
+        final guide = args is TourGuideProfile ? args : null;
+        final guideId = args is int ? args : guide?.id;
+        final cubit = sl<TourGuideProfileCubit>();
+        if (guideId != null) {
+          cubit.fetchProfile(guideId);
+          cubit.fetchGuideTrips(guideId: guideId);
+        }
+        page = BlocProvider(
+          create: (context) => cubit,
+          child: TourGuideProfileView(
+            guideId: guideId,
+            initialGuide: guide,
+          ),
+        );
         break;
       case '/guideCreateTripView':
         page = BlocProvider(
@@ -280,6 +297,14 @@ class AppRoute {
                   sl<ProfilePersonalInformationCubit>()
                     ..loadInitialData(initialGuideName: guideName),
           child: const ProfilePersonalInformationView(),
+        );
+        break;
+      case '/guideSettingsView':
+        final args = settings.arguments;
+        final cubit = args is GuideProfileCubit ? args : sl<GuideProfileCubit>();
+        page = BlocProvider.value(
+          value: cubit,
+          child: const GuideSettingsView(),
         );
         break;
       case '/onboarding':

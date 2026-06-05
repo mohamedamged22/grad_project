@@ -1,52 +1,130 @@
 import 'package:beyond_the_pramids/core/constants/app_color.dart';
 import 'package:beyond_the_pramids/core/utils/size_config.dart';
+import 'package:beyond_the_pramids/features/guide%20home/data/model/guide_trip_summary_model.dart';
+import 'package:beyond_the_pramids/features/tourist%20home/data/model/tour_guide_profile.dart';
+import 'package:beyond_the_pramids/features/tourist%20home/presentation/manager/tour_guide_profile_cubit/tour_guide_profile_cubit.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class TourGuideProfileView extends StatelessWidget {
-  const TourGuideProfileView({super.key});
+  final int? guideId;
+  final TourGuideProfile? initialGuide;
 
-  static const _specialties = <String>[
-    'History',
-    'Culture',
-    'Photography',
-    'Food',
+  const TourGuideProfileView({super.key, this.guideId, this.initialGuide});
+
+  static const _fallbackSpecialtyKeys = <String>[
+    'tour_guide_specialty_history',
+    'tour_guide_specialty_culture',
+    'tour_guide_specialty_photography',
+    'tour_guide_specialty_food',
   ];
 
-  static const _languages = <String>['English', 'Spanish'];
-
-  static const _guideTrips = <_GuideTripCardData>[
-    _GuideTripCardData(
-      imagePath: 'assets/images/2th.jpg',
-      title: 'Ancient Wonders Of Aswan',
-      price: r'$ 300',
-      dateText: '24 Feb- 30 Feb, 2026',
-    ),
-    _GuideTripCardData(
-      imagePath: 'assets/images/3th.jpg',
-      title: 'Ancient Wonders Of Giza',
-      price: r'$ 210',
-      dateText: '1 Feb- 15 Feb, 2026',
-    ),
-    _GuideTripCardData(
-      imagePath: 'assets/images/2th.jpg',
-      title: 'Ancient Wonders Of Aswan',
-      price: r'$ 150',
-      dateText: '1 Feb- 15 Feb, 2026',
-    ),
+  static const _fallbackLanguageKeys = <String>[
+    'lang_english',
+    'lang_spanish',
   ];
+
+
+  String _resolveLocation(TourGuideProfile? guide) {
+    if (guide == null) {
+      return 'Cairo, Giza';
+    }
+    if (guide.city.trim().isNotEmpty) {
+      return guide.city;
+    }
+    if (guide.coveredArea.trim().isNotEmpty) {
+      return guide.coveredArea;
+    }
+    return 'Cairo, Giza';
+  }
+
+  List<String> _resolveSpecialties(
+    BuildContext context,
+    TourGuideProfile? guide,
+  ) {
+    if (guide == null) {
+      return _fallbackSpecialtyKeys.map((key) => key.tr()).toList();
+    }
+    final items = guide.specialization
+        .map((item) => item.trim())
+        .where((item) => item.isNotEmpty)
+        .toList();
+    return items.isNotEmpty
+        ? items
+        : _fallbackSpecialtyKeys.map((key) => key.tr()).toList();
+  }
+
+  List<String> _resolveLanguages(
+    BuildContext context,
+    TourGuideProfile? guide,
+  ) {
+    if (guide == null) {
+      return _fallbackLanguageKeys.map((key) => key.tr()).toList();
+    }
+    final items = guide.languages
+        .map((item) => item.language.trim())
+        .where((item) => item.isNotEmpty)
+        .toList();
+    return items.isNotEmpty
+        ? items
+        : _fallbackLanguageKeys.map((key) => key.tr()).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final pageBg = isDark ? const Color(0xFF0F1A24) : const Color(0xFFF1F4F6);
+    return BlocBuilder<TourGuideProfileCubit, TourGuideProfileState>(
+      builder: (context, state) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final pageBg = Colors.white;
+        final guide = state.guide ?? initialGuide;
 
-    return Scaffold(
-      backgroundColor: pageBg,
-      body: SingleChildScrollView(
-        padding: EdgeInsets.only(bottom: 14.h),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+        if (state.status == TourGuideProfileStatus.loading && guide == null) {
+          return Scaffold(
+            backgroundColor: pageBg,
+            body: const Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (state.status == TourGuideProfileStatus.failure && guide == null) {
+          return Scaffold(
+            backgroundColor: pageBg,
+            body: Center(
+              child: Text(
+                state.errorMessage ?? 'tour_guide_profile_load_failed'.tr(),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: isDark ? Colors.white : AppColor.primaryColor,
+                ),
+              ),
+            ),
+          );
+        }
+
+        final profileName = guide?.name.trim().isNotEmpty == true
+            ? guide!.name
+            : 'Ahmed Sameh';
+        final profileLocation = _resolveLocation(guide);
+        final profilePhoto = guide?.profilePhoto.trim().isNotEmpty == true
+            ? guide!.profilePhoto
+            : 'assets/images/2th.jpg';
+        final specialties = _resolveSpecialties(context, guide);
+        final languages = _resolveLanguages(context, guide);
+        final memberSinceDate =
+            context.locale.languageCode == 'ar' ? 'يناير 2026' : 'Jan 2026';
+        final memberSinceLabel =
+            'tour_guide_profile_member_since'.tr(namedArgs: {
+          'date': memberSinceDate,
+        });
+        final trips = state.trips;
+
+        return Scaffold(
+          backgroundColor: pageBg,
+          body: SingleChildScrollView(
+            padding: EdgeInsets.only(bottom: 14.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
             SizedBox(
               height: 205.h,
               width: double.infinity,
@@ -95,12 +173,7 @@ class TourGuideProfileView extends StatelessWidget {
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(24.r),
-                          child: Image.asset(
-                            'assets/images/2th.jpg',
-                            width: 92.w,
-                            height: 92.w,
-                            fit: BoxFit.cover,
-                          ),
+                          child: _ProfileAvatar(photoUrl: profilePhoto),
                         ),
                       ),
                     ),
@@ -111,7 +184,7 @@ class TourGuideProfileView extends StatelessWidget {
             SizedBox(height: 8.h),
             Center(
               child: Text(
-                'Ahmed Sameh',
+                profileName,
                 style: TextStyle(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w700,
@@ -131,7 +204,7 @@ class TourGuideProfileView extends StatelessWidget {
                   ),
                   SizedBox(width: 2.w),
                   Text(
-                    'Cairo, Giza',
+                    profileLocation,
                     style: TextStyle(
                       fontSize: 12.sp,
                       fontWeight: FontWeight.w500,
@@ -146,7 +219,7 @@ class TourGuideProfileView extends StatelessWidget {
             SizedBox(height: 3.h),
             Center(
               child: Text(
-                'Member Since Jan 2026',
+                memberSinceLabel,
                 style: TextStyle(
                   fontSize: 11.sp,
                   fontWeight: FontWeight.w500,
@@ -161,12 +234,27 @@ class TourGuideProfileView extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 18.w),
               child: IntrinsicHeight(
                 child: Row(
-                  children: const [
-                    Expanded(child: _TopStat(value: '120', label: 'Trips Led')),
-                    _StatsDivider(),
-                    Expanded(child: _TopStat(value: '3.6', label: 'Rating')),
-                    _StatsDivider(),
-                    Expanded(child: _TopStat(value: '< 1 hour', label: 'Response')),
+                  children: [
+                    Expanded(
+                      child: _TopStat(
+                        value: '120',
+                        label: 'tour_guide_profile_trips_led'.tr(),
+                      ),
+                    ),
+                    const _StatsDivider(),
+                    Expanded(
+                      child: _TopStat(
+                        value: '3.6',
+                        label: 'tour_guide_profile_rating'.tr(),
+                      ),
+                    ),
+                    const _StatsDivider(),
+                    Expanded(
+                      child: _TopStat(
+                        value: 'tour_guide_profile_response_time_short'.tr(),
+                        label: 'tour_guide_profile_response'.tr(),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -181,7 +269,7 @@ class TourGuideProfileView extends StatelessWidget {
                   color: AppColor.secondaryColor,
                 ),
                 label: Text(
-                  'Message',
+                  'tour_guide_profile_message'.tr(),
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w700,
@@ -202,17 +290,14 @@ class TourGuideProfileView extends StatelessWidget {
               ),
             ),
             SizedBox(height: 14.h),
-            const _SectionTitle(title: 'About'),
+            _SectionTitle(title: 'tour_guide_profile_about_title'.tr()),
             SizedBox(height: 8.h),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 14.w),
               child: _RoundedCard(
                 isDark: isDark,
                 child: Text(
-                  'Discover the magic of Egypt with a local guide. '
-                  'I will show you hidden gems, history, and real culture. '
-                  'Fun, safe, and memorable tours guaranteed. '
-                  'Your journey starts here!',
+                  'tour_guide_profile_about_fallback'.tr(),
                   style: TextStyle(
                     fontSize: 10.sp,
                     height: 1.5,
@@ -224,7 +309,7 @@ class TourGuideProfileView extends StatelessWidget {
               ),
             ),
             SizedBox(height: 14.h),
-            const _SectionTitle(title: 'Specialties'),
+            _SectionTitle(title: 'tour_guide_profile_specialties'.tr()),
             SizedBox(height: 8.h),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 14.w),
@@ -232,12 +317,12 @@ class TourGuideProfileView extends StatelessWidget {
                 spacing: 8.w,
                 runSpacing: 8.h,
                 children: [
-                  for (final item in _specialties) _ProfileChip(label: item),
+                  for (final item in specialties) _ProfileChip(label: item),
                 ],
               ),
             ),
             SizedBox(height: 14.h),
-            const _SectionTitle(title: 'Languages'),
+            _SectionTitle(title: 'tour_guide_profile_languages'.tr()),
             SizedBox(height: 8.h),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 14.w),
@@ -245,28 +330,108 @@ class TourGuideProfileView extends StatelessWidget {
                 spacing: 8.w,
                 runSpacing: 8.h,
                 children: [
-                  for (final item in _languages) _ProfileChip(label: item),
+                  for (final item in languages) _ProfileChip(label: item),
                 ],
               ),
             ),
             SizedBox(height: 14.h),
-            const _SectionTitle(title: 'Trips by Ahmed Sameh'),
+            _SectionTitle(
+              title: 'tour_guide_profile_trips_by'
+                  .tr(namedArgs: {'name': profileName}),
+            ),
             SizedBox(height: 8.h),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 14.w),
               child: Column(
                 children: [
-                  for (final item in _guideTrips)
+                  if (state.tripsStatus == TourGuideTripsStatus.loading &&
+                      trips.isEmpty)
                     Padding(
-                      padding: EdgeInsets.only(bottom: 10.h),
-                      child: _GuideTripMiniCard(item: item),
-                    ),
+                      padding: EdgeInsets.only(top: 12.h),
+                      child: const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  else if (state.tripsStatus == TourGuideTripsStatus.failure &&
+                      trips.isEmpty)
+                    Padding(
+                      padding: EdgeInsets.only(top: 8.h),
+                      child: Text(
+                      state.errorMessage ??
+                        'tour_guide_profile_trips_load_failed'.tr(),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          color:
+                              isDark ? Colors.white : AppColor.primaryColor,
+                        ),
+                      ),
+                    )
+                  else if (trips.isEmpty)
+                    Padding(
+                      padding: EdgeInsets.only(top: 8.h),
+                      child: Text(
+                        'tour_guide_profile_no_trips'.tr(),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          color:
+                              isDark ? Colors.white : AppColor.primaryColor,
+                        ),
+                      ),
+                    )
+                  else
+                    for (final item in trips)
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 10.h),
+                        child: _GuideTripMiniCard(item: item),
+                      ),
                 ],
               ),
             ),
-          ],
-        ),
-      ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _ProfileAvatar extends StatelessWidget {
+  final String photoUrl;
+
+  const _ProfileAvatar({required this.photoUrl});
+
+  @override
+  Widget build(BuildContext context) {
+    final hasNetworkImage = photoUrl.startsWith('http');
+    if (hasNetworkImage) {
+      return Image.network(
+        photoUrl,
+        width: 92.w,
+        height: 92.w,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) {
+          return _fallbackAvatar();
+        },
+      );
+    }
+
+    return Image.asset(
+      photoUrl,
+      width: 92.w,
+      height: 92.w,
+      fit: BoxFit.cover,
+    );
+  }
+
+  Widget _fallbackAvatar() {
+    return Image.asset(
+      'assets/images/2th.jpg',
+      width: 92.w,
+      height: 92.w,
+      fit: BoxFit.cover,
     );
   }
 }
@@ -397,13 +562,17 @@ class _ProfileChip extends StatelessWidget {
 }
 
 class _GuideTripMiniCard extends StatelessWidget {
-  final _GuideTripCardData item;
+  final GuideTripSummaryModel item;
 
   const _GuideTripMiniCard({required this.item});
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final coverUrl = item.normalizedCoverImageUrl;
+    final priceText = _resolvePrice();
+    final dateText = _resolveDateRange();
 
     return Container(
       padding: EdgeInsets.all(1.w),
@@ -418,12 +587,15 @@ class _GuideTripMiniCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.horizontal(left: Radius.circular(20.r)),
-            child: Image.asset(
-              item.imagePath,
-              width: 130.w,
-              height: 108.h,
-              fit: BoxFit.cover,
-            ),
+            child: coverUrl != null && coverUrl.isNotEmpty
+                ? Image.network(
+                    coverUrl,
+                    width: 130.w,
+                    height: 108.h,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => _fallbackImage(),
+                  )
+                : _fallbackImage(),
           ),
           SizedBox(width: 10.w),
           Expanded(
@@ -454,7 +626,7 @@ class _GuideTripMiniCard extends StatelessWidget {
                       SizedBox(width: 3.w),
                       Expanded(
                         child: Text(
-                          item.dateText,
+                          dateText,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -472,7 +644,7 @@ class _GuideTripMiniCard extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          '${item.price} / person',
+                          '$priceText / person',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -514,18 +686,28 @@ class _GuideTripMiniCard extends StatelessWidget {
       ),
     );
   }
-}
 
-class _GuideTripCardData {
-  final String imagePath;
-  final String title;
-  final String price;
-  final String dateText;
+  String _resolvePrice() {
+    final price = item.pricePerTourist;
+    if (price == null) return r'$ 0';
+    final value = price % 1 == 0 ? price.toInt().toString() : price.toString();
+    return '\$ $value';
+  }
 
-  const _GuideTripCardData({
-    required this.imagePath,
-    required this.title,
-    required this.price,
-    required this.dateText,
-  });
+  String _resolveDateRange() {
+    final start = item.startDate?.trim() ?? '';
+    final end = item.endDate?.trim() ?? '';
+    if (start.isEmpty && end.isEmpty) return 'Date not set';
+    if (start.isNotEmpty && end.isNotEmpty) return '$start - $end';
+    return start.isNotEmpty ? start : end;
+  }
+
+  Widget _fallbackImage() {
+    return Image.asset(
+      'assets/images/2th.jpg',
+      width: 130.w,
+      height: 108.h,
+      fit: BoxFit.cover,
+    );
+  }
 }

@@ -1,5 +1,6 @@
 import 'package:beyond_the_pramids/core/constants/app_color.dart';
 import 'package:beyond_the_pramids/core/utils/size_config.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -23,13 +24,19 @@ class _TouristDiscoverViewState extends State<TouristDiscoverView> {
 
       if (picked == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No image selected')),
+          SnackBar(content: Text('tourist_discover_no_image_selected'.tr())),
         );
         return;
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Selected: ${picked.name}')),
+        SnackBar(
+          content: Text(
+            'tourist_discover_selected'.tr(namedArgs: {
+              'name': picked.name,
+            }),
+          ),
+        ),
       );
     } on PlatformException catch (e) {
       if (!mounted) {
@@ -38,8 +45,13 @@ class _TouristDiscoverViewState extends State<TouristDiscoverView> {
       final channelError = (e.code == 'channel-error');
       final message =
           channelError
-              ? 'Image picker not initialized. Please stop app and run again.'
-              : 'Could not open ${source == ImageSource.camera ? 'camera' : 'gallery'}.';
+              ? 'tourist_discover_picker_not_initialized'.tr()
+              : 'tourist_discover_open_failed'.tr(namedArgs: {
+                'source':
+                    source == ImageSource.camera
+                        ? 'tourist_discover_source_camera'.tr()
+                        : 'tourist_discover_source_gallery'.tr(),
+              });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(message)),
       );
@@ -57,7 +69,7 @@ class _TouristDiscoverViewState extends State<TouristDiscoverView> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'Discover',
+              'tourist_discover_title'.tr(),
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16.sp,
@@ -68,13 +80,13 @@ class _TouristDiscoverViewState extends State<TouristDiscoverView> {
             SizedBox(height: 22.h),
             _DiscoverActionCard(
               icon: Icons.camera_alt_outlined,
-              text: 'Take, Upload a photo of any Egyptian\nlandmark to learn more',
+              text: 'tourist_discover_action_camera'.tr(),
               onTap: () => _pickImage(ImageSource.camera),
             ),
             SizedBox(height: 14.h),
             _DiscoverActionCard(
               icon: Icons.photo_library_outlined,
-              text: 'Scan any Egyptian landmark to learn more',
+              text: 'tourist_discover_action_gallery'.tr(),
               onTap: () => _pickImage(ImageSource.gallery),
             ),
           ],

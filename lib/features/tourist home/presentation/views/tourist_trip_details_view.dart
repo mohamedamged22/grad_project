@@ -4,6 +4,7 @@ import 'package:beyond_the_pramids/core/utils/size_config.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/data/model/tourist_public_trip.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/data/repo/tourist_favorites_repo.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/presentation/manager/tourist_trip_details_cubit/tourist_trip_details_cubit.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -223,17 +224,23 @@ class _TouristTripDetailsViewState extends State<TouristTripDetailsView> {
                 children: [
                   _TripStat(
                     icon: Icons.calendar_month_rounded,
-                    label: 'Date',
-                    value: dateRange.isEmpty ? 'Flexible' : dateRange,
+                    label: 'trip_details_date'.tr(),
+                    value:
+                        dateRange.isEmpty
+                            ? 'pricing_duration_flexible'.tr()
+                            : dateRange,
                   ),
                   _TripStat(
                     icon: Icons.access_time_rounded,
-                    label: 'Duration',
-                    value: duration.isEmpty ? 'Flexible' : duration,
+                    label: 'trip_details_duration'.tr(),
+                    value:
+                        duration.isEmpty
+                            ? 'pricing_duration_flexible'.tr()
+                            : duration,
                   ),
                   _TripStat(
                     icon: Icons.people_outline_rounded,
-                    label: 'Group',
+                    label: 'trip_details_group'.tr(),
                     value: groupSize.isEmpty ? '-' : groupSize,
                   ),
                 ],
@@ -309,7 +316,7 @@ class _TouristTripDetailsViewState extends State<TouristTripDetailsView> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 12.w),
               child: Text(
-                'About this Trip',
+                'trip_details_about'.tr(),
                 style: TextStyle(
                   fontSize: 18.sp,
                   fontWeight: FontWeight.w700,
@@ -335,7 +342,7 @@ class _TouristTripDetailsViewState extends State<TouristTripDetailsView> {
                 ),
                 child: Text(
                   description.isEmpty
-                      ? 'No description available yet.'
+                      ? 'trip_details_no_description'.tr()
                       : description,
                   style: TextStyle(
                     fontSize: 10.sp,
@@ -352,7 +359,7 @@ class _TouristTripDetailsViewState extends State<TouristTripDetailsView> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 12.w),
               child: Text(
-                "What's Included",
+                'trip_details_included'.tr(),
                 style: TextStyle(
                   fontSize: 18.sp,
                   fontWeight: FontWeight.w700,
@@ -368,7 +375,9 @@ class _TouristTripDetailsViewState extends State<TouristTripDetailsView> {
                 children:
                     inclusions.isEmpty
                         ? [
-                          const _IncludedItem(text: 'No inclusions listed'),
+                          _IncludedItem(
+                            text: 'trip_details_no_inclusions'.tr(),
+                          ),
                         ]
                         : inclusions
                             .map((item) => _IncludedItem(text: item))
@@ -379,7 +388,7 @@ class _TouristTripDetailsViewState extends State<TouristTripDetailsView> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 12.w),
               child: Text(
-                'Tour Guide',
+                'trip_details_tour_guide'.tr(),
                 style: TextStyle(
                   fontSize: 17.sp,
                   fontWeight: FontWeight.w700,
@@ -399,7 +408,7 @@ class _TouristTripDetailsViewState extends State<TouristTripDetailsView> {
                 ),
                 child: guide == null
                     ? Text(
-                        'Guide details unavailable',
+                  'trip_details_guide_unavailable'.tr(),
                         style: TextStyle(
                           fontSize: 12.sp,
                           color:
@@ -448,7 +457,8 @@ class _TouristTripDetailsViewState extends State<TouristTripDetailsView> {
                                 ),
                                 SizedBox(height: 2.h),
                                 Text(
-                                  '⭐ ${guide.rating} • ${guide.yearsOfExperience} yrs',
+                                
+                                  '⭐ ${guide.rating} • ${guide.yearsOfExperience} ${"years_short".tr()}',
                                   style: TextStyle(
                                     fontSize: 12.sp,
                                     color:
@@ -474,7 +484,7 @@ class _TouristTripDetailsViewState extends State<TouristTripDetailsView> {
                                 vertical: 4.h,
                               ),
                               child: Text(
-                                'View Profile >',
+                                'trip_details_view_profile'.tr(),
                                 style: TextStyle(
                                   fontSize: 12.sp,
                                   color: AppColor.secondaryColor,
@@ -491,7 +501,7 @@ class _TouristTripDetailsViewState extends State<TouristTripDetailsView> {
               Padding(
                 padding: EdgeInsets.fromLTRB(12.w, 8.h, 12.w, 0),
                 child: Text(
-                  state.errorMessage ?? 'Failed to load trip details',
+                  state.errorMessage ?? 'trip_details_load_failed'.tr(),
                   style: TextStyle(
                     fontSize: 12.sp,
                     color: Colors.redAccent,
@@ -503,7 +513,7 @@ class _TouristTripDetailsViewState extends State<TouristTripDetailsView> {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 12.w),
                 child: Text(
-                  'Status: $status',
+                  'trip_details_status'.tr(namedArgs: {'status': status}),
                   style: TextStyle(
                     fontSize: 11.sp,
                     fontWeight: FontWeight.w600,
@@ -551,7 +561,7 @@ class _TouristTripDetailsViewState extends State<TouristTripDetailsView> {
                       ),
                     ),
                     TextSpan(
-                      text: ' /person',
+                      text: 'price_per_person_suffix'.tr(),
                       style: TextStyle(
                         fontSize: 11.sp,
                         color:
@@ -577,7 +587,7 @@ class _TouristTripDetailsViewState extends State<TouristTripDetailsView> {
                     ),
                   ),
                   child: Text(
-                    'Book Now',
+                    'trip_details_book_now'.tr(),
                     style: TextStyle(
                       fontSize: 12.sp,
                       fontWeight: FontWeight.w700,

@@ -48,10 +48,25 @@ class AuthRepo {
       await PrefHelper.saveToken(token);
       await PrefHelper.setProfileCompleted(true);
 
-      isGuest = false;
-      _currentUser = user;
+      final roleFromLogin = _normalizeRole(_extractRoleFromResponse(response));
+      UserModel? profileUser;
 
-      return user;
+      if (roleFromLogin != null) {
+        await PrefHelper.saveUserRole(roleFromLogin);
+      } else {
+        try {
+          profileUser = await getProfileData();
+          final profileRole = _normalizeRole(profileUser?.role);
+          if (profileRole != null) {
+            await PrefHelper.saveUserRole(profileRole);
+          }
+        } catch (_) {}
+      }
+
+      isGuest = false;
+      _currentUser = profileUser ?? user;
+
+      return _currentUser!;
     } on DioException catch (e) {
       throw ApiException.fromDioError(e);
     } catch (e) {
@@ -227,6 +242,35 @@ class AuthRepo {
     }
   }
 
+  String? _normalizeRole(String? value) {
+    if (value == null) return null;
+    final trimmed = value.trim();
+    if (trimmed.isEmpty) return null;
+    final lower = trimmed.toLowerCase();
+    if (lower.contains('guide')) return 'guide';
+    if (lower.contains('tourist')) return 'tourist';
+    return null;
+  }
+
+  String? _extractRoleFromResponse(Map<String, dynamic> response) {
+    final data = response['data'];
+    if (data is Map<String, dynamic>) {
+      final directRole = data['role']?.toString();
+      if (directRole != null && directRole.trim().isNotEmpty) {
+        return directRole;
+      }
+      final userNode = data['user'];
+      if (userNode is Map<String, dynamic>) {
+        return userNode['role']?.toString();
+      }
+    }
+    final rootRole = response['role']?.toString();
+    if (rootRole != null && rootRole.trim().isNotEmpty) {
+      return rootRole;
+    }
+    return null;
+  }
+
   /// ----------------------------
   /// PROFILE
   /// ----------------------------
@@ -247,6 +291,10 @@ class AuthRepo {
           final decoded = jsonDecode(cached);
           if (decoded is Map<String, dynamic>) {
             final cachedUser = UserModel.fromAuthMeResponse(decoded);
+            final cachedRole = _normalizeRole(cachedUser.role);
+            if (cachedRole != null) {
+              await PrefHelper.saveUserRole(cachedRole);
+            }
             isGuest = false;
             _currentUser = cachedUser;
             return cachedUser;
@@ -260,6 +308,10 @@ class AuthRepo {
         throw ApiError(message: message);
       }
       final user = UserModel.fromAuthMeResponse(response);
+      final normalizedRole = _normalizeRole(user.role);
+      if (normalizedRole != null) {
+        await PrefHelper.saveUserRole(normalizedRole);
+      }
       await PrefHelper.saveAuthMeCache(jsonEncode(response));
       isGuest = false;
       _currentUser = user;

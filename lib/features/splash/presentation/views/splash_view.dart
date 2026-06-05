@@ -1,6 +1,9 @@
 import 'package:beyond_the_pramids/core/constants/app_color.dart';
+import 'package:beyond_the_pramids/core/network/api_execptions.dart';
+import 'package:beyond_the_pramids/core/services/service_locator.dart';
 import 'package:beyond_the_pramids/core/utils/pref_helper.dart';
 import 'package:beyond_the_pramids/core/utils/size_config.dart';
+import 'package:beyond_the_pramids/features/auth/data/repo/auth_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
@@ -63,8 +66,28 @@ class _SplashViewState extends State<SplashView>
       return;
     }
 
+    try {
+      await sl<AuthRepo>().getProfileData();
+    } on ApiException catch (e) {
+      if (e.statusCode == 401 || e.statusCode == 403) {
+        await PrefHelper.clearSession();
+        _nextRoute = '/onboarding';
+        return;
+      }
+    } catch (_) {
+      await PrefHelper.clearSession();
+      _nextRoute = '/onboarding';
+      return;
+    }
+
     final isCompleted = await PrefHelper.isProfileCompleted();
-    final role = await PrefHelper.getUserRole();
+    var role = await PrefHelper.getUserRole();
+    if (role == null) {
+      try {
+        await sl<AuthRepo>().getProfileData();
+        role = await PrefHelper.getUserRole();
+      } catch (_) {}
+    }
     
     if (isCompleted) {
       if (role == 'tourist') {

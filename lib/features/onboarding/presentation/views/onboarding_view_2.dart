@@ -136,7 +136,7 @@ class _OnboardingView2State extends State<OnboardingView2>
                       onPressed: () {
                         Navigator.pushReplacementNamed(
                           context,
-                          '/accountTypeView',
+                          '/signUpView',
                         );
                       },
                       child: Row(

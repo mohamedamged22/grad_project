@@ -4,6 +4,7 @@ import 'package:beyond_the_pramids/core/utils/size_config.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/data/model/tourist_landmark_list_item.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/data/model/tourist_public_trip.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/data/repo/tourist_favorites_repo.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class TouristSavedTripsView extends StatefulWidget {
@@ -25,7 +26,10 @@ class _TouristSavedTripsViewState extends State<TouristSavedTripsView> {
   List<TouristLandmarkListItem> _landmarks = [];
   late final TouristFavoritesRepo _favoritesRepo;
 
-  static const _tabs = ['Trips', 'Landmarks'];
+  static const _tabKeys = [
+    'tourist_saved_trips_tab_trips',
+    'tourist_saved_trips_tab_landmarks',
+  ];
 
   @override
   void initState() {
@@ -128,7 +132,7 @@ class _TouristSavedTripsViewState extends State<TouristSavedTripsView> {
           ),
         ),
         title: Text(
-          'Saved Trips',
+          'saved_trips'.tr(),
           style: TextStyle(
             fontSize: 16.sp,
             fontWeight: FontWeight.w700,
@@ -142,7 +146,7 @@ class _TouristSavedTripsViewState extends State<TouristSavedTripsView> {
           child: Column(
             children: [
               Row(
-                children: List.generate(_tabs.length, (index) {
+                children: List.generate(_tabKeys.length, (index) {
                   final selected = _selectedTab == index;
                   return Expanded(
                     child: InkWell(
@@ -170,7 +174,7 @@ class _TouristSavedTripsViewState extends State<TouristSavedTripsView> {
                             ),
                             SizedBox(height: 2.h),
                             Text(
-                              _tabs[index],
+                              _tabKeys[index].tr(),
                               style: TextStyle(
                                 fontSize: 10.sp,
                                 fontWeight:
@@ -273,7 +277,9 @@ class _SavedTripCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10.r),
                       ),
                       child: Text(
-                        item.category.isEmpty ? 'Trip' : item.category,
+                        item.category.isEmpty
+                            ? 'tourist_trip_label'.tr()
+                            : item.category,
                         style: TextStyle(
                           fontSize: 8.sp,
                           color: Colors.white,
@@ -316,7 +322,9 @@ class _SavedTripCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      item.status.isEmpty ? 'Available' : item.status,
+                      item.status.isEmpty
+                          ? 'tourist_trip_status_available'.tr()
+                          : item.status,
                       style: TextStyle(
                         fontSize: 8.sp,
                         color: AppColor.secondaryColor,
@@ -353,7 +361,7 @@ class _SavedTripCard extends StatelessWidget {
               ),
               SizedBox(width: 2.w),
               Text(
-                '/person',
+                'price_per_person_suffix'.tr(),
                 style: TextStyle(
                   fontSize: 8.sp,
                   color: isDark ? const Color(0xFF9FB0BD) : const Color(0xFF78909E),
@@ -365,7 +373,7 @@ class _SavedTripCard extends StatelessWidget {
           Align(
             alignment: Alignment.center,
             child: _RemoveFavoriteButton(
-              label: 'Remove from favorites',
+              label: 'tourist_remove_from_favorites'.tr(),
               isLoading: isRemoving,
               onTap: onRemove,
             ),
@@ -459,7 +467,7 @@ class _SavedLandmarkCard extends StatelessWidget {
                   Align(
                     alignment: Alignment.center,
                     child: _RemoveFavoriteButton(
-                      label: 'Remove',
+                      label: 'tourist_remove'.tr(),
                       isLoading: isRemoving,
                       onTap: onRemove,
                       compact: true,
@@ -501,15 +509,15 @@ class _TripsTab extends StatelessWidget {
     if (errorMessage != null && errorMessage!.trim().isNotEmpty) {
       return _EmptyState(
         message: errorMessage!,
-        actionLabel: 'Retry',
+        actionLabel: 'action_retry'.tr(),
         onTap: onRefresh,
       );
     }
 
     if (trips.isEmpty) {
       return _EmptyState(
-        message: 'No saved trips yet.',
-        actionLabel: 'Refresh',
+        message: 'tourist_saved_trips_empty'.tr(),
+        actionLabel: 'action_refresh'.tr(),
         onTap: onRefresh,
       );
     }
@@ -552,15 +560,15 @@ class _LandmarksTab extends StatelessWidget {
     if (errorMessage != null && errorMessage!.trim().isNotEmpty) {
       return _EmptyState(
         message: errorMessage!,
-        actionLabel: 'Retry',
+        actionLabel: 'action_retry'.tr(),
         onTap: onRefresh,
       );
     }
 
     if (landmarks.isEmpty) {
       return _EmptyState(
-        message: 'No saved landmarks yet.',
-        actionLabel: 'Refresh',
+        message: 'tourist_saved_landmarks_empty'.tr(),
+        actionLabel: 'action_refresh'.tr(),
         onTap: onRefresh,
       );
     }
@@ -656,7 +664,7 @@ class _RemoveFavoriteButton extends StatelessWidget {
           ),
         ),
         child: Text(
-          isLoading ? 'Removing...' : label,
+          isLoading ? 'action_removing'.tr() : label,
           style: TextStyle(
             fontSize: compact ? 8.sp : 10.sp,
             fontWeight: FontWeight.w700,

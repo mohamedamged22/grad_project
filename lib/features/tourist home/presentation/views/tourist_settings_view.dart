@@ -1,6 +1,7 @@
 import 'package:beyond_the_pramids/core/constants/app_color.dart';
 import 'package:beyond_the_pramids/core/services/theme_service.dart';
 import 'package:beyond_the_pramids/core/utils/size_config.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class TouristSettingsView extends StatefulWidget {
@@ -12,6 +13,75 @@ class TouristSettingsView extends StatefulWidget {
 
 class _TouristSettingsViewState extends State<TouristSettingsView> {
   bool _notificationsEnabled = true;
+
+  Future<void> _showLanguageSheet() async {
+    if (!mounted) return;
+    final currentCode = context.locale.languageCode;
+
+    await showModalBottomSheet<void>(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(18.r)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(16.w, 10.h, 16.w, 18.h),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 36.w,
+                  height: 4.h,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFCFD8DE),
+                    borderRadius: BorderRadius.circular(20.r),
+                  ),
+                ),
+                SizedBox(height: 12.h),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'language'.tr(),
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w700,
+                      color: AppColor.primaryColor,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 8.h),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text('lang_english'.tr()),
+                  trailing:
+                      currentCode == 'en'
+                          ? const Icon(Icons.check_rounded)
+                          : null,
+                  onTap: () async {
+                    Navigator.pop(context);
+                    await context.setLocale(const Locale('en'));
+                  },
+                ),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text('lang_arabic'.tr()),
+                  trailing:
+                      currentCode == 'ar'
+                          ? const Icon(Icons.check_rounded)
+                          : null,
+                  onTap: () async {
+                    Navigator.pop(context);
+                    await context.setLocale(const Locale('ar'));
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +107,7 @@ class _TouristSettingsViewState extends State<TouristSettingsView> {
           ),
         ),
         title: Text(
-          'Settings',
+          'settings'.tr(),
           style: TextStyle(
             fontSize: 16.sp,
             fontWeight: FontWeight.w700,
@@ -52,7 +122,7 @@ class _TouristSettingsViewState extends State<TouristSettingsView> {
             children: [
               _SettingsItem(
                 icon: Icons.notifications_none_rounded,
-                title: 'Notification',
+                title: 'notification'.tr(),
                 borderColor: borderColor,
                 backgroundColor: cardBg,
                 defaultTextColor: primaryText,
@@ -69,7 +139,7 @@ class _TouristSettingsViewState extends State<TouristSettingsView> {
               SizedBox(height: 8.h),
               _SettingsItem(
                 icon: Icons.lock_outline_rounded,
-                title: 'Change password',
+                title: 'change_password'.tr(),
                 borderColor: borderColor,
                 backgroundColor: cardBg,
                 defaultTextColor: primaryText,
@@ -88,20 +158,36 @@ class _TouristSettingsViewState extends State<TouristSettingsView> {
               SizedBox(height: 8.h),
               _SettingsItem(
                 icon: Icons.language_rounded,
-                title: 'Language',
+                title: 'language'.tr(),
                 borderColor: borderColor,
                 backgroundColor: cardBg,
                 defaultTextColor: primaryText,
-                trailing: Icon(
-                  Icons.chevron_right_rounded,
-                  color: AppColor.secondaryColor,
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      context.locale.languageCode == 'ar'
+                          ? 'lang_arabic'.tr()
+                          : 'lang_english'.tr(),
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColor.secondaryColor,
+                      ),
+                    ),
+                    SizedBox(width: 6.w),
+                    Icon(
+                      Icons.chevron_right_rounded,
+                      color: AppColor.secondaryColor,
+                    ),
+                  ],
                 ),
-                onTap: () {},
+                onTap: _showLanguageSheet,
               ),
               SizedBox(height: 8.h),
               _SettingsItem(
                 icon: Icons.dark_mode_outlined,
-                title: 'Dark Mode',
+                title: 'dark_mode'.tr(),
                 borderColor: borderColor,
                 backgroundColor: cardBg,
                 defaultTextColor: primaryText,
@@ -120,7 +206,7 @@ class _TouristSettingsViewState extends State<TouristSettingsView> {
               SizedBox(height: 8.h),
               _SettingsItem(
                 icon: Icons.delete_outline_rounded,
-                title: 'Delete account',
+                title: 'delete_account'.tr(),
                 borderColor: borderColor,
                 backgroundColor: cardBg,
                 defaultTextColor: primaryText,

@@ -194,7 +194,7 @@ class _OnboardingView3State extends State<OnboardingView3>
                       onTap: () {
                         Navigator.pushReplacementNamed(
                           context,
-                          '/accountTypeView',
+                          '/signUpView',
                         );
                       },
                     ),

@@ -1,6 +1,7 @@
 import 'package:beyond_the_pramids/core/constants/app_color.dart';
 import 'package:beyond_the_pramids/core/utils/size_config.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/data/model/tourist_public_trip.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class TouristGroupTripCard extends StatelessWidget {
@@ -78,7 +79,7 @@ class TouristGroupTripCard extends StatelessWidget {
                 ),
                 SizedBox(height: 2.h),
                 Text(
-                  'Explore the great Pyramids, sphinx',
+                  'tourist_trip_card_subtitle'.tr(),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
@@ -143,7 +144,10 @@ class TouristGroupTripCard extends StatelessWidget {
                           ),
                         ),
                         onPressed: onBookNowTap ?? onTap ?? () {},
-                        child: Text('Book Now', style: TextStyle(fontSize: 9.sp)),
+                        child: Text(
+                          'tourist_book_now'.tr(),
+                          style: TextStyle(fontSize: 9.sp),
+                        ),
                       ),
                     ),
                   ],

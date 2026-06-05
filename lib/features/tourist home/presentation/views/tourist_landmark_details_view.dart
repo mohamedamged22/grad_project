@@ -9,6 +9,7 @@ import 'package:beyond_the_pramids/features/tourist%20home/presentation/manager/
 import 'package:beyond_the_pramids/features/tourist%20home/presentation/manager/tourist_landmark_trips_cubit/tourist_landmark_trips_cubit.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/presentation/manager/tourist_landmark_trips_cubit/tourist_landmark_trips_state.dart';
 import 'package:beyond_the_pramids/core/services/service_locator.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -57,6 +58,25 @@ class _TouristLandmarkDetailsViewState extends State<TouristLandmarkDetailsView>
   void initState() {
     super.initState();
     _favoritesRepo = sl<TouristFavoritesRepo>();
+    _loadFavoriteStatus();
+  }
+
+  Future<void> _loadFavoriteStatus() async {
+    final landmarkId = widget.args.id;
+    if (landmarkId == null) return;
+
+    try {
+      final favorites = await _favoritesRepo.getFavoriteLandmarks();
+      if (!mounted) return;
+      setState(() {
+        _isFavorite = favorites.any((item) => item.id == landmarkId);
+      });
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    }
   }
 
   @override
@@ -209,13 +229,19 @@ class _TouristLandmarkDetailsViewState extends State<TouristLandmarkDetailsView>
                           const Center(child: CircularProgressIndicator())
                         else ...[
                           if (type.trim().isNotEmpty)
-                            _InfoRow(label: 'Type', value: type),
+                            _InfoRow(
+                              label: 'tourist_landmark_type'.tr(),
+                              value: type,
+                            ),
                           if (address.trim().isNotEmpty)
-                            _InfoRow(label: 'Address', value: address),
+                            _InfoRow(
+                              label: 'tourist_landmark_address'.tr(),
+                              value: address,
+                            ),
                           if (description.trim().isNotEmpty) ...[
                             SizedBox(height: 10.h),
                             Text(
-                              'About',
+                              'tourist_landmark_about'.tr(),
                               style: TextStyle(
                                 fontSize: 14.sp,
                                 fontWeight: FontWeight.w700,
@@ -238,7 +264,7 @@ class _TouristLandmarkDetailsViewState extends State<TouristLandmarkDetailsView>
                           ],
                           SizedBox(height: 16.h),
                           Text(
-                            'Trips Visiting this landmark',
+                            'tourist_landmark_trips_visiting'.tr(),
                             style: TextStyle(
                               fontSize: 14.sp,
                               fontWeight: FontWeight.w700,
@@ -255,7 +281,8 @@ class _TouristLandmarkDetailsViewState extends State<TouristLandmarkDetailsView>
                             Padding(
                               padding: EdgeInsets.only(top: 10.h),
                               child: Text(
-                                state.errorMessage ?? 'Failed to load details',
+                                state.errorMessage ??
+                                    'tourist_landmark_details_failed'.tr(),
                                 style: TextStyle(
                                   fontSize: 12.sp,
                                   color: Colors.redAccent,

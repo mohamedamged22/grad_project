@@ -4,6 +4,7 @@ import 'package:beyond_the_pramids/core/utils/size_config.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/data/model/tourist_public_trip.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/data/repo/tourist_favorites_repo.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/presentation/manager/tourist_public_trips_cubit/tourist_public_trips_cubit.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -91,7 +92,7 @@ class _TouristGroupTripsViewState extends State<TouristGroupTripsView> {
                     ),
                     Expanded(
                       child: Text(
-                        'Group Trips',
+                        'tourist_home_group_trips'.tr(),
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 17.sp,
@@ -121,7 +122,8 @@ class _TouristGroupTripsViewState extends State<TouristGroupTripsView> {
                         padding: EdgeInsets.symmetric(vertical: 18.h),
                         child: Center(
                           child: Text(
-                            state.errorMessage ?? 'Failed to load trips',
+                            state.errorMessage ??
+                                'tourist_group_trips_load_failed'.tr(),
                             style: TextStyle(
                               fontSize: 12.sp,
                               fontWeight: FontWeight.w600,
@@ -139,7 +141,7 @@ class _TouristGroupTripsViewState extends State<TouristGroupTripsView> {
                         padding: EdgeInsets.symmetric(vertical: 18.h),
                         child: Center(
                           child: Text(
-                            'No trips found',
+                            'tourist_group_trips_empty'.tr(),
                             style: TextStyle(
                               fontSize: 12.sp,
                               fontWeight: FontWeight.w600,
@@ -233,7 +235,7 @@ class _SearchBar extends StatelessWidget {
       decoration: InputDecoration(
         filled: true,
         fillColor: const Color(0xFFF6F8F9),
-        hintText: 'Discover Egypt',
+        hintText: 'tourist_home_search'.tr(),
         hintStyle: TextStyle(
           fontSize: 12.sp,
           color: const Color(0xFF8DA0AD),
@@ -325,7 +327,9 @@ class _TripListCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12.r),
                       ),
                       child: Text(
-                        item.category.isEmpty ? 'Trip' : item.category,
+                        item.category.isEmpty
+                            ? 'tourist_trip_label'.tr()
+                            : item.category,
                         style: TextStyle(
                           fontSize: 9.sp,
                           fontWeight: FontWeight.w600,
@@ -418,7 +422,9 @@ class _TripListCard extends StatelessWidget {
               SizedBox(width: 2.w),
               Expanded(
                 child: Text(
-                  item.duration.isEmpty ? 'Flexible' : item.duration,
+                  item.duration.isEmpty
+                      ? 'pricing_duration_flexible'.tr()
+                      : item.duration,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
@@ -469,7 +475,7 @@ class _TripListCard extends StatelessWidget {
                   ),
                   children: [
                     TextSpan(
-                      text: '/person',
+                      text: 'price_per_person_suffix'.tr(),
                       style: TextStyle(
                         fontSize: 10.sp,
                         fontWeight: FontWeight.w600,

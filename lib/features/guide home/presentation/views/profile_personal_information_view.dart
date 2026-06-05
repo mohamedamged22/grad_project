@@ -3,6 +3,7 @@ import 'package:beyond_the_pramids/core/utils/size_config.dart';
 import 'package:beyond_the_pramids/features/auth/presentation/views/widgets/custom_text_field.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/profile_personal_information_cubit/profile_personal_information_cubit.dart';
 import 'package:beyond_the_pramids/features/onboarding/presentation/views/widgets/custom_button.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -61,7 +62,7 @@ class ProfilePersonalInformationView extends StatelessWidget {
               ),
             ),
             title: Text(
-              'Profile',
+              'profile_title'.tr(),
               style: TextStyle(
                 fontSize: 18.sp,
                 fontWeight: FontWeight.w700,
@@ -115,23 +116,32 @@ class ProfilePersonalInformationView extends StatelessWidget {
                       ),
                       SizedBox(height: 12.h),
 
-                      _FieldLabel(text: 'First name', textColor: primaryText),
+                      _FieldLabel(
+                        text: 'profile_first_name'.tr(),
+                        textColor: primaryText,
+                      ),
                       SizedBox(height: 6.h),
                       CustomTextField(
                         controller: cubit.firstNameController,
-                        hintText: 'Enter your first name',
+                        hintText: 'profile_first_name_hint'.tr(),
                       ),
 
                       SizedBox(height: 8.h),
-                      _FieldLabel(text: 'Last name', textColor: primaryText),
+                      _FieldLabel(
+                        text: 'profile_last_name'.tr(),
+                        textColor: primaryText,
+                      ),
                       SizedBox(height: 6.h),
                       CustomTextField(
                         controller: cubit.lastNameController,
-                        hintText: 'Enter your last name',
+                        hintText: 'profile_last_name_hint'.tr(),
                       ),
 
                       SizedBox(height: 8.h),
-                      _FieldLabel(text: 'Email', textColor: primaryText),
+                      _FieldLabel(
+                        text: 'profile_email'.tr(),
+                        textColor: primaryText,
+                      ),
                       SizedBox(height: 6.h),
                       TextFormField(
                         controller: cubit.emailController,
@@ -139,20 +149,20 @@ class ProfilePersonalInformationView extends StatelessWidget {
                         validator: (value) {
                           final text = value?.trim() ?? '';
                           if (text.isEmpty) {
-                            return 'Email is required';
+                            return 'profile_email_required'.tr();
                           }
                           final emailRegExp = RegExp(
                             r'^[^@\s]+@[^@\s]+\.[^@\s]+$',
                           );
                           if (!emailRegExp.hasMatch(text)) {
-                            return 'Enter a valid email address';
+                            return 'profile_email_invalid'.tr();
                           }
                           return null;
                         },
                         decoration: InputDecoration(
                           filled: true,
                           fillColor: cardBg,
-                          hintText: 'example@gmail.com',
+                          hintText: 'profile_email_hint'.tr(),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(24.r),
                           ),
@@ -178,7 +188,10 @@ class ProfilePersonalInformationView extends StatelessWidget {
                       ),
 
                       SizedBox(height: 8.h),
-                      _FieldLabel(text: 'Phone', textColor: primaryText),
+                      _FieldLabel(
+                        text: 'profile_phone'.tr(),
+                        textColor: primaryText,
+                      ),
                       SizedBox(height: 6.h),
                       Container(
                         height: 46.h,
@@ -224,7 +237,7 @@ class ProfilePersonalInformationView extends StatelessWidget {
                                 validator: (value) {
                                   final text = value?.trim() ?? '';
                                   if (text.isEmpty) {
-                                    return 'Phone is required';
+                                    return 'profile_phone_required'.tr();
                                   }
                                   final digits = text.replaceAll(
                                     RegExp(r'\D'),
@@ -232,7 +245,7 @@ class ProfilePersonalInformationView extends StatelessWidget {
                                   );
                                   if (digits.length < 10 ||
                                       digits.length > 11) {
-                                    return 'Enter a valid Egyptian phone number';
+                                    return 'profile_phone_invalid_eg'.tr();
                                   }
                                   return null;
                                 },
@@ -275,7 +288,7 @@ class ProfilePersonalInformationView extends StatelessWidget {
                                   ),
                                 ),
                                 child: Text(
-                                  'Cancel',
+                                  'action_cancel'.tr(),
                                   style: TextStyle(
                                     fontSize: 13.sp,
                                     color: AppColor.secondaryColor,
@@ -290,7 +303,10 @@ class ProfilePersonalInformationView extends StatelessWidget {
                             child: AbsorbPointer(
                               absorbing: isSaving,
                               child: CustomButton(
-                                text: isSaving ? 'Saving...' : 'Save',
+                                text:
+                                  isSaving
+                                    ? 'action_saving'.tr()
+                                    : 'action_save'.tr(),
                                 onTap: () {
                                   FocusScope.of(context).unfocus();
                                   context

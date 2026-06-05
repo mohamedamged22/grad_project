@@ -1,4 +1,5 @@
 import 'package:beyond_the_pramids/core/constants/app_color.dart';
+import 'package:beyond_the_pramids/core/utils/pref_helper.dart';
 import 'package:beyond_the_pramids/core/utils/size_config.dart';
 import 'package:beyond_the_pramids/core/utils/widgets/loading_overlay.dart';
 import 'package:beyond_the_pramids/core/utils/widgets/snack_bar.dart';
@@ -10,6 +11,7 @@ import 'package:beyond_the_pramids/features/auth/presentation/manger/auth_cubit/
 import 'package:beyond_the_pramids/features/auth/presentation/views/widgets/custom_text_button.dart';
 import 'package:beyond_the_pramids/features/auth/presentation/views/widgets/custom_text_field.dart';
 import 'package:beyond_the_pramids/features/auth/presentation/views/widgets/circle_check_button.dart';
+import 'package:beyond_the_pramids/features/auth/presentation/views/widgets/account_role_slider.dart';
 import 'package:beyond_the_pramids/features/onboarding/presentation/views/widgets/custom_button.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -20,22 +22,32 @@ class SignUpView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final store = AccountTypeStore(); // 🔥 اقرأ الـ store
+    final store = AccountTypeStore(); 
 
     return BlocConsumer<AuthCubit, AuthState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state is AuthLoading) {
           showLoadingOverlay(context);
         } else if (state is AuthSuccess) {
           hideLoadingOverlay(context);
           showSnackBar(context, 'signup_success'.tr(), isSuccess: true);
+          final selectedRole = store.selectedType;
+          await PrefHelper.saveUserRole(
+            selectedRole,
+          ); 
 
+          debugPrint('resolved role = $selectedRole');
           if (store.selectedType == 'guide') {
-            Navigator.pushReplacementNamed(context, '/basicInformationView');
-          } else {
-            Navigator.pushReplacementNamed(
+            Navigator.pushNamedAndRemoveUntil(
               context,
-              '/basicInformationTouristView',
+              '/guideHomeRootView',
+              (route) => false,
+            );
+          } else {
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              '/touristHomeRootView',
+              (route) => false,
             );
           }
         } else if (state is AuthError) {
@@ -54,8 +66,8 @@ class SignUpView extends StatelessWidget {
                 onPressed:
                     () => Navigator.pushReplacementNamed(
                       context,
-                      '/accountTypeView',
-                    ), // ⭐ غيّر للـ account type
+                      '/signInView',
+                    ),
                 icon: Icon(
                   Icons.chevron_left,
                   size: 32.w,
@@ -81,6 +93,8 @@ class SignUpView extends StatelessWidget {
                         child: CustomTextRegolar(text: 'signup_subtitle'.tr()),
                       ),
 
+                      const SizedBox(height: 16),
+                      const AccountRoleSlider(),
                       const SizedBox(height: 24),
 
                       CustomTextSemiBold(fontSize: 16, text: 'name'.tr()),

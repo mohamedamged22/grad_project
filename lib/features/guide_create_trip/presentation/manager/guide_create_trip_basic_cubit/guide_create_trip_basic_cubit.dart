@@ -48,6 +48,15 @@ class GuideCreateTripBasicCubit extends Cubit<GuideCreateTripBasicState> {
     emit(state.copyWith(selectedCity: city, status: GuideCreateTripBasicStatus.initial));
   }
 
+  void setSelectedLandmarks(List<int> ids) {
+    emit(
+      state.copyWith(
+        selectedLandmarkIds: ids.toSet(),
+        status: GuideCreateTripBasicStatus.initial,
+      ),
+    );
+  }
+
   void setMeetingPoint(String value) {
     meetingPointController.text = value;
     emit(state.copyWith(status: GuideCreateTripBasicStatus.initial));
@@ -116,6 +125,7 @@ class GuideCreateTripBasicCubit extends Cubit<GuideCreateTripBasicState> {
           category: state.selectedCategories.toList(),
           city: state.selectedCity!.trim(),
           meetingPoint: meetingPoint,
+          landmarkIds: state.selectedLandmarkIds.toList(),
         ),
       );
 

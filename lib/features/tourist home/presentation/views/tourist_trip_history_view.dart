@@ -1,5 +1,6 @@
 import 'package:beyond_the_pramids/core/constants/app_color.dart';
 import 'package:beyond_the_pramids/core/utils/size_config.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class TouristTripHistoryView extends StatelessWidget {
@@ -13,7 +14,7 @@ class TouristTripHistoryView extends StatelessWidget {
       dateText: '1 Feb - 15 Feb, 2026',
       price: r'$ 150',
       rating: '3.8',
-      status: 'Completed',
+      status: 'trip_status_completed',
     ),
     _HistoryItemData(
       imagePath: 'assets/images/3th.jpg',
@@ -22,7 +23,7 @@ class TouristTripHistoryView extends StatelessWidget {
       dateText: '1 Feb - 15 Feb, 2026',
       price: r'$ 150',
       rating: '4.6',
-      status: 'Cancelled',
+      status: 'trip_status_cancelled',
     ),
   ];
 
@@ -45,7 +46,7 @@ class TouristTripHistoryView extends StatelessWidget {
           ),
         ),
         title: Text(
-          'Trip History',
+          'trip_history'.tr(),
           style: TextStyle(
             fontSize: 16.sp,
             fontWeight: FontWeight.w700,
@@ -60,7 +61,7 @@ class TouristTripHistoryView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Your travel status',
+                'tourist_trip_history_status_title'.tr(),
                 style: TextStyle(
                   fontSize: 11.sp,
                   fontWeight: FontWeight.w600,
@@ -69,10 +70,22 @@ class TouristTripHistoryView extends StatelessWidget {
               ),
               SizedBox(height: 8.h),
               Row(
-                children: const [
-                  _StatusStat(value: '2', label: 'Completed', color: Color(0xFF1BAA5A)),
-                  _StatusStat(value: '1', label: 'Cancelled', color: Color(0xFFD64545)),
-                  _StatusStat(value: '5', label: 'Spent', color: Color(0xFFF39A2C)),
+                children: [
+                  _StatusStat(
+                    value: '2',
+                    label: 'trip_status_completed'.tr(),
+                    color: const Color(0xFF1BAA5A),
+                  ),
+                  _StatusStat(
+                    value: '1',
+                    label: 'trip_status_cancelled'.tr(),
+                    color: const Color(0xFFD64545),
+                  ),
+                  _StatusStat(
+                    value: '5',
+                    label: 'trip_status_spent'.tr(),
+                    color: const Color(0xFFF39A2C),
+                  ),
                 ],
               ),
               SizedBox(height: 10.h),
@@ -131,7 +144,9 @@ class _HistoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final statusColor =
-        item.status == 'Completed' ? const Color(0xFF1BAA5A) : const Color(0xFFD64545);
+      item.status == 'trip_status_completed'
+        ? const Color(0xFF1BAA5A)
+        : const Color(0xFFD64545);
 
     return Container(
       padding: EdgeInsets.all(6.w),
@@ -164,7 +179,7 @@ class _HistoryCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10.r),
                       ),
                       child: Text(
-                        item.status,
+                        item.status.tr(),
                         style: TextStyle(
                           fontSize: 8.sp,
                           color: Colors.white,
@@ -244,7 +259,7 @@ class _HistoryCard extends StatelessWidget {
               ),
               SizedBox(width: 2.w),
               Text(
-                '/person',
+                'price_per_person_suffix'.tr(),
                 style: TextStyle(
                   fontSize: 8.sp,
                   color: isDark ? const Color(0xFF9FB0BD) : const Color(0xFF78909E),

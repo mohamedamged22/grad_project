@@ -19,9 +19,21 @@ class LanguageDropdown extends StatelessWidget {
         child: DropdownButton<Locale>(
           value: context.locale,
           icon:  Icon(Icons.language ,color: AppColor.secondaryColor,),
-          items:  [
-            DropdownMenuItem(value: Locale('en'), child: Text('English', style: TextStyle(color: AppColor.secondaryColor),)),
-            DropdownMenuItem(value: Locale('ar'), child: Text('العربية', style: TextStyle(color: AppColor.secondaryColor),)),
+          items: [
+            DropdownMenuItem(
+              value: const Locale('en'),
+              child: Text(
+                'lang_english'.tr(),
+                style: TextStyle(color: AppColor.secondaryColor),
+              ),
+            ),
+            DropdownMenuItem(
+              value: const Locale('ar'),
+              child: Text(
+                'lang_arabic'.tr(),
+                style: TextStyle(color: AppColor.secondaryColor),
+              ),
+            ),
           ],
           onChanged: (locale) {
             if (locale != null) {

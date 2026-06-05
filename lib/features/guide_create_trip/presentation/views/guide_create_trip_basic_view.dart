@@ -7,7 +7,9 @@ import 'package:beyond_the_pramids/features/auth/presentation/views/widgets/cust
 import 'package:beyond_the_pramids/features/complete%20guide%20account/presentation/views/widgets/custom_dropdown_field.dart';
 import 'package:beyond_the_pramids/features/complete%20guide%20account/presentation/views/widgets/step_progress_indicator.dart';
 import 'package:beyond_the_pramids/features/guide_create_trip/presentation/manager/guide_create_trip_basic_cubit/guide_create_trip_basic_cubit.dart';
+import 'package:beyond_the_pramids/features/guide_create_trip/presentation/views/guide_select_landmarks_view.dart';
 import 'package:beyond_the_pramids/features/onboarding/presentation/views/widgets/custom_button.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -30,7 +32,11 @@ class GuideCreateTripBasicView extends StatelessWidget {
 
         if (state.status == GuideCreateTripBasicStatus.success) {
           hideLoadingOverlay(context);
-          showSnackBar(context, state.message ?? 'Created', isSuccess: true);
+          showSnackBar(
+            context,
+            state.message ?? 'guide_trip_created'.tr(),
+            isSuccess: true,
+          );
           Navigator.pushNamed(context, '/guideCreateTripStep2View');
           return;
         }
@@ -39,7 +45,7 @@ class GuideCreateTripBasicView extends StatelessWidget {
           hideLoadingOverlay(context);
           showSnackBar(
             context,
-            state.message ?? 'Failed to create trip',
+            state.message ?? 'guide_trip_create_failed'.tr(),
             isSuccess: false,
           );
         }
@@ -50,7 +56,7 @@ class GuideCreateTripBasicView extends StatelessWidget {
             if (state.status == GuideCreateTripBasicStatus.failure) {
               showSnackBar(
                 context,
-                'Please fix the current error first',
+                'guide_trip_fix_error'.tr(),
                 isSuccess: false,
               );
               return false;
@@ -73,7 +79,7 @@ class GuideCreateTripBasicView extends StatelessWidget {
                 if (state.status == GuideCreateTripBasicStatus.failure) {
                   showSnackBar(
                     context,
-                    'Please fix the current error first',
+                    'guide_trip_fix_error'.tr(),
                     isSuccess: false,
                   );
                   return;
@@ -82,7 +88,7 @@ class GuideCreateTripBasicView extends StatelessWidget {
               },
             ),
             title: Text(
-              'Create New Trip',
+              'guide_trip_create_title'.tr(),
               style: TextStyle(
                 fontSize: 18.sp,
                 fontWeight: FontWeight.w700,
@@ -112,14 +118,20 @@ class GuideCreateTripBasicView extends StatelessWidget {
                     SizedBox(height: 6.h),
                     const StepProgressIndicator(currentStep: 1, totalSteps: 4),
                     SizedBox(height: 16.h),
-                    CustomTextSemiBold(text: 'Trip Title', fontSize: 15.sp),
+                    CustomTextSemiBold(
+                      text: 'guide_trip_title_label'.tr(),
+                      fontSize: 15.sp,
+                    ),
                     SizedBox(height: 6.h),
                     CustomTextField(
                       controller: cubit.tripTitleController,
-                      hintText: 'Enter trip title',
+                      hintText: 'guide_trip_title_hint'.tr(),
                     ),
                     SizedBox(height: 12.h),
-                    CustomTextSemiBold(text: 'Category', fontSize: 15.sp),
+                    CustomTextSemiBold(
+                      text: 'guide_trip_category_label'.tr(),
+                      fontSize: 15.sp,
+                    ),
                     SizedBox(height: 16.h),
                     Wrap(
                       spacing: 10.w,
@@ -136,20 +148,26 @@ class GuideCreateTripBasicView extends StatelessWidget {
                           }).toList(),
                     ),
                     SizedBox(height: 14.h),
-                    CustomTextSemiBold(text: 'Select City', fontSize: 15.sp),
+                    CustomTextSemiBold(
+                      text: 'guide_trip_city_label'.tr(),
+                      fontSize: 15.sp,
+                    ),
                     SizedBox(height: 6.h),
                     CustomDropdownField(
-                      hint: 'Select city',
+                      hint: 'guide_trip_city_hint'.tr(),
                       value: state.selectedCity,
                       items: cubit.cities,
                       onChanged: cubit.selectCity,
                     ),
                     SizedBox(height: 12.h),
-                    CustomTextSemiBold(text: 'Meeting Point', fontSize: 15.sp),
+                    CustomTextSemiBold(
+                      text: 'guide_trip_meeting_point_label'.tr(),
+                      fontSize: 15.sp,
+                    ),
                     SizedBox(height: 6.h),
                     CustomTextField(
                       controller: cubit.meetingPointController,
-                      hintText: 'Marriott Mena House, Giza',
+                      hintText: 'guide_trip_meeting_point_hint'.tr(),
                       suffixIcon: Icon(
                         Icons.location_on_outlined,
                         color: AppColor.secondaryColor,
@@ -173,7 +191,7 @@ class GuideCreateTripBasicView extends StatelessWidget {
                           color: AppColor.secondaryColor,
                         ),
                         label: Text(
-                          'Choose from map',
+                          'guide_trip_choose_from_map'.tr(),
                           style: TextStyle(
                             color: AppColor.secondaryColor,
                             fontSize: 12.sp,
@@ -182,6 +200,79 @@ class GuideCreateTripBasicView extends StatelessWidget {
                         ),
                       ),
                     ),
+                    // بعد الـ meeting point TextButton.icon بتاع الـ map
+                      SizedBox(height: 12.h),
+                      CustomTextSemiBold(
+                        text: 'guide_trip_landmarks_label'.tr(),
+                        fontSize: 15.sp,
+                      ),
+                      SizedBox(height: 6.h),
+
+                      // عرض الـ chips المختارة
+                      if (state.selectedLandmarkIds.isNotEmpty)
+                        Wrap(
+                          spacing: 8.w,
+                          runSpacing: 6.h,
+                          children:
+                              state.selectedLandmarkIds.map((id) {
+                                return Chip(
+                                  label: Text(
+                                    '#$id',
+                                    style: TextStyle(
+                                      fontSize: 11.sp,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  backgroundColor: AppColor.secondaryColor,
+                                  deleteIconColor: Colors.white,
+                                  onDeleted: () {
+                                    final updated = Set<int>.from(
+                                      state.selectedLandmarkIds,
+                                    )..remove(id);
+                                    cubit.setSelectedLandmarks(
+                                      updated.toList(),
+                                    );
+                                  },
+                                );
+                              }).toList(),
+                        ),
+
+                      SizedBox(height: 6.h),
+
+                      // زرار اختيار اللاند ماركس
+                      Align(
+                        alignment: AlignmentDirectional.centerEnd,
+                        child: TextButton.icon(
+                          onPressed: () async {
+                            final result = await Navigator.push<List<int>>(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (_) => GuideSelectLandmarksView(
+                                      initialSelectedIds:
+                                          state.selectedLandmarkIds.toList(),
+                                    ),
+                              ),
+                            );
+                            if (result != null) {
+                              cubit.setSelectedLandmarks(result);
+                            }
+                          },
+                          icon: Icon(
+                            Icons.place_outlined,
+                            size: 18.sp,
+                            color: AppColor.secondaryColor,
+                          ),
+                          label: Text(
+                            'guide_trip_choose_landmarks'.tr(),
+                            style: TextStyle(
+                              color: AppColor.secondaryColor,
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
                     SizedBox(height: 70.h),
                   ],
                 ),
@@ -193,7 +284,7 @@ class GuideCreateTripBasicView extends StatelessWidget {
             child: Padding(
               padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 14.h),
               child: CustomButton(
-                text: 'Next',
+                text: 'next'.tr(),
                 onTap: () {
                   if (cubit.formKey.currentState!.validate()) {
                     FocusScope.of(context).unfocus();

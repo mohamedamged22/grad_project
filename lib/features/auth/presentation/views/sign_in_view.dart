@@ -1,13 +1,16 @@
 import 'package:beyond_the_pramids/core/constants/app_color.dart';
 import 'package:beyond_the_pramids/core/utils/size_config.dart';
+import 'package:beyond_the_pramids/core/utils/pref_helper.dart';
 import 'package:beyond_the_pramids/core/utils/widgets/loading_overlay.dart';
 import 'package:beyond_the_pramids/core/utils/widgets/snack_bar.dart';
 import 'package:beyond_the_pramids/features/account%20type/presentation/views/widgets/custom_text_regolar.dart';
 import 'package:beyond_the_pramids/features/account%20type/presentation/views/widgets/custom_text_semi_bold.dart';
+import 'package:beyond_the_pramids/features/account%20type/presentation/views/widgets/language_aware_content.dart';
 import 'package:beyond_the_pramids/features/auth/presentation/manger/auth_cubit/auth_cubit.dart';
 import 'package:beyond_the_pramids/features/auth/presentation/manger/auth_cubit/auth_state.dart';
 import 'package:beyond_the_pramids/features/auth/presentation/views/widgets/custom_text_button.dart';
 import 'package:beyond_the_pramids/features/auth/presentation/views/widgets/custom_text_field.dart';
+import 'package:beyond_the_pramids/features/auth/presentation/views/widgets/account_role_slider.dart';
 import 'package:beyond_the_pramids/features/onboarding/presentation/views/widgets/custom_button.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -17,14 +20,23 @@ class SignInView extends StatelessWidget {
   const SignInView({super.key});
   @override
   Widget build(BuildContext context) {
+    final store = AccountTypeStore();
     return BlocConsumer<AuthCubit, AuthState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state is AuthLoading) {
           showLoadingOverlay(context);
         } else if (state is AuthSuccess) {
           hideLoadingOverlay(context);
           showSnackBar(context, 'login_success'.tr(), isSuccess: true);
-          if (state.user.role == 'TOURGUIDE') {
+
+          final selectedRole = store.selectedType;
+          await PrefHelper.saveUserRole(
+            selectedRole,
+          ); 
+
+          debugPrint('resolved role = $selectedRole');
+
+          if (selectedRole == 'guide') {
             Navigator.pushNamedAndRemoveUntil(
               context,
               '/guideHomeRootView',
@@ -75,6 +87,8 @@ class SignInView extends StatelessWidget {
                       Center(
                         child: CustomTextRegolar(text: 'signin_subtitle'.tr()),
                       ),
+                      const SizedBox(height: 16),
+                      const AccountRoleSlider(),
                       const SizedBox(height: 24),
 
                       CustomTextSemiBold(fontSize: 16, text: 'email'.tr()),

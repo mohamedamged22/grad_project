@@ -23,6 +23,20 @@ class GuideHomeView extends StatelessWidget {
             ? Colors.white
             : AppColor.primaryColor;
     final profileState = context.watch<GuideProfileCubit>().state;
+    final trips = [
+      TripData(
+        imagePath: 'assets/images/trip.png',
+        title: 'guide_sample_trip_title_dahab'.tr(),
+        date: 'guide_sample_trip_date'.tr(),
+        tourists: '10 ${"tourists".tr()}',
+      ),
+      TripData(
+        imagePath: 'assets/images/trip.png',
+        title: 'guide_sample_trip_title_giza'.tr(),
+        date: 'guide_sample_trip_date'.tr(),
+        tourists: '10 ${"tourists".tr()}',
+      ),
+    ];
 
     return SafeArea(
       child: ColoredBox(
@@ -60,10 +74,10 @@ class GuideHomeView extends StatelessWidget {
                 height: 240.h,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
-                  itemCount: _trips.length,
+                  itemCount: trips.length,
                   separatorBuilder: (_, __) => SizedBox(width: 12.w),
                   itemBuilder: (_, index) {
-                    return GuideUpcomingTripCard(data: _trips[index]);
+                    return GuideUpcomingTripCard(data: trips[index]);
                   },
                 ),
               ),
@@ -119,19 +133,3 @@ class GuideHomeView extends StatelessWidget {
     );
   }
 }
-
-final List<TripData> _trips = [
-  const TripData(
-    imagePath: 'assets/images/trip.png',
-    title: 'Dahab Adventure',
-    date: 'Mon 20 Feb 2026',
-    tourists: '10 tourists',
-  ),
-
-  const TripData(
-    imagePath: 'assets/images/trip.png',
-    title: 'Giza Adventure',
-    date: 'Mon 20 Feb 2026',
-    tourists: '10 tourists',
-  ),
-];

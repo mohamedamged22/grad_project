@@ -40,12 +40,13 @@ class PrefHelper {
 
   static Future<void> saveUserRole(String role) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_roleKey, role);
+    final normalized = _normalizeRole(role);
+    await prefs.setString(_roleKey, normalized ?? role);
   }
 
   static Future<String?> getUserRole() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_roleKey);
+    return _normalizeRole(prefs.getString(_roleKey));
   }
 
   static Future<void> setProfileCompleted(bool isCompleted) async {
@@ -85,5 +86,15 @@ class PrefHelper {
     await clearAuthMeCache();
     await removeKey(_guideDashboardCacheKey);
     await removeKey(_guideProfileInfoCacheKey);
+  }
+
+  static String? _normalizeRole(String? value) {
+    if (value == null) return null;
+    final trimmed = value.trim();
+    if (trimmed.isEmpty) return null;
+    final lower = trimmed.toLowerCase();
+    if (lower.contains('guide')) return 'guide';
+    if (lower.contains('tourist')) return 'tourist';
+    return null;
   }
 }

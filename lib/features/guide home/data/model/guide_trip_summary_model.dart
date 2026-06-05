@@ -7,6 +7,8 @@ class GuideTripSummaryModel {
   final String? duration;
   final String status;
   final double? pricePerTourist;
+  final String? startDate;
+  final String? endDate;
 
   const GuideTripSummaryModel({
     required this.id,
@@ -17,6 +19,8 @@ class GuideTripSummaryModel {
     required this.duration,
     required this.status,
     required this.pricePerTourist,
+    this.startDate,
+    this.endDate,
   });
 
   factory GuideTripSummaryModel.fromJson(Map<String, dynamic> json) {
@@ -34,6 +38,8 @@ class GuideTripSummaryModel {
       duration: json['duration']?.toString(),
       status: json['status']?.toString() ?? '',
       pricePerTourist: parsedPrice,
+      startDate: json['startDate']?.toString(),
+      endDate: json['endDate']?.toString(),
     );
   }
 

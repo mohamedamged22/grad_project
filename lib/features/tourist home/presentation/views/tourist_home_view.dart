@@ -11,6 +11,7 @@ import 'package:beyond_the_pramids/features/tourist%20home/presentation/manager/
 import 'package:beyond_the_pramids/features/tourist%20home/presentation/views/tourist_group_trips_view.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/presentation/views/widgets/tourist_group_trip_card.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/presentation/views/widgets/tourist_landmark_home_card.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -82,7 +83,7 @@ class _TouristHomeViewState extends State<TouristHomeView> {
               ),
               SizedBox(height: 8.h),
               Text(
-                'Welcome to Beyond the Pyramids',
+                'tourist_home_welcome'.tr(),
                 style: TextStyle(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w700,
@@ -90,10 +91,10 @@ class _TouristHomeViewState extends State<TouristHomeView> {
                 ),
               ),
               SizedBox(height: 10.h),
-              const GuideHomeSearchField(hintText: 'Discover Egypt'),
+              GuideHomeSearchField(hintText: 'tourist_home_search'.tr()),
               SizedBox(height: 14.h),
               GuideSectionTitle(
-                title: 'Iconic Landmarks',
+                title: 'tourist_home_iconic_landmarks'.tr(),
                 onTap: () {
                   Navigator.pushNamed(context, '/touristLandmarksView');
                 },
@@ -110,7 +111,8 @@ class _TouristHomeViewState extends State<TouristHomeView> {
                     if (state.status == TouristLandmarksStatus.failure) {
                       return Center(
                         child: Text(
-                          state.errorMessage ?? 'Failed to load landmarks',
+                          state.errorMessage ??
+                              'tourist_home_landmarks_failed'.tr(),
                           style: TextStyle(
                             color:
                                 isDark
@@ -125,7 +127,7 @@ class _TouristHomeViewState extends State<TouristHomeView> {
                     if (items.isEmpty) {
                       return Center(
                         child: Text(
-                          'No landmarks found',
+                          'tourist_home_landmarks_empty'.tr(),
                           style: TextStyle(
                             color:
                                 isDark
@@ -161,7 +163,7 @@ class _TouristHomeViewState extends State<TouristHomeView> {
               ),
               SizedBox(height: 10.h),
               GuideSectionTitle(
-                title: 'Group Trips',
+                title: 'tourist_home_group_trips'.tr(),
                 onTap: () {
                   Navigator.push(
                     context,
@@ -183,7 +185,8 @@ class _TouristHomeViewState extends State<TouristHomeView> {
                       padding: EdgeInsets.symmetric(vertical: 20.h),
                       child: Center(
                         child: Text(
-                          state.errorMessage ?? 'Failed to load trips',
+                          state.errorMessage ??
+                              'tourist_home_trips_failed'.tr(),
                           style: TextStyle(
                             color:
                                 isDark
@@ -202,7 +205,7 @@ class _TouristHomeViewState extends State<TouristHomeView> {
                       padding: EdgeInsets.symmetric(vertical: 20.h),
                       child: Center(
                         child: Text(
-                          'No trips found',
+                          'tourist_home_trips_empty'.tr(),
                           style: TextStyle(
                             color:
                                 isDark
