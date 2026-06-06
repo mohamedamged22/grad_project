@@ -170,14 +170,16 @@ class AppRoute {
           page = MultiBlocProvider(
             providers: [
               BlocProvider(
-                create: (context) =>
-                    sl<TouristLandmarkDetailsCubit>()
-                      ..fetchLandmarkDetails(landmark.id),
+                create:
+                    (context) =>
+                        sl<TouristLandmarkDetailsCubit>()
+                          ..fetchLandmarkDetails(landmark.id),
               ),
               BlocProvider(
-                create: (context) =>
-                    sl<TouristLandmarkTripsCubit>()
-                      ..fetchLandmarkTrips(landmarkId: landmark.id),
+                create:
+                    (context) =>
+                        sl<TouristLandmarkTripsCubit>()
+                          ..fetchLandmarkTrips(landmarkId: landmark.id),
               ),
             ],
             child: TouristLandmarkDetailsView(args: args),
@@ -205,7 +207,10 @@ class AppRoute {
         final trip = settings.arguments;
         if (trip is TouristPublicTrip) {
           page = BlocProvider(
-            create: (context) => sl<TouristTripDetailsCubit>()..fetchTripDetails(tripId: trip.id),
+            create:
+                (context) =>
+                    sl<TouristTripDetailsCubit>()
+                      ..fetchTripDetails(tripId: trip.id),
             child: TouristTripDetailsView(trip: trip),
           );
           break;
@@ -216,17 +221,20 @@ class AppRoute {
             id: 0,
             title: trip.title,
             city: trip.city,
-            category: trip.category,
-            coverImageUrl: trip.imagePath,
+            startDate: '',
+            endDate: '',
             duration: trip.duration,
-            status: 'PUBLIC',
-            pricePerTourist: num.tryParse(
-                  trip.price.replaceAll(RegExp(r'[^0-9.]'), ''),
-                ) ??
+            imageUrl: trip.imagePath,
+            creatorName: '',
+            price:
+                num.tryParse(trip.price.replaceAll(RegExp(r'[^0-9.]'), '')) ??
                 0,
           );
           page = BlocProvider(
-            create: (context) => sl<TouristTripDetailsCubit>()..fetchTripDetails(tripId: publicTrip.id),
+            create:
+                (context) =>
+                    sl<TouristTripDetailsCubit>()
+                      ..fetchTripDetails(tripId: publicTrip.id),
             child: TouristTripDetailsView(trip: publicTrip),
           );
           break;
@@ -244,10 +252,7 @@ class AppRoute {
         }
         page = BlocProvider(
           create: (context) => cubit,
-          child: TourGuideProfileView(
-            guideId: guideId,
-            initialGuide: guide,
-          ),
+          child: TourGuideProfileView(guideId: guideId, initialGuide: guide),
         );
         break;
       case '/guideCreateTripView':
@@ -301,7 +306,8 @@ class AppRoute {
         break;
       case '/guideSettingsView':
         final args = settings.arguments;
-        final cubit = args is GuideProfileCubit ? args : sl<GuideProfileCubit>();
+        final cubit =
+            args is GuideProfileCubit ? args : sl<GuideProfileCubit>();
         page = BlocProvider.value(
           value: cubit,
           child: const GuideSettingsView(),

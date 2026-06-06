@@ -277,9 +277,9 @@ class _SavedTripCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10.r),
                       ),
                       child: Text(
-                        item.category.isEmpty
+                        item.creatorName.isEmpty
                             ? 'tourist_trip_label'.tr()
-                            : item.category,
+                            : item.creatorName,
                         style: TextStyle(
                           fontSize: 8.sp,
                           color: Colors.white,
@@ -322,9 +322,9 @@ class _SavedTripCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      item.status.isEmpty
+                      item.creatorName.isEmpty
                           ? 'tourist_trip_status_available'.tr()
-                          : item.status,
+                          : item.creatorName,
                       style: TextStyle(
                         fontSize: 8.sp,
                         color: AppColor.secondaryColor,

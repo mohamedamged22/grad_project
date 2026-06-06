@@ -47,9 +47,9 @@ class _TouristGroupTripsViewState extends State<TouristGroupTripsView> {
       });
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString())),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
     }
   }
 
@@ -63,7 +63,7 @@ class _TouristGroupTripsViewState extends State<TouristGroupTripsView> {
 
       return trip.title.toLowerCase().contains(query) ||
           trip.city.toLowerCase().contains(query) ||
-          trip.category.toLowerCase().contains(query);
+          trip.creatorName.toLowerCase().contains(query);
     }).toList();
   }
 
@@ -105,11 +105,7 @@ class _TouristGroupTripsViewState extends State<TouristGroupTripsView> {
                   ],
                 ),
                 SizedBox(height: 8.h),
-                _SearchBar(
-                  onChanged: (value) {
-                    setState(() => _searchQuery = value);
-                  },
-                ),
+
                 SizedBox(height: 10.h),
                 BlocBuilder<TouristPublicTripsCubit, TouristPublicTripsState>(
                   builder: (context, state) {
@@ -127,8 +123,9 @@ class _TouristGroupTripsViewState extends State<TouristGroupTripsView> {
                             style: TextStyle(
                               fontSize: 12.sp,
                               fontWeight: FontWeight.w600,
-                              color:
-                                  AppColor.primaryColor.withValues(alpha: .55),
+                              color: AppColor.primaryColor.withValues(
+                                alpha: .55,
+                              ),
                             ),
                           ),
                         ),
@@ -145,8 +142,9 @@ class _TouristGroupTripsViewState extends State<TouristGroupTripsView> {
                             style: TextStyle(
                               fontSize: 12.sp,
                               fontWeight: FontWeight.w600,
-                              color:
-                                  AppColor.primaryColor.withValues(alpha: .55),
+                              color: AppColor.primaryColor.withValues(
+                                alpha: .55,
+                              ),
                             ),
                           ),
                         ),
@@ -164,6 +162,12 @@ class _TouristGroupTripsViewState extends State<TouristGroupTripsView> {
                           item: trip,
                           isFavorite: _favoriteTrips.contains(trip.id),
                           isSaving: _savingTrips.contains(trip.id),
+                          onTap:
+                              () => Navigator.pushNamed(
+                                context,
+                                '/touristTripDetailsView',
+                                arguments: trip,
+                              ),
                           onFavoriteTap: () {
                             if (_savingTrips.contains(trip.id)) {
                               return;
@@ -222,53 +226,52 @@ class _TouristGroupTripsViewState extends State<TouristGroupTripsView> {
   }
 }
 
-class _SearchBar extends StatelessWidget {
-  final ValueChanged<String> onChanged;
+// class _SearchBar extends StatelessWidget {
+//   final ValueChanged<String> onChanged;
 
-  const _SearchBar({required this.onChanged});
+//   const _SearchBar({required this.onChanged});
 
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      onChanged: onChanged,
-      style: TextStyle(color: AppColor.primaryColor),
-      decoration: InputDecoration(
-        filled: true,
-        fillColor: const Color(0xFFF6F8F9),
-        hintText: 'tourist_home_search'.tr(),
-        hintStyle: TextStyle(
-          fontSize: 12.sp,
-          color: const Color(0xFF8DA0AD),
-        ),
-        prefixIcon: Icon(
-          Icons.search_rounded,
-          color: AppColor.secondaryColor,
-          size: 20.sp,
-        ),
-        contentPadding: EdgeInsets.symmetric(vertical: 12.h),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(26.r),
-          borderSide: BorderSide(color: AppColor.secondaryColor, width: 1.45),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(26.r),
-          borderSide: BorderSide(color: AppColor.secondaryColor, width: 1.7),
-        ),
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return TextField(
+//       onChanged: onChanged,
+//       style: TextStyle(color: AppColor.primaryColor),
+//       decoration: InputDecoration(
+//         filled: true,
+//         fillColor: const Color(0xFFF6F8F9),
+//         hintText: 'tourist_home_search'.tr(),
+//         hintStyle: TextStyle(fontSize: 12.sp, color: const Color(0xFF8DA0AD)),
+//         prefixIcon: Icon(
+//           Icons.search_rounded,
+//           color: AppColor.secondaryColor,
+//           size: 20.sp,
+//         ),
+//         contentPadding: EdgeInsets.symmetric(vertical: 12.h),
+//         enabledBorder: OutlineInputBorder(
+//           borderRadius: BorderRadius.circular(26.r),
+//           borderSide: BorderSide(color: AppColor.secondaryColor, width: 1.45),
+//         ),
+//         focusedBorder: OutlineInputBorder(
+//           borderRadius: BorderRadius.circular(26.r),
+//           borderSide: BorderSide(color: AppColor.secondaryColor, width: 1.7),
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 class _TripListCard extends StatelessWidget {
   final TouristPublicTrip item;
   final bool isFavorite;
   final bool isSaving;
+  final VoidCallback onTap;
   final VoidCallback onFavoriteTap;
 
   const _TripListCard({
     required this.item,
     required this.isFavorite,
     required this.isSaving,
+    required this.onTap,
     required this.onFavoriteTap,
   });
 
@@ -279,156 +282,142 @@ class _TripListCard extends StatelessWidget {
     final titleText = item.title.trim().replaceAll(RegExp(r'\s+'), ' ');
     final coverUrl = item.normalizedImageUrl;
 
-    return Container(
-      padding: EdgeInsets.fromLTRB(8.w, 8.h, 8.w, 10.h),
-      decoration: BoxDecoration(
-        color: cardBg,
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(
-          color: isDark ? const Color(0xFF2F4150) : const Color(0xFFDBE5EB),
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16.r),
+      child: Container(
+        padding: EdgeInsets.fromLTRB(8.w, 8.h, 8.w, 10.h),
+        decoration: BoxDecoration(
+          color: cardBg,
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(
+            color: isDark ? const Color(0xFF2F4150) : const Color(0xFFDBE5EB),
+          ),
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12.r),
-            child: SizedBox(
-              height: 124.h,
-              width: double.infinity,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  if (coverUrl != null)
-                    Image.network(coverUrl, fit: BoxFit.cover)
-                  else
-                    Container(
-                      color:
-                          isDark
-                              ? const Color(0xFF1C2732)
-                              : const Color(0xFFE6EEF2),
-                      alignment: Alignment.center,
-                      child: Icon(
-                        Icons.image_outlined,
-                        size: 30.sp,
-                        color: AppColor.secondaryColor,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12.r),
+              child: SizedBox(
+                height: 124.h,
+                width: double.infinity,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    if (coverUrl != null)
+                      Image.network(
+                        coverUrl,
+                        fit: BoxFit.cover,
+                        errorBuilder:
+                            (_, __, ___) => Image.asset(
+                              'assets/images/trip.png',
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                              height: double.infinity,
+                            ),
+                      )
+                    else
+                      Image.asset(
+                        'assets/images/trip.png',
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
                       ),
-                    ),
-                  Positioned(
-                    left: 8.w,
-                    top: 8.h,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 9.w,
-                        vertical: 4.h,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF6D99A8).withValues(alpha: .82),
-                        borderRadius: BorderRadius.circular(12.r),
-                      ),
-                      child: Text(
-                        item.category.isEmpty
-                            ? 'tourist_trip_label'.tr()
-                            : item.category,
-                        style: TextStyle(
-                          fontSize: 9.sp,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: 8.h,
-                    right: 8.w,
-                    child: GestureDetector(
-                      onTap: isSaving ? null : onFavoriteTap,
+                    Positioned(
+                      left: 8.w,
+                      top: 8.h,
                       child: Container(
-                        height: 22.w,
-                        width: 22.w,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 9.w,
+                          vertical: 4.h,
+                        ),
                         decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: .30),
-                          borderRadius: BorderRadius.circular(7.r),
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: .6),
+                          color: const Color(0xFF6D99A8).withValues(alpha: .82),
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                        child: Text(
+                          item.creatorName.isEmpty
+                              ? 'tourist_trip_label'.tr()
+                              : item.creatorName,
+                          style: TextStyle(
+                            fontSize: 9.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
                           ),
                         ),
-                        child:
-                            isSaving
-                                ? Padding(
-                                  padding: EdgeInsets.all(5.w),
-                                  child: const CircularProgressIndicator(
-                                    strokeWidth: 1.6,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      Colors.white,
-                                    ),
-                                  ),
-                                )
-                                : Icon(
-                                  isFavorite
-                                      ? Icons.bookmark_rounded
-                                      : Icons.bookmark_border_rounded,
-                                  size: 14.sp,
-                                  color: isFavorite
-                                      ? const Color(0xFFF8B64C)
-                                      : Colors.white,
-                                ),
                       ),
                     ),
-                  ),
-                ],
+                    Positioned(
+                      top: 8.h,
+                      right: 8.w,
+                      child: GestureDetector(
+                        onTap: isSaving ? null : onFavoriteTap,
+                        child: Container(
+                          height: 22.w,
+                          width: 22.w,
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: .30),
+                            borderRadius: BorderRadius.circular(7.r),
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: .6),
+                            ),
+                          ),
+                          child:
+                              isSaving
+                                  ? Padding(
+                                    padding: EdgeInsets.all(5.w),
+                                    child: const CircularProgressIndicator(
+                                      strokeWidth: 1.6,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white,
+                                      ),
+                                    ),
+                                  )
+                                  : Icon(
+                                    isFavorite
+                                        ? Icons.bookmark_rounded
+                                        : Icons.bookmark_border_rounded,
+                                    size: 14.sp,
+                                    color:
+                                        isFavorite
+                                            ? const Color(0xFFF8B64C)
+                                            : Colors.white,
+                                  ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          SizedBox(height: 8.h),
-          Text(
-            titleText,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: 17.sp,
-              fontWeight: FontWeight.w700,
-              color: isDark ? Colors.white : AppColor.primaryColor,
-            ),
-          ),
-          SizedBox(height: 2.h),
-          Row(
-            children: [
-              Icon(
-                Icons.location_on_outlined,
-                size: 12.sp,
-                color:
-                    isDark ? const Color(0xFF9FB0BD) : const Color(0xFF8A9BA7),
+            SizedBox(height: 8.h),
+            Text(
+              titleText,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 17.sp,
+                fontWeight: FontWeight.w700,
+                color: isDark ? Colors.white : AppColor.primaryColor,
               ),
-              SizedBox(width: 2.w),
-              Text(
-                item.city,
-                style: TextStyle(
-                  fontSize: 9.sp,
+            ),
+            SizedBox(height: 2.h),
+            Row(
+              children: [
+                Icon(
+                  Icons.location_on_outlined,
+                  size: 12.sp,
                   color:
                       isDark
                           ? const Color(0xFF9FB0BD)
                           : const Color(0xFF8A9BA7),
-                  fontWeight: FontWeight.w500,
                 ),
-              ),
-              SizedBox(width: 8.w),
-              Icon(
-                Icons.schedule_rounded,
-                size: 10.sp,
-                color:
-                    isDark ? const Color(0xFF9FB0BD) : const Color(0xFF8A9BA7),
-              ),
-              SizedBox(width: 2.w),
-              Expanded(
-                child: Text(
-                  item.duration.isEmpty
-                      ? 'pricing_duration_flexible'.tr()
-                      : item.duration,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                SizedBox(width: 2.w),
+                Text(
+                  item.city,
                   style: TextStyle(
-                    fontSize: 8.sp,
+                    fontSize: 9.sp,
                     color:
                         isDark
                             ? const Color(0xFF9FB0BD)
@@ -436,61 +425,93 @@ class _TripListCard extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-              ),
-            ],
-          ),
-          SizedBox(height: 5.h),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              if (item.status.trim().isNotEmpty)
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                  decoration: BoxDecoration(
-                    color: isDark
-                        ? const Color(0xFF1D2A33)
-                        : const Color(0xFFE9F1F5),
-                    borderRadius: BorderRadius.circular(10.r),
-                  ),
+                SizedBox(width: 8.w),
+                Icon(
+                  Icons.schedule_rounded,
+                  size: 10.sp,
+                  color:
+                      isDark
+                          ? const Color(0xFF9FB0BD)
+                          : const Color(0xFF8A9BA7),
+                ),
+                SizedBox(width: 2.w),
+                Expanded(
                   child: Text(
-                    item.status,
+                    item.duration.isEmpty
+                        ? 'pricing_duration_flexible'.tr()
+                        : item.duration,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontSize: 9.sp,
-                      fontWeight: FontWeight.w600,
-                      color: isDark
-                          ? const Color(0xFFB2C0CC)
-                          : AppColor.primaryColor,
+                      fontSize: 8.sp,
+                      color:
+                          isDark
+                              ? const Color(0xFF9FB0BD)
+                              : const Color(0xFF8A9BA7),
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
-              const Spacer(),
-              RichText(
-                text: TextSpan(
-                  text: '\$ ${item.formattedPrice} ',
-                  style: TextStyle(
-                    color: AppColor.secondaryColor,
-                    fontSize: 33.sp,
-                    fontWeight: FontWeight.w800,
-                    height: .9,
-                  ),
-                  children: [
-                    TextSpan(
-                      text: 'price_per_person_suffix'.tr(),
+              ],
+            ),
+            SizedBox(height: 5.h),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                if (item.creatorName.trim().isNotEmpty)
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 8.w,
+                      vertical: 4.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color:
+                          isDark
+                              ? const Color(0xFF1D2A33)
+                              : const Color(0xFFE9F1F5),
+                      borderRadius: BorderRadius.circular(10.r),
+                    ),
+                    child: Text(
+                      item.creatorName,
                       style: TextStyle(
-                        fontSize: 10.sp,
+                        fontSize: 9.sp,
                         fontWeight: FontWeight.w600,
                         color:
                             isDark
-                                ? const Color(0xFF9FB0BD)
-                                : const Color(0xFF7D8F9C),
+                                ? const Color(0xFFB2C0CC)
+                                : AppColor.primaryColor,
                       ),
                     ),
-                  ],
+                  ),
+                const Spacer(),
+                RichText(
+                  text: TextSpan(
+                    text: '\$ ${item.formattedPrice} ',
+                    style: TextStyle(
+                      color: AppColor.secondaryColor,
+                      fontSize: 33.sp,
+                      fontWeight: FontWeight.w800,
+                      height: .9,
+                    ),
+                    children: [
+                      TextSpan(
+                        text: 'price_per_person_suffix'.tr(),
+                        style: TextStyle(
+                          fontSize: 10.sp,
+                          fontWeight: FontWeight.w600,
+                          color:
+                              isDark
+                                  ? const Color(0xFF9FB0BD)
+                                  : const Color(0xFF7D8F9C),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -20,22 +20,11 @@ class TourGuideProfileView extends StatelessWidget {
     'tour_guide_specialty_food',
   ];
 
-  static const _fallbackLanguageKeys = <String>[
-    'lang_english',
-    'lang_spanish',
-  ];
-
+  static const _fallbackLanguageKeys = <String>['lang_english', 'lang_spanish'];
 
   String _resolveLocation(TourGuideProfile? guide) {
-    if (guide == null) {
-      return 'Cairo, Giza';
-    }
-    if (guide.city.trim().isNotEmpty) {
-      return guide.city;
-    }
-    if (guide.coveredArea.trim().isNotEmpty) {
-      return guide.coveredArea;
-    }
+    if (guide == null) return 'Cairo, Giza';
+    if (guide.city.trim().isNotEmpty) return guide.city;
     return 'Cairo, Giza';
   }
 
@@ -46,10 +35,11 @@ class TourGuideProfileView extends StatelessWidget {
     if (guide == null) {
       return _fallbackSpecialtyKeys.map((key) => key.tr()).toList();
     }
-    final items = guide.specialization
-        .map((item) => item.trim())
-        .where((item) => item.isNotEmpty)
-        .toList();
+    final items =
+        guide.specialization
+            .map((item) => item.trim())
+            .where((item) => item.isNotEmpty)
+            .toList();
     return items.isNotEmpty
         ? items
         : _fallbackSpecialtyKeys.map((key) => key.tr()).toList();
@@ -59,13 +49,13 @@ class TourGuideProfileView extends StatelessWidget {
     BuildContext context,
     TourGuideProfile? guide,
   ) {
-    if (guide == null) {
+    if (guide == null)
       return _fallbackLanguageKeys.map((key) => key.tr()).toList();
-    }
-    final items = guide.languages
-        .map((item) => item.language.trim())
-        .where((item) => item.isNotEmpty)
-        .toList();
+    final items =
+        guide.languages
+            .map((item) => item.trim()) // languages دلوقتي String مباشرة
+            .where((item) => item.isNotEmpty)
+            .toList();
     return items.isNotEmpty
         ? items
         : _fallbackLanguageKeys.map((key) => key.tr()).toList();
@@ -101,21 +91,20 @@ class TourGuideProfileView extends StatelessWidget {
           );
         }
 
-        final profileName = guide?.name.trim().isNotEmpty == true
-            ? guide!.name
-            : 'Ahmed Sameh';
+        final profileName =
+            guide?.name.trim().isNotEmpty == true ? guide!.name : 'Ahmed Sameh';
         final profileLocation = _resolveLocation(guide);
-        final profilePhoto = guide?.profilePhoto.trim().isNotEmpty == true
-            ? guide!.profilePhoto
-            : 'assets/images/2th.jpg';
+        final profilePhoto =
+            guide?.profilePhoto.trim().isNotEmpty == true
+                ? guide!.profilePhoto
+                : 'assets/images/2th.jpg';
         final specialties = _resolveSpecialties(context, guide);
         final languages = _resolveLanguages(context, guide);
         final memberSinceDate =
             context.locale.languageCode == 'ar' ? 'يناير 2026' : 'Jan 2026';
-        final memberSinceLabel =
-            'tour_guide_profile_member_since'.tr(namedArgs: {
-          'date': memberSinceDate,
-        });
+        final memberSinceLabel = 'tour_guide_profile_member_since'.tr(
+          namedArgs: {'date': memberSinceDate},
+        );
         final trips = state.trips;
 
         return Scaffold(
@@ -125,270 +114,284 @@ class TourGuideProfileView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-            SizedBox(
-              height: 205.h,
-              width: double.infinity,
-              child: Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(24.r),
-                      bottomRight: Radius.circular(24.r),
-                    ),
-                    child: SizedBox(
-                      height: 160.h,
-                      width: double.infinity,
-                      child: Image.asset('assets/images/sky.png', fit: BoxFit.cover),
-                    ),
-                  ),
-                  Positioned(
-                    top: 18.h,
-                    left: 8.w,
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: () => Navigator.pop(context),
-                        borderRadius: BorderRadius.circular(20.r),
-                        child: Padding(
-                          padding: EdgeInsets.all(6.w),
-                          child: Icon(
-                            Icons.arrow_back_ios_new_rounded,
-                            size: 24.sp,
-                            color: Colors.white,
+                SizedBox(
+                  height: 205.h,
+                  width: double.infinity,
+                  child: Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(24.r),
+                          bottomRight: Radius.circular(24.r),
+                        ),
+                        child: SizedBox(
+                          height: 160.h,
+                          width: double.infinity,
+                          child: Image.asset(
+                            'assets/images/sky.png',
+                            fit: BoxFit.cover,
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    child: Center(
-                      child: Container(
-                        padding: EdgeInsets.all(3.w),
-                        decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF10222E) : Colors.white,
-                          borderRadius: BorderRadius.circular(26.r),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(24.r),
-                          child: _ProfileAvatar(photoUrl: profilePhoto),
+                      // Positioned(
+                      //   top: 18.h,
+                      //   left: 8.w,
+                      //   child: Material(
+                      //     color: Colors.transparent,
+                      //     child: InkWell(
+                      //       onTap: () => Navigator.pop(context),
+                      //       borderRadius: BorderRadius.circular(20.r),
+                      //       child: Padding(
+                      //         padding: EdgeInsets.all(6.w),
+                      //         child: Icon(
+                      //           Icons.arrow_back_ios_new_rounded,
+                      //           size: 24.sp,
+                      //           color: Colors.white,
+                      //         ),
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
+                      Positioned(
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        child: Center(
+                          child: Container(
+                            padding: EdgeInsets.all(3.w),
+                            decoration: BoxDecoration(
+                              color:
+                                  isDark
+                                      ? const Color(0xFF10222E)
+                                      : Colors.white,
+                              borderRadius: BorderRadius.circular(26.r),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(24.r),
+                              child: _ProfileAvatar(photoUrl: profilePhoto),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-            SizedBox(height: 8.h),
-            Center(
-              child: Text(
-                profileName,
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w700,
-                  color: isDark ? Colors.white : AppColor.secondaryColor,
                 ),
-              ),
-            ),
-            SizedBox(height: 4.h),
-            Center(
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.location_on_outlined,
-                    size: 15.sp,
-                    color: const Color(0xFFF39A2C),
-                  ),
-                  SizedBox(width: 2.w),
-                  Text(
-                    profileLocation,
+                SizedBox(height: 8.h),
+                Center(
+                  child: Text(
+                    profileName,
                     style: TextStyle(
-                      fontSize: 12.sp,
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w700,
+                      color: isDark ? Colors.white : AppColor.secondaryColor,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 4.h),
+                Center(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.location_on_outlined,
+                        size: 15.sp,
+                        color: const Color(0xFFF39A2C),
+                      ),
+                      SizedBox(width: 2.w),
+                      Text(
+                        profileLocation,
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w500,
+                          color:
+                              isDark
+                                  ? const Color(0xFFA8B7C4)
+                                  : const Color(0xFF556C7B),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 3.h),
+                Center(
+                  child: Text(
+                    memberSinceLabel,
+                    style: TextStyle(
+                      fontSize: 11.sp,
                       fontWeight: FontWeight.w500,
-                      color: isDark
-                          ? const Color(0xFFA8B7C4)
-                          : const Color(0xFF556C7B),
+                      color:
+                          isDark
+                              ? const Color(0xFFA8B7C4)
+                              : const Color(0xFF1B7E96),
                     ),
                   ),
-                ],
-              ),
-            ),
-            SizedBox(height: 3.h),
-            Center(
-              child: Text(
-                memberSinceLabel,
-                style: TextStyle(
-                  fontSize: 11.sp,
-                  fontWeight: FontWeight.w500,
-                  color: isDark
-                      ? const Color(0xFFA8B7C4)
-                      : const Color(0xFF1B7E96),
                 ),
-              ),
-            ),
-            SizedBox(height: 14.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 18.w),
-              child: IntrinsicHeight(
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: _TopStat(
-                        value: '120',
-                        label: 'tour_guide_profile_trips_led'.tr(),
-                      ),
-                    ),
-                    const _StatsDivider(),
-                    Expanded(
-                      child: _TopStat(
-                        value: '3.6',
-                        label: 'tour_guide_profile_rating'.tr(),
-                      ),
-                    ),
-                    const _StatsDivider(),
-                    Expanded(
-                      child: _TopStat(
-                        value: 'tour_guide_profile_response_time_short'.tr(),
-                        label: 'tour_guide_profile_response'.tr(),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(height: 10.h),
-            Center(
-              child: OutlinedButton.icon(
-                onPressed: () {},
-                icon: Icon(
-                  Icons.chat_bubble_outline_rounded,
-                  size: 14.sp,
-                  color: AppColor.secondaryColor,
-                ),
-                label: Text(
-                  'tour_guide_profile_message'.tr(),
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w700,
-                    color: AppColor.secondaryColor,
-                  ),
-                ),
-                style: OutlinedButton.styleFrom(
-                  minimumSize: Size(180.w, 40.h),
-                  side: BorderSide(
-                    color: AppColor.secondaryColor.withValues(alpha: .6),
-                  ),
-                  backgroundColor:
-                      isDark ? const Color(0xFF173041) : const Color(0xFFF8FCFE),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14.r),
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: 14.h),
-            _SectionTitle(title: 'tour_guide_profile_about_title'.tr()),
-            SizedBox(height: 8.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 14.w),
-              child: _RoundedCard(
-                isDark: isDark,
-                child: Text(
-                  'tour_guide_profile_about_fallback'.tr(),
-                  style: TextStyle(
-                    fontSize: 10.sp,
-                    height: 1.5,
-                    color: isDark
-                        ? const Color(0xFFB2C0CC)
-                        : const Color(0xFF607382),
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: 14.h),
-            _SectionTitle(title: 'tour_guide_profile_specialties'.tr()),
-            SizedBox(height: 8.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 14.w),
-              child: Wrap(
-                spacing: 8.w,
-                runSpacing: 8.h,
-                children: [
-                  for (final item in specialties) _ProfileChip(label: item),
-                ],
-              ),
-            ),
-            SizedBox(height: 14.h),
-            _SectionTitle(title: 'tour_guide_profile_languages'.tr()),
-            SizedBox(height: 8.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 14.w),
-              child: Wrap(
-                spacing: 8.w,
-                runSpacing: 8.h,
-                children: [
-                  for (final item in languages) _ProfileChip(label: item),
-                ],
-              ),
-            ),
-            SizedBox(height: 14.h),
-            _SectionTitle(
-              title: 'tour_guide_profile_trips_by'
-                  .tr(namedArgs: {'name': profileName}),
-            ),
-            SizedBox(height: 8.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 14.w),
-              child: Column(
-                children: [
-                  if (state.tripsStatus == TourGuideTripsStatus.loading &&
-                      trips.isEmpty)
-                    Padding(
-                      padding: EdgeInsets.only(top: 12.h),
-                      child: const Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    )
-                  else if (state.tripsStatus == TourGuideTripsStatus.failure &&
-                      trips.isEmpty)
-                    Padding(
-                      padding: EdgeInsets.only(top: 8.h),
-                      child: Text(
-                      state.errorMessage ??
-                        'tour_guide_profile_trips_load_failed'.tr(),
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          color:
-                              isDark ? Colors.white : AppColor.primaryColor,
+                SizedBox(height: 14.h),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 18.w),
+                  child: IntrinsicHeight(
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: _TopStat(
+                            value: '120',
+                            label: 'tour_guide_profile_trips_led'.tr(),
+                          ),
                         ),
-                      ),
-                    )
-                  else if (trips.isEmpty)
-                    Padding(
-                      padding: EdgeInsets.only(top: 8.h),
-                      child: Text(
-                        'tour_guide_profile_no_trips'.tr(),
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          color:
-                              isDark ? Colors.white : AppColor.primaryColor,
+                        const _StatsDivider(),
+                        Expanded(
+                          child: _TopStat(
+                            value: '3.6',
+                            label: 'tour_guide_profile_rating'.tr(),
+                          ),
                         ),
+                        const _StatsDivider(),
+                        Expanded(
+                          child: _TopStat(
+                            value:
+                                'tour_guide_profile_response_time_short'.tr(),
+                            label: 'tour_guide_profile_response'.tr(),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10.h),
+                Center(
+                  child: OutlinedButton.icon(
+                    onPressed: () {},
+                    icon: Icon(
+                      Icons.chat_bubble_outline_rounded,
+                      size: 14.sp,
+                      color: AppColor.secondaryColor,
+                    ),
+                    label: Text(
+                      'tour_guide_profile_message'.tr(),
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w700,
+                        color: AppColor.secondaryColor,
                       ),
-                    )
-                  else
-                    for (final item in trips)
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 10.h),
-                        child: _GuideTripMiniCard(item: item),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: Size(180.w, 40.h),
+                      side: BorderSide(
+                        color: AppColor.secondaryColor.withValues(alpha: .6),
                       ),
-                ],
-              ),
-            ),
+                      backgroundColor:
+                          isDark
+                              ? const Color(0xFF173041)
+                              : const Color(0xFFF8FCFE),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14.r),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 14.h),
+                _SectionTitle(title: 'tour_guide_profile_about_title'.tr()),
+                SizedBox(height: 8.h),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 14.w),
+                  child: _RoundedCard(
+                    isDark: isDark,
+                    child: Text(
+                      'tour_guide_profile_about_fallback'.tr(),
+                      style: TextStyle(
+                        fontSize: 10.sp,
+                        height: 1.5,
+                        color:
+                            isDark
+                                ? const Color(0xFFB2C0CC)
+                                : const Color(0xFF607382),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 14.h),
+                _SectionTitle(title: 'tour_guide_profile_specialties'.tr()),
+                SizedBox(height: 8.h),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 14.w),
+                  child: Wrap(
+                    spacing: 8.w,
+                    runSpacing: 8.h,
+                    children: [
+                      for (final item in specialties) _ProfileChip(label: item),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 14.h),
+                _SectionTitle(title: 'tour_guide_profile_languages'.tr()),
+                SizedBox(height: 8.h),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 14.w),
+                  child: Wrap(
+                    spacing: 8.w,
+                    runSpacing: 8.h,
+                    children: [
+                      for (final item in languages) _ProfileChip(label: item),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 14.h),
+                _SectionTitle(
+                  title: 'tour_guide_profile_trips_by'.tr(
+                    namedArgs: {'name': profileName},
+                  ),
+                ),
+                SizedBox(height: 8.h),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 14.w),
+                  child: Column(
+                    children: [
+                      if (state.tripsStatus == TourGuideTripsStatus.loading &&
+                          trips.isEmpty)
+                        Padding(
+                          padding: EdgeInsets.only(top: 12.h),
+                          child: const Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        )
+                      else if (state.tripsStatus ==
+                              TourGuideTripsStatus.failure &&
+                          trips.isEmpty)
+                        Padding(
+                          padding: EdgeInsets.only(top: 8.h),
+                          child: Text(
+                            state.errorMessage ??
+                                'tour_guide_profile_trips_load_failed'.tr(),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              color:
+                                  isDark ? Colors.white : AppColor.primaryColor,
+                            ),
+                          ),
+                        )
+                      else if (trips.isEmpty)
+                        Padding(
+                          padding: EdgeInsets.only(top: 8.h),
+                          child: Text(
+                            'tour_guide_profile_no_trips'.tr(),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              color:
+                                  isDark ? Colors.white : AppColor.primaryColor,
+                            ),
+                          ),
+                        )
+                      else
+                        for (final item in trips)
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 10.h),
+                            child: _GuideTripMiniCard(item: item),
+                          ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
@@ -418,12 +421,7 @@ class _ProfileAvatar extends StatelessWidget {
       );
     }
 
-    return Image.asset(
-      photoUrl,
-      width: 92.w,
-      height: 92.w,
-      fit: BoxFit.cover,
-    );
+    return Image.asset(photoUrl, width: 92.w, height: 92.w, fit: BoxFit.cover);
   }
 
   Widget _fallbackAvatar() {
@@ -587,15 +585,16 @@ class _GuideTripMiniCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.horizontal(left: Radius.circular(20.r)),
-            child: coverUrl != null && coverUrl.isNotEmpty
-                ? Image.network(
-                    coverUrl,
-                    width: 130.w,
-                    height: 108.h,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => _fallbackImage(),
-                  )
-                : _fallbackImage(),
+            child:
+                coverUrl != null && coverUrl.isNotEmpty
+                    ? Image.network(
+                      coverUrl,
+                      width: 130.w,
+                      height: 108.h,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => _fallbackImage(),
+                    )
+                    : _fallbackImage(),
           ),
           SizedBox(width: 10.w),
           Expanded(
@@ -631,9 +630,10 @@ class _GuideTripMiniCard extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontSize: 11.sp,
-                            color: isDark
-                                ? const Color(0xFF9FB0BD)
-                                : const Color(0xFF556C7B),
+                            color:
+                                isDark
+                                    ? const Color(0xFF9FB0BD)
+                                    : const Color(0xFF556C7B),
                           ),
                         ),
                       ),

@@ -13,7 +13,7 @@ class TouristGuidesView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final pageBg = isDark ? const Color(0xFF0F1A24) :  Colors.white;
+    final pageBg = isDark ? const Color(0xFF0F1A24) : Colors.white;
     final titleColor = isDark ? Colors.white : AppColor.primaryColor;
     final subtitleColor =
         isDark ? const Color(0xFF9FB0BD) : const Color(0xFF6B7B88);
@@ -50,16 +50,13 @@ class TouristGuidesView extends StatelessWidget {
                   child: BlocBuilder<TouristGuidesCubit, TouristGuidesState>(
                     builder: (context, state) {
                       if (state.status == TouristGuidesStatus.loading) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
+                        return const Center(child: CircularProgressIndicator());
                       }
 
                       if (state.status == TouristGuidesStatus.failure) {
                         return Center(
                           child: Text(
-                            state.errorMessage ??
-                                'tourist_guides_failed'.tr(),
+                            state.errorMessage ?? 'tourist_guides_failed'.tr(),
                             style: TextStyle(
                               color:
                                   isDark ? Colors.white : AppColor.primaryColor,
@@ -197,11 +194,11 @@ class _GuideCard extends StatelessWidget {
             label: 'tourist_guides_experience'.tr(),
             value: '${guide.yearsOfExperience} ${"tourist_guides_years".tr()}',
           ),
-          if (guide.coveredArea.trim().isNotEmpty)
-            _GuideInfoRow(
-              label: 'tourist_guides_covers'.tr(),
-              value: guide.coveredArea,
-            ),
+          // if (guide.coveredArea.trim().isNotEmpty)
+          //   _GuideInfoRow(
+          //     label: 'tourist_guides_covers'.tr(),
+          //     value: guide.coveredArea,
+          //   ),
           if (languages.isNotEmpty)
             _GuideInfoRow(
               label: 'tourist_guides_languages'.tr(),
@@ -213,27 +210,32 @@ class _GuideCard extends StatelessWidget {
               child: Wrap(
                 spacing: 6.w,
                 runSpacing: 6.h,
-                children: guide.specialization
-                    .map(
-                      (item) => Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
-                        decoration: BoxDecoration(
-                          color:
-                              isDark ? const Color(0xFF1F2D38) : const Color(0xFFF2F4F6),
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                        child: Text(
-                          item,
-                          style: TextStyle(
-                            fontSize: 11.sp,
-                            color: mutedColor,
-                            fontWeight: FontWeight.w600,
+                children:
+                    guide.specialization
+                        .map(
+                          (item) => Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 10.w,
+                              vertical: 4.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color:
+                                  isDark
+                                      ? const Color(0xFF1F2D38)
+                                      : const Color(0xFFF2F4F6),
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
+                            child: Text(
+                              item,
+                              style: TextStyle(
+                                fontSize: 11.sp,
+                                color: mutedColor,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    )
-                    .toList(),
+                        )
+                        .toList(),
               ),
             ),
           SizedBox(height: 14.h),
@@ -241,11 +243,10 @@ class _GuideCard extends StatelessWidget {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(
+                Navigator.of(
                   context,
-                  '/tourGuideProfileView',
-                  arguments: guide,
-                );
+                  rootNavigator: true,
+                ).pushNamed('/tourGuideProfileView', arguments: guide);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColor.secondaryColor,
@@ -270,15 +271,12 @@ class _GuideCard extends StatelessWidget {
   }
 
   String _resolveLocation() {
-    if (guide.city.trim().isNotEmpty) {
-      return guide.city.trim();
-    }
-    return guide.coveredArea.trim();
+    return guide.city.trim();
   }
 
   String _resolveLanguages() {
     if (guide.languages.isEmpty) return '';
-    return guide.languages.map((item) => item.language).join(' • ');
+    return guide.languages.join(' • '); // languages دلوقتي List<String>
   }
 }
 
@@ -303,10 +301,7 @@ class _GuideInfoRow extends StatelessWidget {
             width: 88.w,
             child: Text(
               label,
-              style: TextStyle(
-                fontSize: 12.sp,
-                color: mutedColor,
-              ),
+              style: TextStyle(fontSize: 12.sp, color: mutedColor),
             ),
           ),
           Expanded(
@@ -333,7 +328,8 @@ class _GuideAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final fallbackColor = isDark ? const Color(0xFF1F2D38) : const Color(0xFFF2F4F6);
+    final fallbackColor =
+        isDark ? const Color(0xFF1F2D38) : const Color(0xFFF2F4F6);
     final hasPhoto = photoUrl.trim().isNotEmpty;
 
     return Container(
@@ -344,17 +340,18 @@ class _GuideAvatar extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(24.r),
-        child: hasPhoto
-            ? Image.network(
-                photoUrl,
-                width: 68.w,
-                height: 68.w,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) {
-                  return _fallbackAvatar();
-                },
-              )
-            : _fallbackAvatar(),
+        child:
+            hasPhoto
+                ? Image.network(
+                  photoUrl,
+                  width: 68.w,
+                  height: 68.w,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) {
+                    return _fallbackAvatar();
+                  },
+                )
+                : _fallbackAvatar(),
       ),
     );
   }

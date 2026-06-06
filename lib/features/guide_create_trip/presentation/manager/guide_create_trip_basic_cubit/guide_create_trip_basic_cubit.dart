@@ -7,7 +7,8 @@ import 'package:flutter/material.dart';
 part 'guide_create_trip_basic_state.dart';
 
 class GuideCreateTripBasicCubit extends Cubit<GuideCreateTripBasicState> {
-  GuideCreateTripBasicCubit(this._repo) : super(GuideCreateTripBasicState.initial());
+  GuideCreateTripBasicCubit(this._repo)
+    : super(GuideCreateTripBasicState.initial());
 
   final GuideCreateTripRepo _repo;
 
@@ -41,11 +42,21 @@ class GuideCreateTripBasicCubit extends Cubit<GuideCreateTripBasicState> {
     } else {
       selected.add(category);
     }
-    emit(state.copyWith(selectedCategories: selected, status: GuideCreateTripBasicStatus.initial));
+    emit(
+      state.copyWith(
+        selectedCategories: selected,
+        status: GuideCreateTripBasicStatus.initial,
+      ),
+    );
   }
 
   void selectCity(String? city) {
-    emit(state.copyWith(selectedCity: city, status: GuideCreateTripBasicStatus.initial));
+    emit(
+      state.copyWith(
+        selectedCity: city,
+        status: GuideCreateTripBasicStatus.initial,
+      ),
+    );
   }
 
   void setSelectedLandmarks(List<int> ids) {
@@ -116,7 +127,9 @@ class GuideCreateTripBasicCubit extends Cubit<GuideCreateTripBasicState> {
       return;
     }
 
-    emit(state.copyWith(status: GuideCreateTripBasicStatus.loading, message: null));
+    emit(
+      state.copyWith(status: GuideCreateTripBasicStatus.loading, message: null),
+    );
 
     try {
       final message = await _repo.createBasicTrip(

@@ -493,5 +493,7 @@
     "guide_trip_select_landmarks": "Select Landmarks",
     "guide_trip_created": "Trip created successfully",
     "guide_trip_create_failed": "Failed to create trip",
-    "guide_trip_fix_error": "Please fix the errors before going back"
+    "guide_trip_fix_error": "Please fix the errors before going back",
+    "tourist_trip_card_subtitle": "Explore this amazing trip",
+    "tourist_book_now": "Book Now"
 }

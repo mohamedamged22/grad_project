@@ -13,7 +13,7 @@ class TouristGuidesCubit extends Cubit<TouristGuidesState> {
     emit(state.copyWith(status: TouristGuidesStatus.loading));
 
     try {
-      final guides = await _repo.fetchProfiles(page: page, size: size);
+      final guides = await _repo.fetchProfiles();
       emit(
         state.copyWith(
           status: TouristGuidesStatus.success,

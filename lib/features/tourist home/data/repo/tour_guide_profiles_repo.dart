@@ -6,17 +6,17 @@ import 'package:dio/dio.dart';
 
 class TourGuideProfilesRepo {
   final ApiService _apiService;
-
   TourGuideProfilesRepo(this._apiService);
 
-  Future<List<TourGuideProfile>> fetchProfiles({
-    int page = 0,
-    int size = 10,
-  }) async {
+  /// GET /api/v1/tour-guides?city=Cairo  — returns data: [ {...}, {...} ]
+  Future<List<TourGuideProfile>> fetchProfiles({String? city}) async {
     try {
+      final queryParams = <String, dynamic>{};
+      if (city != null && city.isNotEmpty) queryParams['city'] = city;
+
       final response = await _apiService.get(
-        '/tourguide/profiles',
-        queryParams: {'page': page, 'size': size},
+        '/v1/tour-guides',
+        queryParams: queryParams.isEmpty ? null : queryParams,
       );
 
       if (response['success'] != true) {
@@ -26,16 +26,9 @@ class TourGuideProfilesRepo {
       }
 
       final data = response['data'];
-      if (data is! Map<String, dynamic>) {
-        throw ApiException('Invalid guides response format');
-      }
+      if (data is! List) return const [];
 
-      final content = data['content'];
-      if (content is! List) {
-        return const [];
-      }
-
-      return content
+      return data
           .whereType<Map<String, dynamic>>()
           .map(TourGuideProfile.fromJson)
           .toList();
@@ -47,9 +40,10 @@ class TourGuideProfilesRepo {
     }
   }
 
+  /// GET /api/v1/tour-guides/{guideId}  — returns data: { ... }
   Future<TourGuideProfile> fetchProfileById(int id) async {
     try {
-      final response = await _apiService.get('/tourguide/profile/$id');
+      final response = await _apiService.get('/v1/tour-guides/$id');
 
       if (response['success'] != true) {
         throw ApiException(
@@ -71,6 +65,7 @@ class TourGuideProfilesRepo {
     }
   }
 
+  /// GET /v1/trips/guide/{guideId} — unchanged
   Future<List<GuideTripSummaryModel>> fetchGuideTrips({
     required int guideId,
     int page = 0,
@@ -94,9 +89,7 @@ class TourGuideProfilesRepo {
       }
 
       final content = data['content'];
-      if (content is! List) {
-        return const [];
-      }
+      if (content is! List) return const [];
 
       return content
           .whereType<Map<String, dynamic>>()

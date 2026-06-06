@@ -494,5 +494,7 @@
     "guide_trip_select_landmarks": "اختر المعالم",
     "guide_trip_created": "تم إنشاء الرحلة بنجاح",
     "guide_trip_create_failed": "فشل في إنشاء الرحلة",
-    "guide_trip_fix_error": "يرجى تصحيح الأخطاء قبل الرجوع"
+    "guide_trip_fix_error": "يرجى تصحيح الأخطاء قبل الرجوع",
+    "tourist_trip_card_subtitle": "استكشف هذه الرحلة المميزة",
+    "tourist_book_now": "احجز الآن"
 }

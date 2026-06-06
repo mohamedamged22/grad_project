@@ -1,7 +1,6 @@
 import 'package:beyond_the_pramids/core/constants/app_color.dart';
 import 'package:beyond_the_pramids/core/services/service_locator.dart';
 import 'package:beyond_the_pramids/core/utils/size_config.dart';
-import 'package:beyond_the_pramids/features/guide%20home/presentation/views/widgets/guide_home_search_field.dart';
 import 'package:beyond_the_pramids/features/onboarding/presentation/views/widgets/custom_button.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/data/model/tourist_landmark_list_item.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/presentation/manager/tourist_landmarks_cubit/tourist_landmarks_cubit.dart';
@@ -263,21 +262,7 @@ class _SelectableLandmarkCard extends StatelessWidget {
                         width: 2,
                       ),
                     ),
-                    child: Center(
-                      child: Container(
-                        width: 34.w,
-                        height: 34.w,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.9),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.check_rounded,
-                          color: AppColor.secondaryColor,
-                          size: 20.sp,
-                        ),
-                      ),
-                    ),
+                    child: Center(),
                   ),
                 ),
             ],

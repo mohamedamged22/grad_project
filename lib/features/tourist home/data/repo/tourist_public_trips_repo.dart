@@ -14,7 +14,7 @@ class TouristPublicTripsRepo {
   }) async {
     try {
       final response = await _apiService.get(
-        '/v1/trips',
+        '/v1/static-trips',
         queryParams: {'page': page, 'size': size},
       );
 

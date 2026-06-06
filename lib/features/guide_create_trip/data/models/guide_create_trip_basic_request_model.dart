@@ -31,10 +31,7 @@ class GuideCreateTripBasicRequestModel {
       payload['lng'] = point.$2;
       payload['latitude'] = point.$1;
       payload['longitude'] = point.$2;
-      payload['meetingLocation'] = {
-        'lat': point.$1,
-        'lng': point.$2,
-      };
+      payload['meetingLocation'] = {'lat': point.$1, 'lng': point.$2};
     }
 
     return payload;
