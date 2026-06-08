@@ -143,14 +143,14 @@ class TouristPersonalInformationView extends StatelessWidget {
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(24.r),
                             borderSide: BorderSide(
-                              color: AppColor.primaryColor,
+                              color: isDark ? const Color(0xFF415363) : AppColor.primaryColor,
                               width: 1,
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(24.r),
                             borderSide: BorderSide(
-                              color: AppColor.primaryColor,
+                              color: isDark ? const Color(0xFF5A6A78) : AppColor.primaryColor,
                               width: 1.5,
                             ),
                           ),
@@ -173,7 +173,7 @@ class TouristPersonalInformationView extends StatelessWidget {
                           color: cardBg,
                           borderRadius: BorderRadius.circular(24.r),
                           border: Border.all(
-                            color: AppColor.primaryColor,
+                            color: isDark ? const Color(0xFF415363) : AppColor.primaryColor,
                             width: 1,
                           ),
                         ),

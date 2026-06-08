@@ -10,7 +10,7 @@ class TouristTripDetailsRepo {
 
   Future<TouristTripDetails> fetchTripDetails({required int tripId}) async {
     try {
-      final response = await _apiService.get('/v1/trips/$tripId');
+      final response = await _apiService.get('/v1/static-trips/$tripId');
 
       if (response['success'] != true) {
         throw ApiException(

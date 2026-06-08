@@ -486,29 +486,29 @@ class _TouristTripDetailsViewState extends State<TouristTripDetailsView> {
                                       ],
                                     ),
                                   ),
-                                  InkWell(
-                                    onTap: () {
-                                      Navigator.pushNamed(
-                                        context,
-                                        '/tourGuideProfileView',
-                                      );
-                                    },
-                                    borderRadius: BorderRadius.circular(12.r),
-                                    child: Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 6.w,
-                                        vertical: 4.h,
-                                      ),
-                                      child: Text(
-                                        'trip_details_view_profile'.tr(),
-                                        style: TextStyle(
-                                          fontSize: 12.sp,
-                                          color: AppColor.secondaryColor,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+                                  // InkWell(
+                                  //   onTap: () {
+                                  //     Navigator.pushNamed(
+                                  //       context,
+                                  //       '/tourGuideProfileView',
+                                  //     );
+                                  //   },
+                                  //   borderRadius: BorderRadius.circular(12.r),
+                                  //   child: Padding(
+                                  //     padding: EdgeInsets.symmetric(
+                                  //       horizontal: 6.w,
+                                  //       vertical: 4.h,
+                                  //     ),
+                                  //     child: Text(
+                                  //       'trip_details_view_profile'.tr(),
+                                  //       style: TextStyle(
+                                  //         fontSize: 12.sp,
+                                  //         color: AppColor.secondaryColor,
+                                  //         fontWeight: FontWeight.w700,
+                                  //       ),
+                                  //     ),
+                                  //   ),
+                                  // ),
                                 ],
                               ),
                     ),
@@ -596,7 +596,13 @@ class _TouristTripDetailsViewState extends State<TouristTripDetailsView> {
                     SizedBox(
                       height: 38.h,
                       child: FilledButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushNamed(
+                            context,
+                            '/touristCreateRequestView',
+                            arguments: widget.trip,
+                          );
+                        },
                         style: FilledButton.styleFrom(
                           backgroundColor: AppColor.secondaryColor,
                           padding: EdgeInsets.symmetric(horizontal: 24.w),

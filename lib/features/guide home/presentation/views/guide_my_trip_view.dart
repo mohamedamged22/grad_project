@@ -3,8 +3,8 @@ import 'package:beyond_the_pramids/core/services/service_locator.dart';
 import 'package:beyond_the_pramids/core/utils/size_config.dart';
 import 'package:beyond_the_pramids/features/guide%20home/data/model/guide_trip_summary_model.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_my_trip_cubit/guide_my_trip_cubit.dart';
-import 'package:beyond_the_pramids/features/guide%20home/presentation/views/widgets/guide_filter_chip.dart';
-import 'package:beyond_the_pramids/features/guide%20home/presentation/views/widgets/guide_home_search_field.dart';
+// import 'package:beyond_the_pramids/features/guide%20home/presentation/views/widgets/guide_filter_chip.dart';
+// import 'package:beyond_the_pramids/features/guide%20home/presentation/views/widgets/guide_home_search_field.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/views/widgets/guide_trip_preview_card.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +28,6 @@ class _MyTripViewBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final pageBg = Theme.of(context).scaffoldBackgroundColor;
-    final cardBg = Theme.of(context).cardColor;
     final primaryText =
         Theme.of(context).brightness == Brightness.dark
             ? Colors.white
@@ -72,54 +71,7 @@ class _MyTripViewBody extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 10.h),
-                  GuideHomeSearchField(
-                    hintText: 'guide_search_trip'.tr(),
-                    onChanged:
-                        context.read<GuideMyTripCubit>().updateSearchQuery,
-                  ),
-                  SizedBox(height: 10.h),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: GuideFilterChip(
-                          label: 'guide_filter_new'.tr(),
-                          isSelected: state.filter == MyTripFilter.newTrips,
-                          backgroundColor: cardBg,
-                          textColor: primaryText,
-                          onTap:
-                              () => context
-                                  .read<GuideMyTripCubit>()
-                                  .selectFilter(MyTripFilter.newTrips),
-                        ),
-                      ),
-                      SizedBox(width: 8.w),
-                      Expanded(
-                        child: GuideFilterChip(
-                          label: 'guide_filter_all'.tr(),
-                          isSelected: state.filter == MyTripFilter.all,
-                          backgroundColor: cardBg,
-                          textColor: primaryText,
-                          onTap:
-                              () => context
-                                  .read<GuideMyTripCubit>()
-                                  .selectFilter(MyTripFilter.all),
-                        ),
-                      ),
-                      SizedBox(width: 8.w),
-                      Expanded(
-                        child: GuideFilterChip(
-                          label: 'guide_filter_upcoming'.tr(),
-                          isSelected: state.filter == MyTripFilter.upcoming,
-                          backgroundColor: cardBg,
-                          textColor: primaryText,
-                          onTap:
-                              () => context
-                                  .read<GuideMyTripCubit>()
-                                  .selectFilter(MyTripFilter.upcoming),
-                        ),
-                      ),
-                    ],
-                  ),
+                  // TODO: Re-enable search & filter later
                   if (state.filter != MyTripFilter.upcoming &&
                       state.showCreatedBanner) ...[
                     SizedBox(height: 10.h),

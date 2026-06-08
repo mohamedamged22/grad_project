@@ -28,19 +28,19 @@ class _TouristRootViewState extends State<TouristRootView> {
   Widget build(BuildContext context) {
     final tabs = [
       _TouristTabData(
-        label: 'tourist_nav_home'.tr(),
+        labelKey: 'tourist_nav_home',
         assetPath: 'assets/svg/home-04.svg',
       ),
       _TouristTabData(
-        label: 'tourist_nav_guides'.tr(),
+        labelKey: 'tourist_nav_guides',
         iconData: Icons.badge_outlined,
       ),
       _TouristTabData(
-        label: 'tourist_nav_chat'.tr(),
+        labelKey: 'tourist_nav_chat',
         iconData: Icons.chat_bubble_outline_rounded,
       ),
       _TouristTabData(
-        label: 'tourist_nav_profile'.tr(),
+        labelKey: 'tourist_nav_profile',
         assetPath: 'assets/svg/profile.svg',
       ),
     ];
@@ -57,12 +57,12 @@ class _TouristRootViewState extends State<TouristRootView> {
 }
 
 class _TouristTabData {
-  final String label;
+  final String labelKey;
   final String? assetPath;
   final IconData? iconData;
 
   const _TouristTabData({
-    required this.label,
+    required this.labelKey,
     this.assetPath,
     this.iconData,
   });
@@ -151,7 +151,7 @@ class _TouristBottomNavBar extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            tab.label,
+                            tab.labelKey.tr(),
                             style: TextStyle(
                               fontSize: 15,
                               fontWeight:

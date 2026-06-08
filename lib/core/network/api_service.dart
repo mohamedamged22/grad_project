@@ -51,6 +51,16 @@ class ApiService {
     }
   }
 
+  // PATCH
+  Future<dynamic> patch(String endPoint, Map<String, dynamic> body) async {
+    try {
+      final response = await _dioClient.dio.patch(endPoint, data: body);
+      return response.data;
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
   // DELETE
   Future<dynamic> delete(String endPoint, {Map<String, dynamic>? body}) async {
     try {

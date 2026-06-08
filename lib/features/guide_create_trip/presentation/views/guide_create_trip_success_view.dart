@@ -91,7 +91,16 @@ class GuideCreateTripSuccessView extends StatelessWidget {
     final titleColor = isDark ? Colors.white : AppColor.primaryColor;
     final subtitleColor = AppColor.secondaryColor;
 
-    return Scaffold(
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          '/guideHomeRootView',
+          (route) => false,
+        );
+        return false;
+      },
+      child: Scaffold(
       backgroundColor: pageBg,
       body: SafeArea(
         child: SingleChildScrollView(
@@ -101,7 +110,13 @@ class GuideCreateTripSuccessView extends StatelessWidget {
               Align(
                 alignment: AlignmentDirectional.centerStart,
                 child: IconButton(
-                  onPressed: () => Navigator.maybePop(context),
+                  onPressed: () {
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      '/guideHomeRootView',
+                      (route) => false,
+                    );
+                  },
                   icon: Icon(
                     Icons.arrow_back_ios_new_rounded,
                     size: 17.sp,
@@ -125,7 +140,7 @@ class GuideCreateTripSuccessView extends StatelessWidget {
                   fontSize: 24.sp,
                   height: 1.0,
                   fontWeight: FontWeight.w600,
-                  color: AppColor.primaryColor,
+                  color: titleColor,
                 ),
               ),
               SizedBox(height: 8.h),
@@ -293,6 +308,7 @@ class GuideCreateTripSuccessView extends StatelessWidget {
           ),
         ),
       ),
+    ),
     );
   }
 }

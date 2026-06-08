@@ -18,7 +18,8 @@ class _AccountRoleSliderState extends State<AccountRoleSlider> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final backgroundColor = Colors.white;
+    final backgroundColor =
+        isDark ? const Color(0xFF19232D) : Colors.white;
     final unselectedColor =
         isDark ? const Color(0xFFCDD6DC) : AppColor.primaryColor;
     final isTourist = _store.selectedType != 'guide';
@@ -58,8 +59,8 @@ class _AccountRoleSliderState extends State<AccountRoleSlider> {
                     curve: Curves.easeOut,
                     alignment:
                         isTourist
-                            ? Alignment.centerLeft
-                            : Alignment.centerRight,
+                            ? AlignmentDirectional.centerStart
+                            : AlignmentDirectional.centerEnd,
                     child: Container(
                       width: thumbWidth,
                       decoration: BoxDecoration(

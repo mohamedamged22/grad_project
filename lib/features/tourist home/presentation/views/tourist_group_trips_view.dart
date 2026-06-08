@@ -69,7 +69,8 @@ class _TouristGroupTripsViewState extends State<TouristGroupTripsView> {
 
   @override
   Widget build(BuildContext context) {
-    final pageBg = Colors.white;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final pageBg = Theme.of(context).scaffoldBackgroundColor;
     return BlocProvider.value(
       value: _tripsCubit,
       child: Scaffold(
@@ -87,7 +88,7 @@ class _TouristGroupTripsViewState extends State<TouristGroupTripsView> {
                       icon: Icon(
                         Icons.arrow_back_ios_new_rounded,
                         size: 18.sp,
-                        color: AppColor.primaryColor,
+                        color: isDark ? Colors.white : AppColor.primaryColor,
                       ),
                     ),
                     Expanded(
@@ -97,7 +98,7 @@ class _TouristGroupTripsViewState extends State<TouristGroupTripsView> {
                         style: TextStyle(
                           fontSize: 17.sp,
                           fontWeight: FontWeight.w700,
-                          color: AppColor.primaryColor,
+                          color: isDark ? Colors.white : AppColor.primaryColor,
                         ),
                       ),
                     ),

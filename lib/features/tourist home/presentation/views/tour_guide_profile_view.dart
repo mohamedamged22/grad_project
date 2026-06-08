@@ -66,7 +66,7 @@ class TourGuideProfileView extends StatelessWidget {
     return BlocBuilder<TourGuideProfileCubit, TourGuideProfileState>(
       builder: (context, state) {
         final isDark = Theme.of(context).brightness == Brightness.dark;
-        final pageBg = Colors.white;
+        final pageBg = Theme.of(context).scaffoldBackgroundColor;
         final guide = state.guide ?? initialGuide;
 
         if (state.status == TourGuideProfileStatus.loading && guide == null) {
@@ -133,25 +133,25 @@ class TourGuideProfileView extends StatelessWidget {
                           ),
                         ),
                       ),
-                      // Positioned(
-                      //   top: 18.h,
-                      //   left: 8.w,
-                      //   child: Material(
-                      //     color: Colors.transparent,
-                      //     child: InkWell(
-                      //       onTap: () => Navigator.pop(context),
-                      //       borderRadius: BorderRadius.circular(20.r),
-                      //       child: Padding(
-                      //         padding: EdgeInsets.all(6.w),
-                      //         child: Icon(
-                      //           Icons.arrow_back_ios_new_rounded,
-                      //           size: 24.sp,
-                      //           color: Colors.white,
-                      //         ),
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
+                      Positioned(
+                        top: 40.h,
+                        left: 8.w,
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () => Navigator.pop(context),
+                            borderRadius: BorderRadius.circular(20.r),
+                            child: Padding(
+                              padding: EdgeInsets.all(6.w),
+                              child: Icon(
+                                Icons.arrow_back_ios_new_rounded,
+                                size: 24.sp,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                       Positioned(
                         left: 0,
                         right: 0,
@@ -258,35 +258,80 @@ class TourGuideProfileView extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 10.h),
-                Center(
-                  child: OutlinedButton.icon(
-                    onPressed: () {},
-                    icon: Icon(
-                      Icons.chat_bubble_outline_rounded,
-                      size: 14.sp,
-                      color: AppColor.secondaryColor,
-                    ),
-                    label: Text(
-                      'tour_guide_profile_message'.tr(),
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w700,
-                        color: AppColor.secondaryColor,
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 18.w),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: () {},
+                          icon: Icon(
+                            Icons.chat_bubble_outline_rounded,
+                            size: 14.sp,
+                            color: AppColor.secondaryColor,
+                          ),
+                          label: Text(
+                            'tour_guide_profile_message'.tr(),
+                            style: TextStyle(
+                              fontSize: 13.sp,
+                              fontWeight: FontWeight.w700,
+                              color: AppColor.secondaryColor,
+                            ),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            minimumSize: Size(double.infinity, 40.h),
+                            side: BorderSide(
+                              color: AppColor.secondaryColor.withValues(
+                                alpha: .6,
+                              ),
+                            ),
+                            backgroundColor:
+                                isDark
+                                    ? const Color(0xFF173041)
+                                    : const Color(0xFFF8FCFE),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14.r),
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                    style: OutlinedButton.styleFrom(
-                      minimumSize: Size(180.w, 40.h),
-                      side: BorderSide(
-                        color: AppColor.secondaryColor.withValues(alpha: .6),
+                      SizedBox(width: 10.w),
+                      Expanded(
+                        child: FilledButton.icon(
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              '/touristCreateRequestView',
+                              arguments: {
+                                'guideId': guideId ?? guide?.id,
+                                'guideName': guide?.name ?? '',
+                              },
+                            );
+                          },
+                          icon: Icon(
+                            Icons.calendar_month_rounded,
+                            size: 14.sp,
+                            color: Colors.white,
+                          ),
+                          label: Text(
+                            'tour_guide_profile_book_now'.tr(),
+                            style: TextStyle(
+                              fontSize: 13.sp,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          style: FilledButton.styleFrom(
+                            minimumSize: Size(double.infinity, 40.h),
+                            backgroundColor: AppColor.secondaryColor,
+                            disabledBackgroundColor: AppColor.secondaryColor
+                                .withValues(alpha: 0.4),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14.r),
+                            ),
+                          ),
+                        ),
                       ),
-                      backgroundColor:
-                          isDark
-                              ? const Color(0xFF173041)
-                              : const Color(0xFFF8FCFE),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14.r),
-                      ),
-                    ),
+                    ],
                   ),
                 ),
                 SizedBox(height: 14.h),
@@ -387,7 +432,10 @@ class TourGuideProfileView extends StatelessWidget {
                         for (final item in trips)
                           Padding(
                             padding: EdgeInsets.only(bottom: 10.h),
-                            child: _GuideTripMiniCard(item: item),
+                            child: _GuideTripMiniCard(
+                              item: item,
+                              guideId: guideId ?? guide?.id,
+                            ),
                           ),
                     ],
                   ),
@@ -561,8 +609,20 @@ class _ProfileChip extends StatelessWidget {
 
 class _GuideTripMiniCard extends StatelessWidget {
   final GuideTripSummaryModel item;
+  final int? guideId;
 
-  const _GuideTripMiniCard({required this.item});
+  const _GuideTripMiniCard({required this.item, this.guideId});
+
+  Future<void> _bookNow(BuildContext context) async {
+    Navigator.pushNamed(
+      context,
+      '/touristCreateRequestView',
+      arguments: {
+        'guideId': guideId,
+        'guideName': item.title,
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -659,7 +719,7 @@ class _GuideTripMiniCard extends StatelessWidget {
                         height: 30.h,
                         width: 88.w,
                         child: FilledButton(
-                          onPressed: () {},
+                          onPressed: () => _bookNow(context),
                           style: FilledButton.styleFrom(
                             backgroundColor: AppColor.secondaryColor,
                             padding: EdgeInsets.symmetric(horizontal: 8.w),

@@ -8,6 +8,8 @@ class TouristPublicTrip {
   final String? imageUrl;
   final String creatorName;
   final num price;
+  final String? category;
+  final String? status;
 
   const TouristPublicTrip({
     required this.id,
@@ -19,6 +21,8 @@ class TouristPublicTrip {
     required this.imageUrl,
     required this.creatorName,
     required this.price,
+    this.category,
+    this.status,
   });
 
   factory TouristPublicTrip.fromJson(Map<String, dynamic> json) {
@@ -29,9 +33,11 @@ class TouristPublicTrip {
       startDate: json['startDate']?.toString() ?? '',
       endDate: json['endDate']?.toString() ?? '',
       duration: json['duration']?.toString() ?? '',
-      imageUrl: json['imageUrl']?.toString(),
+      imageUrl: (json['coverImageUrl'] ?? json['imageUrl'])?.toString(),
       creatorName: json['creatorName']?.toString() ?? '',
-      price: json['price'] as num? ?? 0,
+      price: (json['pricePerTourist'] ?? json['price']) as num? ?? 0,
+      category: json['category']?.toString(),
+      status: json['status']?.toString(),
     );
   }
 

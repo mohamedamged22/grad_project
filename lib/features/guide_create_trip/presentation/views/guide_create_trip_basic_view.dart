@@ -72,7 +72,7 @@ class GuideCreateTripBasicView extends StatelessWidget {
             leading: IconButton(
               icon: Icon(
                 Icons.arrow_back_ios_new_rounded,
-                color: AppColor.primaryColor,
+                color: AppColor.secondaryColor,
                 size: 18.sp,
               ),
               onPressed: () {

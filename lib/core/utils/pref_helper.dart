@@ -6,6 +6,7 @@ class PrefHelper {
   static const String _profileCompletedKey = 'profile_completed';
   static const String _guideDashboardCacheKey = 'guide_dashboard_cache';
   static const String _guideProfileInfoCacheKey = 'guide_profile_info_cache';
+  static const String _onboardingSeenKey = 'onboarding_seen';
   static const String _authMeCacheKey = 'auth_me_cache';
 
   static Future<void> saveString(String key, String value) async {
@@ -57,6 +58,16 @@ class PrefHelper {
   static Future<bool> isProfileCompleted() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool(_profileCompletedKey) ?? false;
+  }
+
+  static Future<void> setOnboardingSeen(bool seen) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_onboardingSeenKey, seen);
+  }
+
+  static Future<bool> isOnboardingSeen() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_onboardingSeenKey) ?? false;
   }
 
   static Future<void> clearAuthMetadata() async {

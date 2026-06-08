@@ -337,6 +337,7 @@ class _LandmarkImage extends StatelessWidget {
         resolved,
         fit: BoxFit.cover,
         width: double.infinity,
+        errorBuilder: (_, __, ___) => _imagePlaceholder(isDark),
       );
     }
 
@@ -356,6 +357,10 @@ class _LandmarkImage extends StatelessWidget {
       );
     }
 
+    return _imagePlaceholder(isDark);
+  }
+
+  static Widget _imagePlaceholder(bool isDark) {
     return Container(
       color: isDark ? const Color(0xFF1C2732) : const Color(0xFFE6EEF2),
       alignment: Alignment.center,
@@ -492,20 +497,10 @@ class _LandmarkTripCard extends StatelessWidget {
                     width: 72.w,
                     height: 72.w,
                     fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) =>
+                        _tripImagePlaceholder(isDark),
                   )
-                : Container(
-                    width: 72.w,
-                    height: 72.w,
-                    color: isDark
-                        ? const Color(0xFF1C2732)
-                        : const Color(0xFFE6EEF2),
-                    alignment: Alignment.center,
-                    child: Icon(
-                      Icons.image_outlined,
-                      size: 24.sp,
-                      color: AppColor.secondaryColor,
-                    ),
-                  ),
+                : _tripImagePlaceholder(isDark),
           ),
           SizedBox(width: 10.w),
           Expanded(
@@ -559,6 +554,20 @@ class _LandmarkTripCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  static Widget _tripImagePlaceholder(bool isDark) {
+    return Container(
+      width: 72.w,
+      height: 72.w,
+      color: isDark ? const Color(0xFF1C2732) : const Color(0xFFE6EEF2),
+      alignment: Alignment.center,
+      child: Icon(
+        Icons.image_outlined,
+        size: 24.sp,
+        color: AppColor.secondaryColor,
       ),
     );
   }

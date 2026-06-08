@@ -23,7 +23,9 @@ class _GuideSettingsViewState extends State<GuideSettingsView> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(18.r)),
       ),
-      builder: (context) {
+      builder: (sheetContext) {
+        final isDark = Theme.of(sheetContext).brightness == Brightness.dark;
+        final sheetText = isDark ? Colors.white : AppColor.primaryColor;
         return SafeArea(
           child: Padding(
             padding: EdgeInsets.fromLTRB(16.w, 10.h, 16.w, 18.h),
@@ -34,19 +36,19 @@ class _GuideSettingsViewState extends State<GuideSettingsView> {
                   width: 36.w,
                   height: 4.h,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFCFD8DE),
+                    color: isDark ? const Color(0xFF4A5568) : const Color(0xFFCFD8DE),
                     borderRadius: BorderRadius.circular(20.r),
                   ),
                 ),
                 SizedBox(height: 12.h),
                 Align(
-                  alignment: Alignment.centerLeft,
+                  alignment: AlignmentDirectional.centerStart,
                   child: Text(
                     'language'.tr(),
                     style: TextStyle(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w700,
-                      color: AppColor.primaryColor,
+                      color: sheetText,
                     ),
                   ),
                 ),
@@ -56,10 +58,10 @@ class _GuideSettingsViewState extends State<GuideSettingsView> {
                   title: Text('lang_english'.tr()),
                   trailing:
                       currentCode == 'en'
-                          ? const Icon(Icons.check_rounded)
+                          ? Icon(Icons.check_rounded, color: AppColor.secondaryColor)
                           : null,
                   onTap: () async {
-                    Navigator.pop(context);
+                    Navigator.pop(sheetContext);
                     await context.setLocale(const Locale('en'));
                   },
                 ),
@@ -68,10 +70,10 @@ class _GuideSettingsViewState extends State<GuideSettingsView> {
                   title: Text('lang_arabic'.tr()),
                   trailing:
                       currentCode == 'ar'
-                          ? const Icon(Icons.check_rounded)
+                          ? Icon(Icons.check_rounded, color: AppColor.secondaryColor)
                           : null,
                   onTap: () async {
-                    Navigator.pop(context);
+                    Navigator.pop(sheetContext);
                     await context.setLocale(const Locale('ar'));
                   },
                 ),
@@ -87,7 +89,9 @@ class _GuideSettingsViewState extends State<GuideSettingsView> {
     final shouldDelete = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
-      builder: (context) {
+      builder: (dialogContext) {
+        final isDark = Theme.of(dialogContext).brightness == Brightness.dark;
+        final dialogText = isDark ? Colors.white : AppColor.primaryColor;
         return Dialog(
           insetPadding: EdgeInsets.symmetric(horizontal: 34.w),
           shape: RoundedRectangleBorder(
@@ -101,8 +105,8 @@ class _GuideSettingsViewState extends State<GuideSettingsView> {
                 Container(
                   width: 74.w,
                   height: 74.w,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFF6F6F6),
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF1E2A36) : const Color(0xFFF6F6F6),
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
@@ -124,7 +128,7 @@ class _GuideSettingsViewState extends State<GuideSettingsView> {
                   style: TextStyle(
                     fontSize: 18.sp,
                     fontWeight: FontWeight.w700,
-                    color: AppColor.primaryColor,
+                    color: dialogText,
                   ),
                 ),
                 SizedBox(height: 6.h),
@@ -133,7 +137,7 @@ class _GuideSettingsViewState extends State<GuideSettingsView> {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 11.5.sp,
-                    color: const Color(0xFF6E7C89),
+                    color: isDark ? const Color(0xFF9FAFBC) : const Color(0xFF6E7C89),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -142,7 +146,7 @@ class _GuideSettingsViewState extends State<GuideSettingsView> {
                   children: [
                     Expanded(
                       child: OutlinedButton(
-                        onPressed: () => Navigator.pop(context, false),
+                        onPressed: () => Navigator.pop(dialogContext, false),
                         style: OutlinedButton.styleFrom(
                           side: const BorderSide(
                             color: Color(0xFFB8C4CE),
@@ -156,7 +160,7 @@ class _GuideSettingsViewState extends State<GuideSettingsView> {
                           'keep_it'.tr(),
                           style: TextStyle(
                             fontSize: 12.sp,
-                            color: const Color(0xFF73808D),
+                            color: isDark ? const Color(0xFF9FAFBC) : const Color(0xFF73808D),
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -165,7 +169,7 @@ class _GuideSettingsViewState extends State<GuideSettingsView> {
                     SizedBox(width: 8.w),
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () => Navigator.pop(context, true),
+                        onPressed: () => Navigator.pop(dialogContext, true),
                         style: ElevatedButton.styleFrom(
                           elevation: 0,
                           backgroundColor: const Color(0xFFF23A3A),
@@ -460,7 +464,7 @@ class _TogglePill extends StatelessWidget {
           color: value ? AppColor.secondaryColor : const Color(0xFFD0D7DC),
         ),
         child: Align(
-          alignment: value ? Alignment.centerRight : Alignment.centerLeft,
+          alignment: value ? AlignmentDirectional.centerEnd : AlignmentDirectional.centerStart,
           child: Container(
             width: 18.w,
             height: 18.w,

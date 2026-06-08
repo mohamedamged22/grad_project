@@ -23,7 +23,9 @@ class _TouristSettingsViewState extends State<TouristSettingsView> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(18.r)),
       ),
-      builder: (context) {
+      builder: (sheetContext) {
+        final isDark = Theme.of(sheetContext).brightness == Brightness.dark;
+        final sheetText = isDark ? Colors.white : AppColor.primaryColor;
         return SafeArea(
           child: Padding(
             padding: EdgeInsets.fromLTRB(16.w, 10.h, 16.w, 18.h),
@@ -34,19 +36,19 @@ class _TouristSettingsViewState extends State<TouristSettingsView> {
                   width: 36.w,
                   height: 4.h,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFCFD8DE),
+                    color: isDark ? const Color(0xFF4A5568) : const Color(0xFFCFD8DE),
                     borderRadius: BorderRadius.circular(20.r),
                   ),
                 ),
                 SizedBox(height: 12.h),
                 Align(
-                  alignment: Alignment.centerLeft,
+                  alignment: AlignmentDirectional.centerStart,
                   child: Text(
                     'language'.tr(),
                     style: TextStyle(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w700,
-                      color: AppColor.primaryColor,
+                      color: sheetText,
                     ),
                   ),
                 ),
@@ -56,10 +58,10 @@ class _TouristSettingsViewState extends State<TouristSettingsView> {
                   title: Text('lang_english'.tr()),
                   trailing:
                       currentCode == 'en'
-                          ? const Icon(Icons.check_rounded)
+                          ? Icon(Icons.check_rounded, color: AppColor.secondaryColor)
                           : null,
                   onTap: () async {
-                    Navigator.pop(context);
+                    Navigator.pop(sheetContext);
                     await context.setLocale(const Locale('en'));
                   },
                 ),
@@ -68,10 +70,10 @@ class _TouristSettingsViewState extends State<TouristSettingsView> {
                   title: Text('lang_arabic'.tr()),
                   trailing:
                       currentCode == 'ar'
-                          ? const Icon(Icons.check_rounded)
+                          ? Icon(Icons.check_rounded, color: AppColor.secondaryColor)
                           : null,
                   onTap: () async {
-                    Navigator.pop(context);
+                    Navigator.pop(sheetContext);
                     await context.setLocale(const Locale('ar'));
                   },
                 ),
@@ -309,7 +311,7 @@ class _TogglePill extends StatelessWidget {
           color: value ? AppColor.secondaryColor : const Color(0xFFD0D7DC),
         ),
         child: Align(
-          alignment: value ? Alignment.centerRight : Alignment.centerLeft,
+          alignment: value ? AlignmentDirectional.centerEnd : AlignmentDirectional.centerStart,
           child: Container(
             width: 18.w,
             height: 18.w,

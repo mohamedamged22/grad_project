@@ -25,19 +25,19 @@ class GuideRootView extends StatelessWidget {
   Widget build(BuildContext context) {
     final tabs = [
       _GuideTabData(
-        label: 'guide_nav_home'.tr(),
+        labelKey: 'guide_nav_home',
         assetPath: 'assets/svg/home-04.svg',
       ),
       _GuideTabData(
-        label: 'guide_nav_request'.tr(),
+        labelKey: 'guide_nav_request',
         assetPath: 'assets/svg/request_nav.svg',
       ),
       _GuideTabData(
-        label: 'guide_nav_my_trip'.tr(),
+        labelKey: 'guide_nav_my_trip',
         assetPath: 'assets/svg/my_trip.svg',
       ),
       _GuideTabData(
-        label: 'guide_nav_profile'.tr(),
+        labelKey: 'guide_nav_profile',
         assetPath: 'assets/svg/profile.svg',
       ),
     ];
@@ -58,10 +58,10 @@ class GuideRootView extends StatelessWidget {
 }
 
 class _GuideTabData {
-  final String label;
+  final String labelKey;
   final String assetPath;
 
-  const _GuideTabData({required this.label, required this.assetPath});
+  const _GuideTabData({required this.labelKey, required this.assetPath});
 }
 
 class _GuideBottomNavBar extends StatelessWidget {
@@ -141,7 +141,7 @@ class _GuideBottomNavBar extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            tab.label,
+                            tab.labelKey.tr(),
                             style: TextStyle(
                               fontSize: 15,
                               fontWeight:

@@ -150,7 +150,12 @@ class ProfileView extends StatelessWidget {
                     borderColor: borderColor,
                     backgroundColor: cardBg,
                     defaultTextColor: primaryText,
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        '/guidePrivacyPolicyView',
+                      );
+                    },
                   ),
                   SizedBox(height: 8.h),
 

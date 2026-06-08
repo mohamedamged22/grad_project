@@ -140,15 +140,24 @@ class _CustomTextFieldState extends State<CustomTextField> {
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(24.r)),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(24.r),
-            borderSide: BorderSide(color: AppColor.primaryColor, width: 1),
+            borderSide: BorderSide(
+              color: isDark ? const Color(0xFF304250) : AppColor.primaryColor,
+              width: 1,
+            ),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(24.r),
-            borderSide: BorderSide(color: AppColor.primaryColor, width: 1.5),
+            borderSide: BorderSide(
+              color: isDark ? const Color(0xFF4A90A4) : AppColor.primaryColor,
+              width: 1.5,
+            ),
           ),
           disabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(24.r),
-            borderSide: BorderSide(color: AppColor.primaryColor, width: 1),
+            borderSide: BorderSide(
+              color: isDark ? const Color(0xFF304250) : AppColor.primaryColor,
+              width: 1,
+            ),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(24.r),

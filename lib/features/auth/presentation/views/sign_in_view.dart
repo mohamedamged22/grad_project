@@ -64,9 +64,8 @@ class SignInView extends StatelessWidget {
                   Navigator.pushReplacementNamed(context, '/onboarding');
                 },
                 icon: Icon(
-                  Icons.chevron_left,
+                  Icons.adaptive.arrow_back,
                   size: 32.w,
-                  color: AppColor.primaryColor,
                 ),
               ),
             ),
@@ -139,22 +138,25 @@ class SignInView extends StatelessWidget {
                       ),
 
                       SizedBox(height: 8.h),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(width: 90.w, child: Divider()),
-                          SizedBox(width: 5.w),
-                          Text(
-                            'or_continue_with'.tr(),
-                            style: TextStyle(
-                              color: AppColor.primaryColor,
-                              fontSize: 14.sp,
+                      Builder(builder: (context) {
+                        final isDark = Theme.of(context).brightness == Brightness.dark;
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(width: 90.w, child: Divider(color: isDark ? const Color(0xFF304250) : null)),
+                            SizedBox(width: 5.w),
+                            Text(
+                              'or_continue_with'.tr(),
+                              style: TextStyle(
+                                color: isDark ? const Color(0xFF8FA0AE) : AppColor.primaryColor,
+                                fontSize: 14.sp,
+                              ),
                             ),
-                          ),
-                          SizedBox(width: 5.w),
-                          SizedBox(width: 90.w, child: Divider()),
-                        ],
-                      ),
+                            SizedBox(width: 5.w),
+                            SizedBox(width: 90.w, child: Divider(color: isDark ? const Color(0xFF304250) : null)),
+                          ],
+                        );
+                      }),
 
                       SizedBox(height: 16.h),
                       Row(
@@ -167,28 +169,31 @@ class SignInView extends StatelessWidget {
                       ),
 
                       SizedBox(height: 11.h),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'dont_have_account'.tr(),
-                            style: TextStyle(
-                              color: AppColor.primaryColor,
-                              fontSize: 14.sp,
+                      Builder(builder: (context) {
+                        final isDark = Theme.of(context).brightness == Brightness.dark;
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'dont_have_account'.tr(),
+                              style: TextStyle(
+                                color: isDark ? const Color(0xFF8FA0AE) : AppColor.primaryColor,
+                                fontSize: 14.sp,
+                              ),
                             ),
-                          ),
-                          SizedBox(width: 5.w),
-                          CustomTextButton(
-                            text: 'signup'.tr(),
-                            onPressed: () {
-                              Navigator.pushReplacementNamed(
-                                context,
-                                '/signUpView',
-                              );
-                            },
-                          ),
-                        ],
-                      ),
+                            SizedBox(width: 5.w),
+                            CustomTextButton(
+                              text: 'signup'.tr(),
+                              onPressed: () {
+                                Navigator.pushReplacementNamed(
+                                  context,
+                                  '/signUpView',
+                                );
+                              },
+                            ),
+                          ],
+                        );
+                      }),
                     ],
                   ),
                 ),

@@ -69,9 +69,8 @@ class SignUpView extends StatelessWidget {
                       '/signInView',
                     ),
                 icon: Icon(
-                  Icons.chevron_left,
+                  Icons.adaptive.arrow_back,
                   size: 32.w,
-                  color: AppColor.primaryColor,
                 ),
               ),
             ),
@@ -161,22 +160,25 @@ class SignUpView extends StatelessWidget {
                       ),
 
                       SizedBox(height: 8.h),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(width: 90.w, child: Divider()),
-                          SizedBox(width: 5.w),
-                          Text(
-                            'or_sign_up_with'.tr(),
-                            style: TextStyle(
-                              color: AppColor.primaryColor,
-                              fontSize: 14.sp,
+                      Builder(builder: (context) {
+                        final isDark = Theme.of(context).brightness == Brightness.dark;
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(width: 90.w, child: Divider(color: isDark ? const Color(0xFF304250) : null)),
+                            SizedBox(width: 5.w),
+                            Text(
+                              'or_sign_up_with'.tr(),
+                              style: TextStyle(
+                                color: isDark ? const Color(0xFF8FA0AE) : AppColor.primaryColor,
+                                fontSize: 14.sp,
+                              ),
                             ),
-                          ),
-                          SizedBox(width: 5.w),
-                          SizedBox(width: 90.w, child: Divider()),
-                        ],
-                      ),
+                            SizedBox(width: 5.w),
+                            SizedBox(width: 90.w, child: Divider(color: isDark ? const Color(0xFF304250) : null)),
+                          ],
+                        );
+                      }),
 
                       SizedBox(height: 16.h),
                       Row(
@@ -189,28 +191,31 @@ class SignUpView extends StatelessWidget {
                       ),
 
                       SizedBox(height: 11.h),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'already_have_account'.tr(),
-                            style: TextStyle(
-                              color: AppColor.primaryColor,
-                              fontSize: 14.sp,
+                      Builder(builder: (context) {
+                        final isDark = Theme.of(context).brightness == Brightness.dark;
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'already_have_account'.tr(),
+                              style: TextStyle(
+                                color: isDark ? const Color(0xFF8FA0AE) : AppColor.primaryColor,
+                                fontSize: 14.sp,
+                              ),
                             ),
-                          ),
-                          SizedBox(width: 5.w),
-                          CustomTextButton(
-                            text: 'sign_in'.tr(),
-                            onPressed: () {
-                              Navigator.pushReplacementNamed(
-                                context,
-                                '/signInView',
-                              );
-                            },
-                          ),
-                        ],
-                      ),
+                            SizedBox(width: 5.w),
+                            CustomTextButton(
+                              text: 'sign_in'.tr(),
+                              onPressed: () {
+                                Navigator.pushReplacementNamed(
+                                  context,
+                                  '/signInView',
+                                );
+                              },
+                            ),
+                          ],
+                        );
+                      }),
                     ],
                   ),
                 ),

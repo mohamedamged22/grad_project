@@ -61,9 +61,8 @@ class OtpView extends StatelessWidget {
                       arguments: {'fromProfileFlow': fromProfileFlow},
                     ),
                 icon: Icon(
-                  Icons.chevron_left,
+                  Icons.adaptive.arrow_back,
                   size: 32.w,
-                  color: AppColor.primaryColor,
                 ),
               ),
             ),
@@ -120,14 +119,17 @@ class OtpView extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          'didnt_receive_code'.tr(),
-                          style: TextStyle(
-                            color: AppColor.primaryColor,
-                            fontWeight: FontWeight.w400,
-                            fontSize: 14,
-                          ),
-                        ),
+                        Builder(builder: (context) {
+                          final isDark = Theme.of(context).brightness == Brightness.dark;
+                          return Text(
+                            'didnt_receive_code'.tr(),
+                            style: TextStyle(
+                              color: isDark ? const Color(0xFF8FA0AE) : AppColor.primaryColor,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 14,
+                            ),
+                          );
+                        }),
                         const SizedBox(width: 6),
                         CustomTextButton(
                           text: 'resend_code'.tr(),

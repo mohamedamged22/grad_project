@@ -10,11 +10,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class RequestsView extends StatelessWidget {
   const RequestsView({super.key});
 
-  void _showAcceptConfirmation(BuildContext context) {
+  void _showAcceptConfirmation(BuildContext context, int bookingId) {
     showDialog<void>(
       context: context,
       barrierColor: Colors.black.withValues(alpha: 0.28),
-      builder: (context) {
+      builder: (dialogContext) {
         final isDark = Theme.of(context).brightness == Brightness.dark;
         final dialogBg = Theme.of(context).cardColor;
         final titleColor = isDark ? Colors.white : AppColor.primaryColor;
@@ -81,8 +81,11 @@ class RequestsView extends StatelessWidget {
                   SizedBox(
                     width: 110.w,
                     height: 34.h,
-                    child: ElevatedButton(
-                      onPressed: () => Navigator.of(context).pop(),
+                      child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(dialogContext).pop();
+                        context.read<GuideRequestsCubit>().acceptBooking(bookingId);
+                      },
                       style: ElevatedButton.styleFrom(
                         elevation: 0,
                         backgroundColor: AppColor.secondaryColor,
@@ -105,11 +108,11 @@ class RequestsView extends StatelessWidget {
     );
   }
 
-  void _showDeclineConfirmation(BuildContext context) {
+  void _showDeclineConfirmation(BuildContext context, int bookingId) {
     showDialog<void>(
       context: context,
       barrierColor: Colors.black.withValues(alpha: 0.28),
-      builder: (context) {
+      builder: (dialogContext) {
         final isDark = Theme.of(context).brightness == Brightness.dark;
         final dialogBg = Theme.of(context).cardColor;
         final titleColor = isDark ? Colors.white : Colors.black;
@@ -169,7 +172,7 @@ class RequestsView extends StatelessWidget {
                         child: SizedBox(
                           height: 34.h,
                           child: OutlinedButton(
-                            onPressed: () => Navigator.of(context).pop(),
+                            onPressed: () => Navigator.of(dialogContext).pop(),
                             style: OutlinedButton.styleFrom(
                               side: const BorderSide(
                                 color: Color(0xFFC6CDD3),
@@ -192,7 +195,10 @@ class RequestsView extends StatelessWidget {
                         child: SizedBox(
                           height: 34.h,
                           child: ElevatedButton(
-                            onPressed: () => Navigator.of(context).pop(),
+                            onPressed: () {
+                              Navigator.of(dialogContext).pop();
+                              context.read<GuideRequestsCubit>().rejectBooking(bookingId);
+                            },
                             style: ElevatedButton.styleFrom(
                               elevation: 0,
                               backgroundColor: const Color(0xFFFF2A2A),
@@ -227,10 +233,13 @@ class RequestsView extends StatelessWidget {
     final pageBg = Theme.of(context).scaffoldBackgroundColor;
     final cardBg = Theme.of(context).cardColor;
     final primaryText = isDark ? Colors.white : AppColor.primaryColor;
+    final metaColor = isDark ? const Color(0xFF9DB0BF) : const Color(0xFF6E7F8D);
 
     return BlocBuilder<GuideRequestsCubit, GuideRequestsState>(
       builder: (context, state) {
-        return SafeArea(
+        return Stack(
+          children: [
+          SafeArea(
           child: ColoredBox(
             color: pageBg,
             child: SingleChildScrollView(
@@ -255,59 +264,95 @@ class RequestsView extends StatelessWidget {
                       Expanded(
                         child: GuideFilterChip(
                           label: 'guide_filter_new'.tr(),
-                          isSelected: state.selectedFilter == 'New',
+                          isSelected: state.selectedFilter == 'PENDING',
                           backgroundColor: cardBg,
                           textColor: primaryText,
                           onTap:
                               () => context
                                   .read<GuideRequestsCubit>()
-                                  .selectFilter('New'),
+                                  .selectFilter('PENDING'),
                         ),
                       ),
                       SizedBox(width: 8.w),
                       Expanded(
                         child: GuideFilterChip(
                           label: 'guide_filter_accepted'.tr(),
-                          isSelected: state.selectedFilter == 'Accepted',
+                          isSelected: state.selectedFilter == 'ACCEPTED',
                           backgroundColor: cardBg,
                           textColor: primaryText,
                           onTap:
                               () => context
                                   .read<GuideRequestsCubit>()
-                                  .selectFilter('Accepted'),
+                                  .selectFilter('ACCEPTED'),
                         ),
                       ),
                       SizedBox(width: 8.w),
                       Expanded(
                         child: GuideFilterChip(
                           label: 'guide_filter_declined'.tr(),
-                          isSelected: state.selectedFilter == 'Declined',
+                          isSelected: state.selectedFilter == 'REJECTED',
                           backgroundColor: cardBg,
                           textColor: primaryText,
                           onTap:
                               () => context
                                   .read<GuideRequestsCubit>()
-                                  .selectFilter('Declined'),
+                                  .selectFilter('REJECTED'),
                         ),
                       ),
                     ],
                   ),
                   SizedBox(height: 16.h),
-                  ListView.separated(
-                    itemCount: 6,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    separatorBuilder: (_, __) => SizedBox(height: 10.h),
-                    itemBuilder:
-                        (_, __) => GuideNewRequestCard(
-                          onAccept: () => _showAcceptConfirmation(context),
-                          onDecline: () => _showDeclineConfirmation(context),
+                  if (state.status == GuideRequestsStatus.loading)
+                    const Center(child: CircularProgressIndicator())
+                  else if (state.status == GuideRequestsStatus.failure)
+                    Center(
+                      child: Text(
+                        state.errorMessage ?? 'Failed to load bookings',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          color: Colors.redAccent,
                         ),
-                  ),
+                      ),
+                    )
+                  else if (state.bookings.isEmpty)
+                    Center(
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 40.h),
+                        child: Text(
+                          'No bookings found',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            color: metaColor,
+                          ),
+                        ),
+                      ),
+                    )
+                  else
+                    ListView.separated(
+                      itemCount: state.bookings.length,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      separatorBuilder: (_, __) => SizedBox(height: 10.h),
+                      itemBuilder:
+                          (_, index) => GuideNewRequestCard(
+                            booking: state.bookings[index],
+                            onAccept: () => _showAcceptConfirmation(context, state.bookings[index].id),
+                            onDecline: () => _showDeclineConfirmation(context, state.bookings[index].id),
+                          ),
+                    ),
                 ],
               ),
             ),
-          ),
+            ),
+            ),
+          if (state.actionStatus == GuideRequestsActionStatus.loading)
+            Container(
+              color: Colors.black.withValues(alpha: 0.3),
+              child: const Center(child: CircularProgressIndicator()),
+            ),
+          ],
         );
       },
     );

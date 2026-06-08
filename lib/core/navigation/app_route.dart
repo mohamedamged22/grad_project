@@ -30,6 +30,7 @@ import 'package:beyond_the_pramids/features/complete%20tourist%20account/present
 import 'package:beyond_the_pramids/features/complete%20tourist%20account/presentation/views/trip_details_view.dart';
 import 'package:beyond_the_pramids/features/complete%20tourist%20account/presentation/views/tourist_profile_photo_view.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/presentation/manager/tourist_profile_cubit/tourist_profile_cubit.dart';
+import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_my_trip_cubit/guide_my_trip_cubit.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_profile_cubit/guide_profile_cubit.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_requests_cubit/guide_requests_cubit.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_root_cubit/guide_root_cubit.dart';
@@ -49,6 +50,7 @@ import 'package:beyond_the_pramids/features/guide_trip_map/presentation/views/gu
 import 'package:beyond_the_pramids/features/guide%20home/presentation/views/profile_personal_information_view.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/views/guide_root_view.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/views/guide_settings_view.dart';
+import 'package:beyond_the_pramids/features/guide%20home/presentation/views/guide_privacy_policy_view.dart';
 import 'package:beyond_the_pramids/features/onboarding/presentation/views/onboarding_view_1.dart';
 import 'package:beyond_the_pramids/features/onboarding/presentation/views/onboarding_view_2.dart';
 import 'package:beyond_the_pramids/features/onboarding/presentation/views/onboarding_view_3.dart';
@@ -64,6 +66,7 @@ import 'package:beyond_the_pramids/features/tourist%20home/presentation/views/to
 import 'package:beyond_the_pramids/features/tourist%20home/presentation/views/tour_guide_profile_view.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/presentation/views/tourist_root_view.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/presentation/views/tourist_trip_details_view.dart';
+import 'package:beyond_the_pramids/features/tourist%20home/presentation/views/tourist_create_request_view.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/presentation/manager/tourist_trip_details_cubit/tourist_trip_details_cubit.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/presentation/manager/tour_guide_profile_cubit/tour_guide_profile_cubit.dart';
 import 'package:flutter/material.dart';
@@ -143,6 +146,11 @@ class AppRoute {
             BlocProvider(
               create:
                   (context) => sl<GuideProfileCubit>()..fetchProfileDashboard(),
+            ),
+            BlocProvider(
+              create:
+                  (context) => sl<GuideMyTripCubit>()
+                    ..selectFilter(MyTripFilter.newTrips),
             ),
           ],
           child: const GuideRootView(),
@@ -404,6 +412,24 @@ class AppRoute {
           create: (context) => sl<PricingCubit>(),
           child: const PricingView(),
         );
+        break;
+      case '/guidePrivacyPolicyView':
+        page = const GuidePrivacyPolicyView();
+        break;
+
+      case '/touristCreateRequestView':
+        final args = settings.arguments;
+        if (args is Map<String, dynamic>) {
+          page = TouristCreateRequestView(
+            guideId: args['guideId'] is int ? args['guideId'] as int : null,
+            guideName:
+                args['guideName'] is String
+                    ? args['guideName'] as String
+                    : null,
+          );
+        } else {
+          page = const TouristCreateRequestView();
+        }
         break;
 
       default:

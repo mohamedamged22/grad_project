@@ -38,20 +38,33 @@ class TouristTripDetails {
   });
 
   factory TouristTripDetails.fromJson(Map<String, dynamic> json) {
+    // Support both new API format (groupSize) and old format (minGroupSize/maxGroupSize)
+    final groupSize = (json['groupSize'] as num?)?.toInt() ?? 0;
+    final minSize =
+        (json['minGroupSize'] as num?)?.toInt() ?? (groupSize > 0 ? groupSize : 0);
+    final maxSize =
+        (json['maxGroupSize'] as num?)?.toInt() ?? (groupSize > 0 ? groupSize : 0);
+
     return TouristTripDetails(
       id: (json['id'] as num?)?.toInt() ?? 0,
       title: json['title']?.toString() ?? '',
       city: json['city']?.toString() ?? '',
       meetingPoint: json['meetingPoint']?.toString() ?? '',
       description: json['description']?.toString() ?? '',
-      minGroupSize: (json['minGroupSize'] as num?)?.toInt() ?? 0,
-      maxGroupSize: (json['maxGroupSize'] as num?)?.toInt() ?? 0,
-      tourDuration: json['tourDuration']?.toString() ?? '',
+      minGroupSize: minSize,
+      maxGroupSize: maxSize,
+      tourDuration:
+          json['tourDuration']?.toString() ??
+          json['duration']?.toString() ?? '',
       startDate: json['startDate']?.toString() ?? '',
       endDate: json['endDate']?.toString() ?? '',
-      pricePerTourist: json['pricePerTourist'] as num? ?? 0,
+      pricePerTourist:
+          json['pricePerTourist'] as num? ??
+          json['price'] as num? ?? 0,
       status: json['status']?.toString() ?? '',
-      coverImageUrl: json['coverImageUrl']?.toString(),
+      coverImageUrl:
+          json['coverImageUrl']?.toString() ??
+          json['imageUrl']?.toString(),
       categories:
           (json['categories'] as List?)
               ?.map((e) => e?.toString() ?? '')
@@ -71,9 +84,9 @@ class TouristTripDetails {
               .toList() ??
           const [],
       guide:
-          json['guide'] is Map<String, dynamic>
+          (json['guide'] ?? json['creator']) is Map<String, dynamic>
               ? TouristTripGuide.fromJson(
-                json['guide'] as Map<String, dynamic>,
+                (json['guide'] ?? json['creator']) as Map<String, dynamic>,
               )
               : null,
     );
@@ -165,7 +178,9 @@ class TouristTripGuide {
   factory TouristTripGuide.fromJson(Map<String, dynamic> json) {
     return TouristTripGuide(
       id: (json['id'] as num?)?.toInt() ?? 0,
-      name: json['name']?.toString() ?? '',
+      name:
+          json['name']?.toString() ??
+          json['username']?.toString() ?? '',
       profilePhoto: json['profilePhoto']?.toString(),
       city: json['city']?.toString() ?? '',
       rating: json['rating'] as num? ?? 0,

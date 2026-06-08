@@ -56,9 +56,8 @@ class ForgetPasswordView extends StatelessWidget {
                       Navigator.pushReplacementNamed(context, '/signInView');
                     },
                 icon: Icon(
-                  Icons.chevron_left,
+                  Icons.adaptive.arrow_back,
                   size: 32.w,
-                  color: AppColor.primaryColor,
                 ),
               ),
             ),

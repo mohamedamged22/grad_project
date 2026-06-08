@@ -61,9 +61,8 @@ class ResetNewPasswordView extends StatelessWidget {
               leading: IconButton(
                 onPressed: () => Navigator.pop(context),
                 icon: Icon(
-                  Icons.chevron_left,
+                  Icons.adaptive.arrow_back,
                   size: 32.w,
-                  color: AppColor.primaryColor,
                 ),
               ),
             ),

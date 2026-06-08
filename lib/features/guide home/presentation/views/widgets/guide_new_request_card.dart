@@ -1,25 +1,47 @@
 import 'package:beyond_the_pramids/core/constants/app_color.dart';
 import 'package:beyond_the_pramids/core/utils/size_config.dart';
+import 'package:beyond_the_pramids/features/guide%20home/data/model/guide_booking_model.dart';
 import 'package:flutter/material.dart';
 
 class GuideNewRequestCard extends StatelessWidget {
+  final GuideBookingModel booking;
   final VoidCallback? onAccept;
   final VoidCallback? onDecline;
 
-  const GuideNewRequestCard({super.key, this.onAccept, this.onDecline});
+  const GuideNewRequestCard({
+    super.key,
+    required this.booking,
+    this.onAccept,
+    this.onDecline,
+  });
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = Theme.of(context).cardColor;
     final primaryText = isDark ? Colors.white : AppColor.primaryColor;
-    final acceptButtonColor = AppColor.secondaryColor;
     final cardBorderColor =
         isDark ? const Color(0xFF2C3C4A) : const Color(0xFFD8E0E6);
     final metaColor =
         isDark ? const Color(0xFF9DB0BF) : const Color(0xFF6E7F8D);
     final declineBorderColor =
         isDark ? const Color(0xFF5B6E7D) : const Color(0xFFC7D1D9);
+
+    final isPending = booking.status == 'PENDING';
+
+    String statusLabel;
+    Color statusColor;
+    switch (booking.status) {
+      case 'ACCEPTED':
+        statusLabel = 'Accepted';
+        statusColor = const Color(0xFF4CAF50);
+      case 'REJECTED':
+        statusLabel = 'Declined';
+        statusColor = const Color(0xFFFF2A2A);
+      default:
+        statusLabel = 'New';
+        statusColor = AppColor.secondaryColor;
+    }
 
     return Container(
       width: double.infinity,
@@ -44,7 +66,17 @@ class GuideNewRequestCard extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 32.r,
-                backgroundImage: const AssetImage('assets/images/7th.jpg'),
+                backgroundImage: booking.touristPhoto != null &&
+                        booking.touristPhoto!.isNotEmpty
+                    ? NetworkImage(booking.touristPhoto!)
+                    : null,
+                backgroundColor: isDark
+                    ? const Color(0xFF1C2732)
+                    : const Color(0xFFE6EEF2),
+                child: booking.touristPhoto == null ||
+                        booking.touristPhoto!.isEmpty
+                    ? Icon(Icons.person, size: 24.sp, color: AppColor.secondaryColor)
+                    : null,
               ),
               SizedBox(width: 10.w),
               Expanded(
@@ -52,7 +84,11 @@ class GuideNewRequestCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Michael Brown',
+                      booking.touristName.isNotEmpty
+                          ? booking.touristName
+                          : booking.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: 15.sp,
                         fontWeight: FontWeight.w600,
@@ -60,77 +96,63 @@ class GuideNewRequestCard extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 4.h),
-                    Row(
-                      children: [
-                        Icon(Icons.settings, size: 12.8.sp, color: metaColor),
-                        SizedBox(width: 4.w),
-                        Expanded(
-                          child: Text(
-                            'Culture/Food',
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: 11.5.sp,
-                              fontWeight: FontWeight.w600,
-                              color: metaColor,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 6.h),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.calendar_today_rounded,
-                                size: 12.8.sp,
+                    if (booking.title.isNotEmpty)
+                      Row(
+                        children: [
+                          Icon(Icons.trip_origin, size: 12.sp, color: metaColor),
+                          SizedBox(width: 4.w),
+                          Expanded(
+                            child: Text(
+                              booking.title,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 11.5.sp,
+                                fontWeight: FontWeight.w600,
                                 color: metaColor,
                               ),
-                              SizedBox(width: 4.w),
-                              Expanded(
-                                child: Text(
-                                  'Wen 09 Feb ,2026',
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontSize: 11.sp,
-                                    fontWeight: FontWeight.w600,
-                                    color: metaColor,
-                                  ),
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
-                        ),
-                        SizedBox(width: 8.w),
-                        Icon(Icons.alarm, size: 12.8.sp, color: metaColor),
-                        SizedBox(width: 4.w),
-                        Text(
-                          '8:00 Pm',
-                          style: TextStyle(
-                            fontSize: 12.sp,
-                            fontWeight: FontWeight.w500,
+                        ],
+                      ),
+                    SizedBox(height: 6.h),
+                    if (booking.startDate.isNotEmpty)
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.calendar_today_rounded,
+                            size: 12.8.sp,
                             color: metaColor,
                           ),
-                        ),
-                      ],
-                    ),
+                          SizedBox(width: 4.w),
+                          Expanded(
+                            child: Text(
+                              booking.startDate,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 11.sp,
+                                fontWeight: FontWeight.w600,
+                                color: metaColor,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     SizedBox(height: 5.h),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.group_outlined,
-                          size: 13.sp,
-                          color: metaColor,
-                        ),
-                        SizedBox(width: 4.w),
-                        Text(
-                          '3 Tourists',
-                          style: TextStyle(fontSize: 11.5.sp, color: metaColor),
-                        ),
-                      ],
-                    ),
+                    if (booking.touristCount != null && booking.touristCount! > 0)
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.group_outlined,
+                            size: 13.sp,
+                            color: metaColor,
+                          ),
+                          SizedBox(width: 4.w),
+                          Text(
+                            '${booking.touristCount} Tourists',
+                            style: TextStyle(fontSize: 11.5.sp, color: metaColor),
+                          ),
+                        ],
+                      ),
                   ],
                 ),
               ),
@@ -138,75 +160,80 @@ class GuideNewRequestCard extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
                 decoration: BoxDecoration(
                   color: isDark ? const Color(0xFF0F1720) : Colors.white,
-                  border: Border.all(color: const Color(0xFF9CCFDB), width: .8),
+                  border: Border.all(
+                    color: statusColor.withValues(alpha: 0.6),
+                    width: .8,
+                  ),
                   borderRadius: BorderRadius.circular(16.r),
                 ),
                 child: Text(
-                  'New',
+                  statusLabel,
                   style: TextStyle(
                     fontSize: 10.sp,
-                    color: AppColor.secondaryColor,
+                    color: statusColor,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
             ],
           ),
-          SizedBox(height: 10.h),
-          Row(
-            children: [
-              SizedBox(width: 60.w),
-              Expanded(
-                child: SizedBox(
-                  height: 34.h,
-                  child: ElevatedButton(
-                    onPressed: onAccept ?? () {},
-                    style: ElevatedButton.styleFrom(
-                      elevation: 0,
-                      backgroundColor: acceptButtonColor,
-                      disabledBackgroundColor: acceptButtonColor,
-                      foregroundColor: Colors.white,
-                      disabledForegroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24.r),
+          if (isPending) ...[
+            SizedBox(height: 10.h),
+            Row(
+              children: [
+                SizedBox(width: 60.w),
+                Expanded(
+                  child: SizedBox(
+                    height: 34.h,
+                    child: ElevatedButton(
+                      onPressed: onAccept ?? () {},
+                      style: ElevatedButton.styleFrom(
+                        elevation: 0,
+                        backgroundColor: AppColor.secondaryColor,
+                        disabledBackgroundColor: AppColor.secondaryColor,
+                        foregroundColor: Colors.white,
+                        disabledForegroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(24.r),
+                        ),
                       ),
-                    ),
-                    child: Text(
-                      'Accept',
-                      style: TextStyle(
-                        fontSize: 12.5.sp,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(width: 10.w),
-              Expanded(
-                child: SizedBox(
-                  height: 34.h,
-                  child: OutlinedButton(
-                    onPressed: onDecline ?? () {},
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: declineBorderColor, width: 1),
-                      foregroundColor: metaColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24.r),
-                      ),
-                    ),
-                    child: Text(
-                      'Decline',
-                      style: TextStyle(
-                        fontSize: 12.5.sp,
-                        fontWeight: FontWeight.w600,
+                      child: Text(
+                        'Accept',
+                        style: TextStyle(
+                          fontSize: 12.5.sp,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
+                SizedBox(width: 10.w),
+                Expanded(
+                  child: SizedBox(
+                    height: 34.h,
+                    child: OutlinedButton(
+                      onPressed: onDecline ?? () {},
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(color: declineBorderColor, width: 1),
+                        foregroundColor: metaColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(24.r),
+                        ),
+                      ),
+                      child: Text(
+                        'Decline',
+                        style: TextStyle(
+                          fontSize: 12.5.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ],
       ),
     );

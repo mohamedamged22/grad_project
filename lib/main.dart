@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
+  await ThemeService.loadThemePreference();
   setupServiceLocator();
   runApp(
     EasyLocalization(
@@ -69,6 +70,9 @@ class MyApp extends StatelessWidget {
             ).textTheme.apply(fontFamily: fontFamily),
           ),
           darkTheme: ThemeData(
+            textSelectionTheme: const TextSelectionThemeData(
+              cursorColor: Colors.white,
+            ),
             colorScheme: ColorScheme.fromSeed(
               seedColor: const Color(0xFF047185),
               brightness: Brightness.dark,
@@ -100,7 +104,11 @@ class MyApp extends StatelessWidget {
             ),
             textTheme: Theme.of(
               context,
-            ).textTheme.apply(fontFamily: fontFamily),
+            ).textTheme.apply(
+              fontFamily: fontFamily,
+              bodyColor: Colors.white,
+              displayColor: Colors.white,
+            ),
           ),
           debugShowCheckedModeBanner: false,
           initialRoute: '/splash',

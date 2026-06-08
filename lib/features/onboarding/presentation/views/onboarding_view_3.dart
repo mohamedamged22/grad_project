@@ -1,4 +1,5 @@
 import 'package:beyond_the_pramids/core/constants/app_color.dart';
+import 'package:beyond_the_pramids/core/utils/pref_helper.dart';
 import 'package:beyond_the_pramids/core/utils/size_config.dart';
 import 'package:beyond_the_pramids/features/onboarding/presentation/views/widgets/custom_button.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -191,10 +192,12 @@ class _OnboardingView3State extends State<OnboardingView3>
                     position: _buttonSlide,
                     child: CustomButton(
                       text: 'get_Started'.tr(),
-                      onTap: () {
+                      onTap: () async {
+                        await PrefHelper.setOnboardingSeen(true);
+                        if (!context.mounted) return;
                         Navigator.pushReplacementNamed(
                           context,
-                          '/signUpView',
+                          '/accountTypeView',
                         );
                       },
                     ),

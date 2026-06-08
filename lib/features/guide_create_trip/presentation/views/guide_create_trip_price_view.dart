@@ -45,41 +45,14 @@ class GuideCreateTripPriceView extends StatelessWidget {
       },
       builder: (context, state) {
         return WillPopScope(
-          onWillPop: () async {
-            if (state.status == GuideCreateTripPriceStatus.failure) {
-              showSnackBar(
-                context,
-                'Please fix the current error first',
-                isSuccess: false,
-              );
-              return false;
-            }
-            return true;
-          },
+          onWillPop: () async => false,
           child: Scaffold(
             backgroundColor: pageBg,
             appBar: AppBar(
             backgroundColor: pageBg,
             elevation: 0,
             centerTitle: true,
-            leading: IconButton(
-              icon: Icon(
-                Icons.arrow_back_ios_new_rounded,
-                color: AppColor.primaryColor,
-                size: 18.sp,
-              ),
-              onPressed: () {
-                if (state.status == GuideCreateTripPriceStatus.failure) {
-                  showSnackBar(
-                    context,
-                    'Please fix the current error first',
-                    isSuccess: false,
-                  );
-                  return;
-                }
-                Navigator.pop(context);
-              },
-            ),
+            automaticallyImplyLeading: false,
             title: Text(
               'Create New Trip',
               style: TextStyle(

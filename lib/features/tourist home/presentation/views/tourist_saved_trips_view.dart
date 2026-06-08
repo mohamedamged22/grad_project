@@ -1,6 +1,7 @@
 import 'package:beyond_the_pramids/core/constants/app_color.dart';
 import 'package:beyond_the_pramids/core/services/service_locator.dart';
 import 'package:beyond_the_pramids/core/utils/size_config.dart';
+import 'package:beyond_the_pramids/core/utils/widgets/network_image_with_fallback.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/data/model/tourist_landmark_list_item.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/data/model/tourist_public_trip.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/data/repo/tourist_favorites_repo.dart';
@@ -253,20 +254,11 @@ class _SavedTripCard extends StatelessWidget {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  if (item.normalizedImageUrl != null)
-                    Image.network(item.normalizedImageUrl!, fit: BoxFit.cover)
-                  else
-                    Container(
-                      color: isDark
-                          ? const Color(0xFF1C2732)
-                          : const Color(0xFFE6EEF2),
-                      alignment: Alignment.center,
-                      child: Icon(
-                        Icons.image_outlined,
-                        size: 26.sp,
-                        color: AppColor.secondaryColor,
-                      ),
-                    ),
+                  NetworkImageWithFallback(
+                    imageUrl: item.normalizedImageUrl,
+                    placeholderIconSize: 26.sp,
+                    withAuth: true,
+                  ),
                   Positioned(
                     left: 6.w,
                     top: 6.h,
@@ -402,18 +394,10 @@ class _SavedLandmarkCard extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          if (item.normalizedImageUrl != null)
-            Image.network(item.normalizedImageUrl!, fit: BoxFit.cover)
-          else
-            Container(
-              color: const Color(0xFFE6EEF2),
-              alignment: Alignment.center,
-              child: Icon(
-                Icons.image_outlined,
-                size: 26.sp,
-                color: AppColor.secondaryColor,
-              ),
-            ),
+          NetworkImageWithFallback(
+            imageUrl: item.normalizedImageUrl,
+            placeholderIconSize: 26.sp,
+          ),
           Positioned(
             right: 6.w,
             top: 6.h,

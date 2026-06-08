@@ -1,13 +1,17 @@
 import 'package:beyond_the_pramids/core/constants/app_color.dart';
 import 'package:beyond_the_pramids/core/utils/size_config.dart';
+import 'package:beyond_the_pramids/features/guide%20home/data/model/guide_trip_summary_model.dart';
+import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_my_trip_cubit/guide_my_trip_cubit.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_profile_cubit/guide_profile_cubit.dart';
+import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_requests_cubit/guide_requests_cubit.dart';
+import 'package:beyond_the_pramids/features/guide%20home/presentation/manger/guide_root_cubit/guide_root_cubit.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/views/widgets/guide_home_search_field.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/views/widgets/guide_home_top_bar.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/views/widgets/guide_metric_card.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/views/widgets/guide_new_request_card.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/views/widgets/guide_promo_trip_card.dart';
 import 'package:beyond_the_pramids/features/guide%20home/presentation/views/widgets/guide_section_title.dart';
-import 'package:beyond_the_pramids/features/guide%20home/presentation/views/widgets/guide_upcoming_trip_card.dart';
+import 'package:beyond_the_pramids/features/guide%20home/presentation/views/widgets/guide_trip_preview_card.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,20 +27,6 @@ class GuideHomeView extends StatelessWidget {
             ? Colors.white
             : AppColor.primaryColor;
     final profileState = context.watch<GuideProfileCubit>().state;
-    final trips = [
-      TripData(
-        imagePath: 'assets/images/trip.png',
-        title: 'guide_sample_trip_title_dahab'.tr(),
-        date: 'guide_sample_trip_date'.tr(),
-        tourists: '10 ${"tourists".tr()}',
-      ),
-      TripData(
-        imagePath: 'assets/images/trip.png',
-        title: 'guide_sample_trip_title_giza'.tr(),
-        date: 'guide_sample_trip_date'.tr(),
-        tourists: '10 ${"tourists".tr()}',
-      ),
-    ];
 
     return SafeArea(
       child: ColoredBox(
@@ -68,23 +58,85 @@ class GuideHomeView extends StatelessWidget {
                 },
               ),
               SizedBox(height: 16.h),
-              GuideSectionTitle(title: 'guide_upcoming_trips'.tr()),
-              SizedBox(height: 8.h),
-              SizedBox(
-                height: 240.h,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: trips.length,
-                  separatorBuilder: (_, __) => SizedBox(width: 12.w),
-                  itemBuilder: (_, index) {
-                    return GuideUpcomingTripCard(data: trips[index]);
-                  },
-                ),
+
+              // ── Trips Section (above requests) – show only last trip ──
+              BlocBuilder<GuideMyTripCubit, GuideMyTripState>(
+                builder: (context, tripState) {
+                  if (tripState.status == GuideMyTripStatus.loading) {
+                    return Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: CircularProgressIndicator(
+                          color: AppColor.secondaryColor,
+                        ),
+                      ),
+                    );
+                  }
+
+                  if (tripState.status == GuideMyTripStatus.failure) {
+                    return const SizedBox.shrink();
+                  }
+
+                  final trips = tripState.trips;
+                  if (trips.isEmpty) return const SizedBox.shrink();
+
+                  // Show only the last (latest) trip
+                  final lastTrip = trips.last;
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      GuideSectionTitle(
+                        title: 'guide_trips'.tr(),
+                        onTap: () {
+                          context.read<GuideRootCubit>().changeTab(2);
+                        },
+                      ),
+                      SizedBox(height: 8.h),
+                      _buildTripCard(lastTrip),
+                      SizedBox(height: 12.h),
+                    ],
+                  );
+                },
               ),
-              SizedBox(height: 12.h),
-              GuideSectionTitle(title: 'guide_new_requests'.tr()),
-              SizedBox(height: 8.h),
-              const GuideNewRequestCard(),
+
+              // ── Latest Booking Request ──
+              BlocBuilder<GuideRequestsCubit, GuideRequestsState>(
+                builder: (context, reqState) {
+                  if (reqState.status != GuideRequestsStatus.success ||
+                      reqState.bookings.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
+                  final latestBooking = reqState.bookings.first;
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      GuideSectionTitle(
+                        title: 'guide_new_requests'.tr(),
+                        onTap: () {
+                          context.read<GuideRootCubit>().changeTab(1);
+                        },
+                      ),
+                      SizedBox(height: 8.h),
+                      GuideNewRequestCard(
+                        booking: latestBooking,
+                        onAccept: () {
+                          context
+                              .read<GuideRequestsCubit>()
+                              .acceptBooking(latestBooking.id);
+                        },
+                        onDecline: () {
+                          context
+                              .read<GuideRequestsCubit>()
+                              .rejectBooking(latestBooking.id);
+                        },
+                      ),
+                      SizedBox(height: 16.h),
+                    ],
+                  );
+                },
+              ),
+
               SizedBox(height: 14.h),
               Text(
                 'guide_this_month'.tr(),
@@ -130,6 +182,27 @@ class GuideHomeView extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildTripCard(GuideTripSummaryModel item) {
+    final priceValue = item.pricePerTourist;
+    final priceText =
+        priceValue != null ? '\$${priceValue.toStringAsFixed(2)}' : '--';
+
+    return GuideTripPreviewCard(
+      imagePath: 'assets/images/trip.png',
+      imageUrl: item.normalizedCoverImageUrl,
+      title: item.title,
+      location: item.city,
+      spots: item.status.isNotEmpty ? item.status : '--',
+      dateRange: item.duration ?? 'TBD',
+      price: priceText,
+      priceSuffix: 'guide_price_per_person_suffix'.tr(),
+      tag:
+          item.category.isNotEmpty
+              ? item.category
+              : 'guide_trip_tag_history'.tr(),
     );
   }
 }

@@ -52,41 +52,14 @@ class GuideCreateTripTimeView extends StatelessWidget {
                 : '${DateFormat('dd/MM/yyyy').format(state.dateRange!.start)} - ${DateFormat('dd/MM/yyyy').format(state.dateRange!.end)}';
 
         return WillPopScope(
-          onWillPop: () async {
-            if (state.status == GuideCreateTripTimeStatus.failure) {
-              showSnackBar(
-                context,
-                'Please fix the current error first',
-                isSuccess: false,
-              );
-              return false;
-            }
-            return true;
-          },
+          onWillPop: () async => false,
           child: Scaffold(
             backgroundColor: pageBg,
             appBar: AppBar(
             backgroundColor: pageBg,
             elevation: 0,
             centerTitle: true,
-            leading: IconButton(
-              icon: Icon(
-                Icons.arrow_back_ios_new_rounded,
-                color: AppColor.primaryColor,
-                size: 18.sp,
-              ),
-              onPressed: () {
-                if (state.status == GuideCreateTripTimeStatus.failure) {
-                  showSnackBar(
-                    context,
-                    'Please fix the current error first',
-                    isSuccess: false,
-                  );
-                  return;
-                }
-                Navigator.pop(context);
-              },
-            ),
+            automaticallyImplyLeading: false,
             title: Text(
               'Create New Trip',
               style: TextStyle(
@@ -135,7 +108,7 @@ class GuideCreateTripTimeView extends StatelessWidget {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(24.r),
                           border: Border.all(
-                            color: AppColor.primaryColor,
+                            color: isDark ? const Color(0xFF3A4A58) : AppColor.primaryColor,
                             width: 1,
                           ),
                         ),
@@ -149,7 +122,7 @@ class GuideCreateTripTimeView extends StatelessWidget {
                                   color:
                                       state.dateRange == null
                                           ? const Color(0xFF929292)
-                                          : AppColor.primaryColor,
+                                          : primaryText,
                                   fontWeight: FontWeight.w500,
                                 ),
                                 overflow: TextOverflow.ellipsis,
@@ -197,7 +170,7 @@ class GuideCreateTripTimeView extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 14.sp,
                             fontWeight: FontWeight.w600,
-                            color: AppColor.primaryColor,
+                            color: primaryText,
                           ),
                         ),
                         SizedBox(width: 8.w),
@@ -222,7 +195,7 @@ class GuideCreateTripTimeView extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 14.sp,
                             fontWeight: FontWeight.w600,
-                            color: AppColor.primaryColor,
+                            color: primaryText,
                           ),
                         ),
                         SizedBox(width: 8.w),
@@ -253,14 +226,14 @@ class GuideCreateTripTimeView extends StatelessWidget {
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(18.r),
                           borderSide: BorderSide(
-                            color: AppColor.primaryColor,
+                            color: isDark ? const Color(0xFF3A4A58) : AppColor.primaryColor,
                             width: 1,
                           ),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(18.r),
                           borderSide: BorderSide(
-                            color: AppColor.primaryColor,
+                            color: isDark ? const Color(0xFF5A6A78) : AppColor.primaryColor,
                             width: 1.4,
                           ),
                         ),

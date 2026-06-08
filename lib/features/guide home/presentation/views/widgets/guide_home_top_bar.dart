@@ -14,7 +14,6 @@ class GuideHomeTopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final hasPhoto = profilePhotoUrl.trim().isNotEmpty;
     final locationLabel = location.trim().isEmpty ? 'Egypt' : location.trim();
 
@@ -34,7 +33,7 @@ class GuideHomeTopBar extends StatelessWidget {
           child: Text(
             locationLabel,
             style: TextStyle(
-              color: isDark ? const Color(0xFFF2F7FA) : Colors.white,
+              color: Colors.white,
               fontWeight: FontWeight.w600,
               fontSize: 10.sp,
             ),

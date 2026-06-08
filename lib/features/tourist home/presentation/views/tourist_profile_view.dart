@@ -3,9 +3,12 @@ import 'package:beyond_the_pramids/core/utils/size_config.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/presentation/manager/tourist_profile_cubit/tourist_profile_cubit.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/presentation/manager/tourist_profile_cubit/tourist_profile_state.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/presentation/views/tourist_personal_information_view.dart';
+import 'package:beyond_the_pramids/features/tourist%20home/presentation/views/tourist_privacy_policy_view.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/presentation/views/tourist_saved_trips_view.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/presentation/views/tourist_settings_view.dart';
+import 'package:beyond_the_pramids/features/tourist%20home/presentation/manager/tourist_trip_history_cubit/tourist_trip_history_cubit.dart';
 import 'package:beyond_the_pramids/features/tourist%20home/presentation/views/tourist_trip_history_view.dart';
+import 'package:beyond_the_pramids/core/services/service_locator.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -164,7 +167,7 @@ class TouristProfileView extends StatelessWidget {
                   SizedBox(height: 8.h),
                   _SettingsItem(
                     icon: Icons.receipt_long_outlined,
-                    title: 'trip_history'.tr(),
+                    title: 'request_history'.tr(),
                     borderColor: borderColor,
                     backgroundColor: cardBg,
                     defaultTextColor: primaryText,
@@ -176,7 +179,10 @@ class TouristProfileView extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => const TouristTripHistoryView(),
+                          builder: (_) => BlocProvider(
+                            create: (_) => sl<TouristTripHistoryCubit>(),
+                            child: const TouristTripHistoryView(),
+                          ),
                         ),
                       );
                     },
@@ -208,7 +214,14 @@ class TouristProfileView extends StatelessWidget {
                     borderColor: borderColor,
                     backgroundColor: cardBg,
                     defaultTextColor: primaryText,
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const TouristPrivacyPolicyView(),
+                        ),
+                      );
+                    },
                   ),
                   SizedBox(height: 8.h),
                   _SettingsItem(

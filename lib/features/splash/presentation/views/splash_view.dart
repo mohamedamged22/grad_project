@@ -1,4 +1,5 @@
 import 'package:beyond_the_pramids/core/constants/app_color.dart';
+import 'package:beyond_the_pramids/core/navigation/navigation_service.dart';
 import 'package:beyond_the_pramids/core/network/api_execptions.dart';
 import 'package:beyond_the_pramids/core/services/service_locator.dart';
 import 'package:beyond_the_pramids/core/utils/pref_helper.dart';
@@ -61,25 +62,47 @@ class _SplashViewState extends State<SplashView>
 
   Future<void> _resolveNextRoute() async {
     final token = await PrefHelper.getToken();
+    final onboardingSeen = await PrefHelper.isOnboardingSeen();
+
+    // ── No token: first-time or signed-out user ──
     if (token == null || token.isEmpty || token == 'guest') {
-      _nextRoute = '/onboarding';
+      if (onboardingSeen) {
+        // Returning user – skip onboarding, go to sign-in
+        _nextRoute = '/accountTypeView';
+      } else {
+        // First time – show onboarding
+        _nextRoute = '/onboarding';
+      }
       return;
     }
 
+    // ── Token exists: verify with server ──
     try {
       await sl<AuthRepo>().getProfileData();
     } on ApiException catch (e) {
       if (e.statusCode == 401 || e.statusCode == 403) {
+        // Token expired / invalid
         await PrefHelper.clearSession();
-        _nextRoute = '/onboarding';
+        _nextRoute = '/signInView';
         return;
       }
     } catch (_) {
+      // Network error – try offline fallback
+      final role = await PrefHelper.getUserRole();
+      final isCompleted = await PrefHelper.isProfileCompleted();
+      if (isCompleted && role != null) {
+        _nextRoute =
+            role == 'tourist'
+                ? '/touristHomeRootView'
+                : '/guideHomeRootView';
+        return;
+      }
       await PrefHelper.clearSession();
-      _nextRoute = '/onboarding';
+      _nextRoute = '/signInView';
       return;
     }
 
+    // ── Token valid: check profile completion ──
     final isCompleted = await PrefHelper.isProfileCompleted();
     var role = await PrefHelper.getUserRole();
     if (role == null) {
@@ -88,16 +111,16 @@ class _SplashViewState extends State<SplashView>
         role = await PrefHelper.getUserRole();
       } catch (_) {}
     }
-    
+
     if (isCompleted) {
-      if (role == 'tourist') {
-        _nextRoute = '/touristHomeRootView';
-      } else {
-        _nextRoute = '/guideHomeRootView';
-      }
+      _nextRoute =
+          role == 'tourist'
+              ? '/touristHomeRootView'
+              : '/guideHomeRootView';
       return;
     }
 
+    // Profile not completed → complete info
     if (role == 'guide') {
       _nextRoute = '/basicInformationView';
       return;
@@ -107,7 +130,7 @@ class _SplashViewState extends State<SplashView>
       return;
     }
 
-    // Fallback for signed-in users without stored role metadata.
+    // Fallback
     _nextRoute = '/guideHomeRootView';
   }
 
@@ -124,6 +147,7 @@ class _SplashViewState extends State<SplashView>
 
       if (!mounted) return;
 
+      NavigationService.markBootstrapComplete();
       Navigator.pushReplacementNamed(context, _nextRoute);
     }
   }
